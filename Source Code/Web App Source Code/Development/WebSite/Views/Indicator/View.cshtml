@@ -1,0 +1,229 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using IID.WebSite.Models
+@using IID.BusinessLayer.Identity
+
+@model Indicator
+@{
+    ViewBag.Title = ("View Indicator: " + Model.Name);
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml", ProjectBreadcrumbs.ForIndicator(Model.IndicatorId.Value))
+}
+
+@Scripts.Render("~/Scripts/indicator.js")
+
+<section class="max-width-max">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Show/hide content based on indicator type.
+            indicatorTypeChanged('@Model.TypeValue');
+        });
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @common.Indicator
+        </div>
+
+        @if ((Identity.CurrentUser.IsInRole(Role.ActivityLeader))
+                       || (Identity.CurrentUser.IsInRole(Role.CountryDirector))
+                       || (Identity.CurrentUser.IsInRole(Role.SystemAdministrator)))
+        {
+            <div class="float-right button">
+                <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.IndicatorId.Value })">
+                    @common.Edit
+                    <img src="~/Images/icons/16/pencil_edit.png" />
+                </a>
+            </div>
+        }
+        
+        
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <table class="form-table width-100p">
+            <colgroup>
+                <col style="width: 40%;" />
+                <col style="width:  5%;" />
+                <col style="width: 55%;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.AimId)</td>
+                                    <td>@Html.DisplayFor(m => m.Aim.Name)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Name)</td>
+                                    <td>@Html.DisplayFor(m => m.Name)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.TypeFieldId)</td>
+                                    <td>@Html.DisplayFor(m => m.TypeValue)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.GroupFieldId)</td>
+                                    <td>@Html.DisplayFor(m => m.GroupValue)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Definition)</td>
+                                    <td>@Html.DisplayFor(m => m.Definition)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.NumeratorSource)</td>
+                                    <td>@Html.DisplayFor(m => m.NumeratorSource)</td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyNumeratorDenominator">
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="padding-0" colspan="2">
+                                    @Html.Label(indicator.Numerator, new { @class = "text-align-left" })
+                                        <hr style="margin: 2px 4px 2px 0;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.NumeratorName)</td>
+                                    <td>@Html.DisplayFor(m => m.NumeratorName)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.NumeratorDefinition)</td>
+                                    <td>@Html.DisplayFor(m => m.NumeratorDefinition)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.NumeratorSource)</td>
+                                    <td>@Html.DisplayFor(m => m.NumeratorSource)</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="padding-0" colspan="2">
+                                    @Html.Label(indicator.Denominator, new { @class = "text-align-left" })
+                                        <hr style="margin: 2px 4px 2px 0;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.DenominatorName)</td>
+                                    <td>@Html.DisplayFor(m => m.DenominatorName)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.DenominatorDefinition)</td>
+                                    <td>@Html.DisplayFor(m => m.DenominatorDefinition)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.DenominatorSource)</td>
+                                    <td>@Html.DisplayFor(m => m.DenominatorSource)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td></td>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody id="tbdyCollection">
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.DataCollectionFrequencyFieldId)</td>
+                                    <td>@Html.DisplayFor(m => m.DataCollectionFrequencyValue)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.SamplingFieldId)</td>
+                                    <td>@Html.DisplayFor(m => m.SamplingValue)</td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyChangeVariable">
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.ChangeVariable)</td>
+                                    <td>@Html.DisplayFor(m => m.ChangeVariable)</td>
+                                </tr>
+                                </tbody>
+                            <tbody id="tbdyDisaggregation">
+                                <tr>
+                                    <td colspan="2">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.DisaggregateBySex)</td>
+                                    <td>@Html.DisplayFor(m => m.DisaggregateBySex)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.DisaggregateByAge)</td>
+                                    <td>@Html.DisplayFor(m => m.DisaggregateByAge)</td>
+                                </tr>
+                                @if (Model.DisaggregateByAge)
+                                {
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.AgeRanges)</td>
+                                        <td>@Html.Raw(String.Join(", ", Model.AgeRanges.Values))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tbody id="tbdyTarget">
+                                <tr>
+                                    <td colspan="2">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.TargetPerformance)</td>
+                                    <td>@Html.DisplayFor(m => m.TargetPerformance)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.ThresholdGoodPerformance)</td>
+                                    <td>@Html.DisplayFor(m => m.ThresholdGoodPerformance)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.ThresholdPoorPerformance)</td>
+                                    <td>@Html.DisplayFor(m => m.ThresholdPoorPerformance)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.IncreaseIsGoodText)</td>
+                                    <td>@Html.DisplayFor(m => m.IncreaseIsGoodText)</td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyRatio">
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.RatePerFieldId)</td>
+                                    <td>@Html.DisplayFor(m => m.RatePerValue)</td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Active)</td>
+                                    <td>@Html.DisplayFor(m => m.Active)</td>
+                                </tr>
+                            </tbody> 
+                            <tbody>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.ReportClassFieldId)</td>
+                                    <td>@Html.DisplayFor(m => m.ReportClassValue)</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@Html.Partial("~/Views/IndicatorSite/List.cshtml", new ActivitySiteCollection(Model.ActivityId, Model.IndicatorId.Value))
+
+@Html.Partial("~/Views/Indicator/List.cshtml", Model)

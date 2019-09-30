@@ -1,0 +1,87 @@
+﻿@using C1.Web.Mvc.Grid
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using activitySite = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@using rankByImprovement = IID.BusinessLayer.Globalization.RankByImprovement.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+@using IID.BusinessLayer.Domain
+@using IID.WebSite.Models
+
+@model RankByImprovementData
+@{
+    ViewBag.Title = ("Rank By Improvement:" + Model.Info.ActivityName);
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml", ProjectBreadcrumbs.ForRankByImprovement(Model.Info.ActivityId))
+}
+
+<table class="height-100p width-100p" style="table-layout: fixed;">
+    <tr>
+        <td class="height-100p width-300 vertical-align-top">
+            @Html.Partial("~/Views/Activity/EntityTree.cshtml", new ActivityTree(
+                Model.Info.ActivityId, Model.Info.IndicatorId, null, Mode.RankByImprovement))
+        </td>
+        <td class="width-25"></td>
+        <td class="vertical-align-top">
+            <section class="flexbox flex-v margin-0">
+                <div class="header">
+                    <div class="float-left title">
+                        <span title="@Model.Info.IndicatorDefinition">@Model.Info.IndicatorName</span> &#187; @common.Sites
+                    </div>
+                    <div class="clear-floats"></div>
+                </div>
+                <div class="content">
+                    <script type="text/javascript">
+                        function fgRankByImprovement_LoadedRows(s, e) {
+                            if (s.rows.length == 0)
+                                showFlexGridNoDataMessage(s, 'No @common.Sites.ToLower() available.');
+                            s.columnHeaders.rows[0].wordWrap = true;
+                            s.autoSizeRow(0, true);
+                        }
+
+                        function fgRankByImprovement_ItemFormatter(panel, r, c, cell) {
+                            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                                var grid = panel.grid;
+                                var dataItem = grid.rows[r].dataItem;
+                                if (dataItem && dataItem.Rank) {
+                                    switch (panel.columns[c].name) {
+                                        case 'SiteName':
+                                            cell.innerHTML = (
+                                                '<a href="/Site/View/' + dataItem.SiteId.toString() +
+                                                '">' + dataItem.SiteName + '</a>');
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    </script>
+
+                    @(Html.C1().FlexGrid<RankByImprovementSite>()
+                        .AllowSorting(true)
+                        .AutoGenerateColumns(false)
+                        .Bind(Model.Sites)
+                        .Columns(c =>
+                        {
+                            c.Add(cb => cb.Binding("Rank").Align("Center").Header(common.Rank).Width("50"));
+                            c.Add(cb => cb.Binding("SiteName").Header(common.Site).Name("SiteName").Width("*"));
+                            c.Add(cb => cb.Binding("SiteTypeValue").Align("Center").Header(site.Type).Width("100"));
+                            c.Add(cb => cb.Binding("RegionName").Header(common.Region).Width("*"));
+                            c.Add(cb => cb.Binding("StartValue").Align("Center").Format(Model.Info.DisplayFormatString).Header(activitySite.StartValue).Width("90"));
+                            c.Add(cb => cb.Binding("LatestValue").Align("Center").Format(Model.Info.DisplayFormatString).Header(rankByImprovement.MostRecentValue).Width("90"));
+                            c.Add(cb => cb.Binding("Improvement").Align("Center").Format(Model.Info.DisplayFormatString).Header(rankByImprovement.Improvement).Width("100"));
+                            c.Add().Header(common.Coach).Binding("CoachUserName").Width("*");
+                            c.Add(cb => cb.Binding("SupportStartDate").Header(activitySite.SupportStartDate).Width("100"));
+                            c.Add(cb => cb.Binding("SupportEndDate").Header(activitySite.SupportEndDate).Width("100"));
+                        })
+                        .HeadersVisibility(HeadersVisibility.Column)
+                        .Id("fgRankByImprovement")
+                        .IsReadOnly(true)
+                        .ItemFormatter("fgRankByImprovement_ItemFormatter")
+                        .OnClientLoadedRows("fgRankByImprovement_LoadedRows")
+                        .SelectionMode(SelectionMode.None)
+                    )
+                </div>
+            </section>
+        </td>
+    </tr>
+</table>

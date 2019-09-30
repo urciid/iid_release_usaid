@@ -1,0 +1,205 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+
+@{
+    ViewBag.Title = "Coach's Report (Offline)";
+}
+
+@section contentHeader{
+    <div id="contentHeader" class="breadcrumbs">
+        <b>@common.Activity:</b>
+        <a id="breadCrumbActivity"></a>
+
+        <span class="separator">&#187;</span>
+        <b>@common.Site:</b>
+        <div id="breadCrumbSites"></div>
+
+        <span class="separator">&#187;</span>
+        <b>@observation.CoachReport</b>
+    </div>
+}
+
+<style type="text/css">
+    .wj-flexchart {
+        border: none !important;
+        padding: 4px !important;
+    }
+</style>
+
+<script type="text/javascript">
+    var localized = {
+        changes: '@observation.Changes',
+        dateFormat: '@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+
+    };
+
+    var indicatorFrequencies = { };
+
+    $(document).ready(function () {
+        var activityId = getUrlFragmentValue('activityId');
+        var siteId = getUrlFragmentValue('siteId');
+        if (parseInt(activityId) && parseInt(siteId)) {
+            var site = getLocalStorageEntity('Site', siteId);
+            var activity = getLocalStorageEntity('Activity', activityId);
+
+            setBreadcrumbs('CoachReport', [activityId, parseInt(siteId)]);
+
+            if (site && activity) {
+                var aimIds = getLocalStorageEntity('ActivityAimIds', activityId);
+                if (aimIds) {
+                    // Set header with activity, site info.
+                    var headerContent = ('<h4>@observation.CoachReport for ' + site.SiteName);
+                    for (a = 4; a > 0; a--) {
+                        var admDivName = site['AdministrativeDivisionName' + a];
+                        if (admDivName)
+                            headerContent += (', ' + admDivName);
+                    }
+                    headerContent += (', ' + site.CountryName);
+                    headerContent += ('<br />' + activity.Name);
+                    headerContent += ('<br />' + new Date().format(localized.dateFormat) + '</h4><br />');
+                    $('#headerContainer').append(headerContent);
+
+                    // Build charts for each indicator (except Yes/No type) of each aim.
+                    var chartContainer = $('#chartContainer');
+                    var allChanges = [];
+                    for (var i in aimIds) {
+                        var aimId = aimIds[i];
+                        var aim = getLocalStorageEntity('Aim', aimId);
+                        var indicatorIds = getLocalStorageEntity('AimIndicatorIds', aimId);
+                        for (var j in indicatorIds) {
+                            var indicatorId = indicatorIds[j];
+                            var indicator = getLocalStorageEntity('Indicator', indicatorId);
+
+                            indicatorFrequencies[indicatorId] = indicator.
+
+                            // Skip Yes/No indicators.
+                            if (indicator.TypeFieldId !== 'indyes') {
+                                // Colelct data for this chart and also changes to appear in the grid.
+                                var data = getCoachObservationsAndChanges(siteId, indicatorId);
+                                var observations = data.Observations;
+                                allChanges = allChanges.concat(data.Changes);
+
+                                // Container
+                                var div1 = $('<div class="border-gray border-top-rounded" style="margin: 0 10px 20px 10px; width: 352px;"></div>');
+
+                                // Header
+                                var div2 = $('<div style="background-color: #E0E0E0; border-bottom: 1px solid #999999; padding: 4px;"></div>');
+                                var table = $('<table>');
+                                var tr1 = $('<tr><td style="font-weight: bold; text-align: right; vertical-align: top;">@common.Aim:</td><td>' + aim.Name + '</td></tr>');
+                                var tr2 = $('<tr>');
+                                var td1 = $('<td style="font-weight: bold; text-align: right; vertical-align: top;">@common.Indicator:</td>');
+                                var td2 = $('<td></td>');
+                                var a1 = $('<a href="/Offline/Indicator#indicatorId=' + indicatorId + '" title="' + indicator.Description + '">' + indicator.Name + '</a>');
+                                var a2 = $('<a href="/Offline/ObservationView#indicatorId=' + indicatorId + '&siteId=' + siteId + '"><img src="/Images/icons/16/spreadsheet.png" title="@observation.ViewData" /></a>');
+                                td2.append(a1).append('&nbsp;').append(a2);
+                                tr2.append(td1).append(td2);
+                                table.append(tr1).append(tr2);
+                                div2.append(table);
+                                div1.append(div2);
+                                chartContainer.append(div1);
+
+                                // Chart parameters
+                                var yAxisFormat = '', yMax = 1, yMin = 0, maxValue = null;
+                                for (k in observations)
+                                    maxValue = Math.max(maxValue, observations[k].Value);
+                                if (maxValue) {
+                                    var power10 = Math.floor(Math.log10(maxValue));
+                                    var factor = Math.pow(10, power10);
+                                    yMax = (Math.floor(maxValue / factor) * factor) + factor;
+                                }
+                                switch (indicator.TypeFieldId) {
+                                    case 'indper':
+                                        yAxisFormat = 'p0';
+                                        max = 1;
+                                        break;
+
+                                    case 'indavg':
+                                    case 'indrat':
+                                        yAxisFormat = 'n1';
+                                        break;
+
+                                    case 'indcnt':
+                                        yAxisFormat = 'n0';
+                                        break;
+                                }
+
+                                // Chart
+                                var hostElementId = 'chtIndicator' + indicatorId;
+                                var itemsSourceId = ('_C1MVCCtrl' + indicatorId);
+                                var div3 = $('<div id="' + hostElementId + '" style="height:300px;width:350px;"></div>');
+                                div1.append(div3);
+                                var cv = new c1.mvc.collections.CallbackCollectionView({
+                                    "items": data.Observations,
+                                    "uniqueId": itemsSourceId
+                                });
+                                c1._registerService(itemsSourceId, cv);
+                                var chart = new c1.mvc.chart._FlexChartWrapper('#' + hostElementId);
+                                chart.initialize({
+                                    "itemsSource": [],
+                                    "chartType": 4,
+                                    "axisX": { "format": "M/yy", "majorUnit": (observations.length == 1 ? 1 : 30) },
+                                    "axisY": { "min": yMin, "format": yAxisFormat, "max": yMax },
+                                    "tooltip": { "content": "<b>{Date:MMM d}</b>:<br />{y}<br>{ChangeDescriptions}" },
+                                    "dataLabel": {},
+                                    "itemFormatter": itemFormatter,
+                                    "onClientRendering": onRendering,
+                                    "series": [{
+                                        "bindingX": "Date",
+                                        "binding": "Value",
+                                        "style": { "stroke-width": 4, "stroke": "#002060" },
+                                        "itemsSource": c1._registerService(itemsSourceId)
+                                    }]
+                                });
+                            }
+                        }
+                    }
+
+                    // Bind a grid of all applicable changes.
+                    var fgChanges = new c1.mvc.grid._FlexGridWrapper('#fgChanges');
+                    fgChanges.initialize({
+                        "columns": [
+                            { "width": 100, "header": "@observation.StartDate", "binding": "Date" },
+                            { "width": "*", "header": "@common.Indicator", "binding": "IndicatorName" },
+                            { "width": "3*", "header": "@observation.Change", "binding": "Change" },
+                            { "width": 150, "header": "@common.CreatedBy", "binding": "CreatedBy" }
+                        ],
+                        "loadedRows": fgChanges_LoadedRows,
+                        "autoGenerateColumns": false,
+                        "itemsSource": allChanges,
+                        "selectionMode": 0,
+                        "isReadOnly": true,
+                        "headersVisibility": 1
+                    });
+                } else {
+                    showNoDataMessage();
+                }
+            } else {
+                showNoDataMessage();
+            }
+        } else {
+            showNoDataMessage();
+        }
+    });
+
+    function showNoDataMessage() {
+        $('#container').append('<b>This site is not assigned to any activities.</b>');
+    }
+</script>
+<script src="~/Scripts/coachreport.js" type="text/javascript"></script>
+
+<div id="headerContainer" class="text-align-center">
+</div>
+
+<div id="chartContainer" class="flexbox" style="align-items: center; flex-flow: row wrap; justify-content: center;">
+</div>
+
+<section style="margin: 0 10px 10px 10px;">
+    <div class="header">
+        <div class="title">
+            @observation.Changes
+        </div>
+    </div>
+    <div class="content">
+        <div id="fgChanges"></div>
+    </div>
+</section>

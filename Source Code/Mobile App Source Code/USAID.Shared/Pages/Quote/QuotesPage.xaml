@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:QuotesPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.QuotesPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="My Quotes">
+	<StackLayout>
+		<StackLayout Orientation="Horizontal" VerticalOptions="Start">
+			<!-- top controls -->
+		</StackLayout>
+		<StackLayout VerticalOptions="FillAndExpand">
+		    <!-- middle controls -->
+			  <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Padding="0,0,0,0" x:Name="buttonLayout">
+				<ListView x:Name="listQuotes" ItemsSource="{Binding Quotes}" RowHeight="80" IsPullToRefreshEnabled="true" RefreshCommand="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy, Mode=OneWay}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" ItemTapped="OnItemTapped" Style="{StaticResource ListViewStyle}">
+				    <ListView.ItemTemplate>
+				    	<DataTemplate>
+				        	<ViewCell>
+					        	<ViewCell.ContextActions>
+					            <MenuItem Clicked="OnDelete" CommandParameter="{Binding .}"
+					               Text="Delete" IsDestructive="True" />
+			        			</ViewCell.ContextActions>
+								<ViewCell.View>
+									<Grid Padding="15, 12, 15, 0">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="*" />
+											<RowDefinition Height="*" />
+										</Grid.RowDefinitions>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="*" />
+											<ColumnDefinition Width="*" />
+										</Grid.ColumnDefinitions>
+										<Label Text="{Binding CompanyName}" Grid.Row="0" Grid.Column="0" />
+										<Label Text="{Binding Created}" Grid.Row="0" Grid.Column="1" />
+										<Label Text="{Binding EquipmentAmount, StringFormat='{0:C}'}" Grid.Row="1" Grid.Column="0" />
+										<Label Text="{Binding EquipmentDescription}" Grid.Row="1" Grid.Column="1" />
+									</Grid>
+								</ViewCell.View>
+							</ViewCell>
+						</DataTemplate>
+			    </ListView.ItemTemplate>
+				</ListView>
+				<StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,200,0,0" >
+					<Label Text="No Saved Quotes"  Style="{StaticResource EmptyText}" IsVisible="{Binding NoQuotesLabelVisible}"/>
+				</StackLayout>
+			</StackLayout>
+			
+			<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="30, 13, 30, 10">
+				<Button Text="Add Quote" Clicked="AddQuoteClicked" Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="FillAndExpand">
+				</Button>
+			</StackLayout>
+
+		  </StackLayout>
+		
+		  <StackLayout Orientation="Horizontal" VerticalOptions="End">
+		    <!-- bottom controls -->
+		  </StackLayout>
+		</StackLayout>
+</local:QuotesPageBase>

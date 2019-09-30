@@ -1,0 +1,453 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@{
+    ViewBag.Title = "Observation Record (Offline)";
+}
+
+@section contentHeader{
+    <div id="contentHeader" class="breadcrumbs">
+        <b>@common.Activity:</b>
+        <a id="breadCrumbActivity"></a>
+
+        <span class="separator">&#187;</span>
+        <b>@common.Indicator:</b>
+        <div id="breadCrumbIndicator"></div>
+
+        <span class="separator">&#187;</span>
+        <b>@common.Site:</b>
+        <div id="breadCrumbSites"></div>
+
+        <span class="separator">&#187;</span>
+        <b><span id="breadCrumbDatePeriod"></span></b>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+
+    var localized = {
+        dateFormat: '@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+        viewData: '@observation.ViewData',
+        ageRange: '@observation.AgeRange',
+        sex: '@observation.Sex',
+        total: '@observation.Total',
+        yes: '@common.Yes',
+        no: '@common.No',
+        add: '@common.Add',
+        edit: '@common.Edit',
+        delete: '@common.Delete',
+        change: '@observation.Change',
+        changes: '@observation.Changes',
+        attachment: '@observation.Attachment',
+        attachments: '@observation.Attachments',
+        comment: '@observation.Comment',
+        comments: '@observation.Comments',
+        startDate: '@observation.StartDate',
+        createdBy: '@common.CreatedBy',
+        createdOn: '@common.CreatedOn',
+        updatedBy: '@common.UpdatedBy',
+        updatedOn: '@common.UpdatedOn',
+        fileName: '@observation.FileName',
+        fileSize: '@observation.FileSize',
+        approved: '@common.Approved',
+        fullName: '@Identity.CurrentUser.FullName',
+        save: '@common.Save',
+        saved: '@common.Saved'
+    };
+
+    var sexes = JSON.parse(localStorage.Sexes);
+    sexes[null] = 'Total';
+
+    var disAggByAge, disAggBySex, fgEntries, fgChanges, fgAttachments, fgComments, datePeriods, thisObservationBeginDate, preferredLastDateShown;
+    $(document).ready(function () {
+        // Collect parameters
+        var indicatorId = parseInt(getUrlFragmentValue('indicatorId'));
+        var siteId = parseInt(getUrlFragmentValue('siteId'));
+        var beginDate = getUrlFragmentValue('beginDate');
+
+        if (!(isNaN(indicatorId) || isNaN(siteId) || !beginDate)) {
+            var indicator = getLocalStorageEntity('Indicator', indicatorId);
+            var strBeginDate = beginDate.replace(/-/g, '');
+
+            // Get the date periods.
+            datePeriods = getLocalStorageEntity('ObservationDatePeriods', [indicatorId, siteId]);
+            var thisDatePeriod = datePeriods[beginDate];
+
+            // Get the observation or manufacture one.
+            var observationId = getLocalStorageEntity('ObservationIdIndex', [indicatorId, siteId, strBeginDate]);
+            var observation = null;
+            if (observationId) {
+                observation = getLocalStorageEntity('Observation', observationId);
+            } else {
+                observationId = ('@@' + new Date().getTime());
+                observation = {
+                    ObservationId: observationId,
+                    IndicatorId: indicatorId,
+                    SiteId: siteId,
+                    BeginDate: thisDatePeriod.BeginDate,
+                    EndDate: thisDatePeriod.EndDate,
+                    IsAgeDisaggregated: indicator.DisaggregateByAge,
+                    IsSexDisaggregated: indicator.DisaggregateBySex,
+                    MinMaxTolerance: null,
+                    CreatedOn: convertJavaScriptDateToJson(new Date()),
+                    EntriesCollection: {}
+                };
+                datePeriods[beginDate].ObservationId = observationId;
+                setLocalStorageEntity(observationId, 'ObservationIdIndex', [indicatorId, siteId, strBeginDate]);
+                setLocalStorageEntity(observation, 'Observation', observationId);
+                setLocalStorageEntity(datePeriods, 'ObservationDatePeriods', [indicatorId, siteId]);
+            }
+
+            // Initialize disaggregation controls.
+            var divDisaggregation = $('#divDisaggregation');
+            disAggByAge = $('#disAggByAge');
+            disAggBySex = $('#disAggBySex');
+            if (!indicator.DisaggregateByAge && !indicator.DisaggregateBySex) {
+                divDisaggregation.hide();
+            } else {
+                if (indicator.DisaggregateByAge)
+                    disAggByAge.prop('checked', observation.IsAgeDisaggregated);
+                else
+                    $('#spnDisaggregationByAge').hide();
+
+                if (indicator.DisaggregateBySex)
+                    disAggBySex.prop('checked', observation.IsSexDisaggregated);
+                else
+                    $('#spnDisaggregationBySex').hide();
+            }
+
+            // Other localized values
+            localized.observationId = observationId,
+            localized.indicatorId = indicatorId;
+            localized.siteId = siteId;
+            localized.numeratorDefinition = indicator.NumeratorDefinition,
+            localized.numeratorName = indicator.NumeratorName;
+            localized.denominatorDefinition = indicator.DenominatorDefinition;
+            localized.denominatorName = indicator.DenominatorName;
+            localized.indicatorDefinition = indicator.Definition;
+            localized.indicatorName = indicator.Name;
+            localized.indicatorType = indicator.TypeFieldId;
+            localized.indicatorRatioPer = parsePunctuatedNumber(getFieldIdValue(indicator.indicatorRatioPer || 1000));
+            localized.disAggByAge = indicator.DisaggregateByAge;
+            localized.disAggBySex = indicator.DisaggregateBySex;
+            localized.beginDate = convertJsonDateToJavaScript(observation.BeginDate).format('yyyy-mm-dd');
+            localized.endDate = convertJsonDateToJavaScript(observation.EndDate).format('yyyy-mm-dd');
+
+            localized.ageRanges = [];
+            var ageRangeIds = getLocalStorageEntity('IndicatorAgeRangeIds', indicatorId);
+            if (ageRangeIds)
+                ageRangeIds.map(function (x) { localized.ageRanges[x] = getIndicatorAgeRange(x); });
+            localized.ageRanges[null] = 'Total';
+
+            // Set the breadcrumbs controls.
+            setBreadcrumbs('ObservationRecord', [indicatorId, siteId, convertJsonDateToJavaScript(thisDatePeriod.BeginDate), convertJsonDateToJavaScript(thisDatePeriod.EndDate)]);
+
+            // Initialize the date periods control.
+            thisObservationBeginDate = convertJsonDateToJavaScript(observation.BeginDate);
+            preferredLastDateShown = thisObservationBeginDate;
+            getDatePeriods(0);
+
+            // Populate controls
+            $('#entryCancel').attr('onclick', ('redirect(\'/Offline/ObservationView#indicatorId=' + indicatorId + '&siteId=' + siteId + '\'); return false;'));
+            loadObservations('fgEntries', indicatorId, siteId, strBeginDate);
+
+            disableButton('btnSave');
+        }
+    });
+
+
+    function saveEntries() {
+        var observationId = localized.observationId;
+        var observation = getLocalStorageEntity('Observation', observationId);
+        observation.CreatedOn = convertJavaScriptDateToJson(new Date());
+        observation.IsAgeDisaggregated = $('#disAggByAge').is(':checked');
+        observation.IsSexDisaggregated = $('#disAggBySex').is(':checked');
+        observation.EntriesCollection = {};
+        for (var i = 0; i < fgEntries.control.itemsSource.items.length; i++) {
+            var itm = fgEntries.control.itemsSource.items[i]
+            var key = ((itm.age_range_id || '') + '|' + (itm.sex_code || '') + '|' + (itm.type || ''));
+            observation.EntriesCollection[key] = itm;
+        }
+        setLocalStorageEntity(observation, 'Observation', observationId);
+        addToLocalStorageArray(observationId, 'ObservationUpserts');
+
+        $('#spnSave').text(localized.saved);
+        disableButton('btnSave');
+    }
+
+
+
+    function addChange() {
+        var key = ('@@' + new Date().getTime());
+
+        // Collect data.
+        var change = {
+            ChangeId: key,
+            ObservationId: localized.observationId,
+            StartDate: convertJavaScriptDateToJson(inpChangeStartDate.value),
+            Description: inpChangeDescription.value,
+            CreatedBy: localized.fullName,
+            CreatedOn: convertJavaScriptDateToJson(new Date())
+        };
+
+        // Save data and push id to upserts array.
+        setLocalStorageEntity(change, 'ObservationChange', key);
+        addToLocalStorageArray(key, 'ObservationChangeIds', localized.observationId);
+        addToLocalStorageArray(key, 'ObservationChangeUpserts');
+
+        changeSaveSuccess(change);
+    }
+
+    function editChange() {
+        // Collect data.
+        var changeId = hidChangeId.value;
+        var change = getLocalStorageEntity('ObservationChange', changeId);
+        change.StartDate = convertJavaScriptDateToJson(inpChangeStartDate.value);
+        change.Description = inpChangeDescription.value;
+        change.UpdatedBy = localized.fullName;
+        change.UpdatedOn = convertJavaScriptDateToJson(new Date());
+
+        // Save data and push id to upserts array.
+        setLocalStorageEntity(change, 'ObservationChange', changeId);
+        addToLocalStorageArray(changeId, 'ObservationChangeUpserts');
+
+        changeSaveSuccess(change);
+    }
+
+    function deleteChange(rowIdx) {
+        var dataItem = fgChanges.control.rows[rowIdx].dataItem;
+        var changeId = dataItem.ChangeId;
+
+        removeLocalStorageEntity('ObservationChange', changeId);
+        removeFromLocalStorageArray(changeId, 'ObservationChangeIds', dataItem.ObservationId);
+        if (parseInt(changeId))
+            addToLocalStorageArray(changeId, 'ObservationChangeDeletes');
+        removeFromLocalStorageArray(changeId, 'ObservationChangeUpserts');
+
+        afterDeleteChange(dataItem);
+    }
+
+
+
+    function addAttachment() {
+        if (inpAttachmentFile.files[0]) {
+            var reader = new FileReader();
+            reader.readAsDataURL(inpAttachmentFile.files[0]);
+            reader.onload = function () {
+                saveAttachment(reader.result);
+            };
+        }
+    }
+
+    function saveAttachment(fileBase64) {
+        var attachmentId = ('@@' + new Date().getTime());
+        var a = {
+            AttachmentId: attachmentId,
+            ObservationId: localized.observationId,
+            FileName: inpAttachmentFile.value.substring(inpAttachmentFile.value.lastIndexOf('\\') + 1),
+            Attachment: fileBase64,
+            FileSize: inpAttachmentFile.files[0].size,
+            Approved: false,
+            CreatedBy: localized.fullName,
+            CreatedOn: convertJavaScriptDateToJson(new Date())
+        };
+
+        // Save data and push id to upserts array.
+        setLocalStorageEntity(a, 'ObservationAttachment', attachmentId);
+        addToLocalStorageArray(attachmentId, 'ObservationAttachmentIds', localized.observationId);
+        addToLocalStorageArray(attachmentId, 'ObservationAttachmentUpserts');
+
+        // Remove the file from the grid to prevent bloating the web page.
+        delete a.Attachment;
+        attachmentSaveSuccess(a);
+    }
+
+    function deleteAttachment(rowIdx) {
+        var dataItem = fgAttachments.control.rows[rowIdx].dataItem;
+        var attachmentId = dataItem.AttachmentId;
+
+        // NOTE: We are not loading historical attachments to localStorage, and there is no
+        // edit capability, so in this context deleting means an offline attachment that has
+        // not yet been saved to the db.
+        removeLocalStorageEntity('ObservationAttachment', attachmentId);
+        removeFromLocalStorageArray(attachmentId, 'ObservationAttachmentIds', dataItem.ObservationId);
+        removeFromLocalStorageArray(attachmentId, 'ObservationAttachmentUpserts');
+
+        afterDeleteAttachment(dataItem);
+    }
+
+    function downloadFile(attachmentId) {
+        var a = getLocalStorageEntity('ObservationAttachment', attachmentId);
+        base64DownloadFile(a.Attachment, a.FileName);
+    }
+
+
+
+    function addComment() {
+        var key = ('@@' + new Date().getTime());
+
+        // Collect data.
+        var comment = {
+            CommentId: key,
+            ObservationId: localized.observationId,
+            Comment: inpComment.value,
+            CreatedBy: localized.fullName,
+            CreatedOn: convertJavaScriptDateToJson(new Date())
+        };
+
+        // Save data and push id to upserts array.
+        setLocalStorageEntity(comment, 'ObservationComment', key);
+        addToLocalStorageArray(key, 'ObservationCommentIds', localized.observationId);
+        addToLocalStorageArray(key, 'ObservationCommentUpserts');
+
+        commentSaveSuccess(comment);
+    }
+
+    function editComment() {
+        // Collect data.
+        var commentId = hidCommentId.value;
+        var comment = getLocalStorageEntity('ObservationComment', commentId);
+        comment.Comment = inpComment.value;
+        comment.UpdatedBy = localized.fullName;
+        comment.UpdatedOn = convertJavaScriptDateToJson(new Date());
+
+        // Save data and push id to upserts array.
+        setLocalStorageEntity(comment, 'ObservationComment', commentId);
+        addToLocalStorageArray(commentId, 'ObservationCommentUpserts');
+
+        commentSaveSuccess(comment);
+    }
+
+    function deleteComment(rowIdx) {
+        var dataItem = fgComments.control.rows[rowIdx].dataItem;
+        var commentId = dataItem.CommentId;
+
+        removeLocalStorageEntity('ObservationComment', commentId);
+        removeFromLocalStorageArray(commentId, 'ObservationCommentIds', dataItem.ObservationId);
+        if (parseInt(commentId))
+            addToLocalStorageArray(commentId, 'ObservationCommentDeletes');
+        removeFromLocalStorageArray(commentId, 'ObservationCommentUpserts');
+
+        afterDeleteComment(dataItem);
+    }
+</script>
+@Scripts.Render("~/Scripts/observation.js")
+
+<b class="font-size-big">Observation Dates:</b>
+<br />
+
+<div class="flexbox width-100p">
+    <div class="background-color-blue border-light-gray color-white cursor-pointer float-left text-align-center"
+         onclick="getDatePeriods(numberOfDatePeriods * -1);" style="height: 37px; line-height: 28px; width: 15px;">&#171;</div>
+    <div class="flex-2" id="datePeriods"></div>
+    <div class="background-color-blue border-light-gray color-white cursor-pointer float-left text-align-center"
+         onclick="getDatePeriods(numberOfDatePeriods);" style="height: 37px; line-height: 28px; width: 20px;">&#187;</div>
+    <div class="clear-floats"></div>
+</div>
+<br />
+
+<table class="font-size-big">
+    <tr>
+        <td class="font-weight-bold text-align-right">@common.Aim:</td>
+        <td><span id="spnAimName"></span></td>
+    </tr>
+    <tr>
+        <td class="font-weight-bold text-align-right">@common.Indicator:</td>
+        <td><div id="divIndicator"></div></td>
+    </tr>
+</table>
+<br />
+
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.EnterData
+            </div>
+            <div class="float-right button">
+                <button id="btnSave" type="button" onclick="saveEntries()">
+                    <span id="spnSave">@common.Save</span>
+                    <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+                </button>
+                <a class="btn btn-primary" href="#" id="entryCancel">
+                    @common.Cancel
+                    <img src="~/Images/icons/16/close_delete.png" />
+                </a>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            <div id="divDisaggregation" class="font-weight-bold">
+                @indicator.Disaggregation:
+                <span id="spnDisaggregationByAge">
+                    &nbsp;&nbsp;
+                    @Html.CheckBox("chkAggByAge", new { id = "disAggByAge", onclick = "return confirmRebindGrid(event);" })
+                    @Html.Label("disAggByAge", indicator.DisaggregateByAge, new { @class = "notForForm" })
+                </span>
+                <span id="spnDisaggregationBySex">
+                    &nbsp;&nbsp;
+                    @Html.CheckBox("chkAggBySex", new { id = "disAggBySex", onclick = "return confirmRebindGrid(event);" })
+                    @Html.Label("disAggBySex", indicator.DisaggregateBySex, new { @class = "notForForm" })
+                </span>
+            </div>
+
+            <div class="border-top-rounded" id="fgEntries" style="width:600px;"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.Changes @common.IfAny
+            </div>
+            <div class="float-right button">
+                <button type="button" onclick="showChangeDialog('add', null, afterAddChange);">
+                    @common.Add
+                    <img src="~/Images/icons/16/plus.png" />
+                </button>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            <div id="fgChanges"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.Attachments @common.IfAny
+            </div>
+            <div class="float-right button">
+                <button type="button" onclick="showAttachmentDialog(afterAddAttachment);">
+                    @common.Add
+                    <img src="~/Images/icons/16/plus.png" />
+                </button>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            <div id="fgAttachments"></div>
+        </div>
+    </section>
+
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.Comments @common.IfAny
+            </div>
+            <div class="float-right button">
+                <button type="button" onclick="showCommentDialog('add', null, afterAddComment);">
+                    @common.Add
+                    <img src="~/Images/icons/16/plus.png" />
+                </button>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            <div id="fgComments"></div>
+        </div>
+    </section>
+
+    @Html.Partial("~/Views/Observation/Dialogs.cshtml")

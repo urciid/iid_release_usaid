@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ObservationPageBase xmlns="http://xamarin.com/schemas/2014/forms" BackgroundColor="{StaticResource grayLight}" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		x:Class="USAID.Pages.ObservationPage" 
+		xmlns:local="clr-namespace:USAID.Pages;assembly=USAID" 
+		Title="{Binding PageTitle}"
+		xmlns:custom="clr-namespace:USAID.CustomRenderers;assembly=USAID">
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
+	</ContentPage.ToolbarItems>
+	<StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="StartAndExpand">
+		<ScrollView VerticalOptions="Start" HorizontalOptions="StartAndExpand">
+				
+				<Grid BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" x:Name="grdMain">
+	                <Grid.RowDefinitions>
+	                    <RowDefinition Height="Auto" /> <!-- AIM -->
+						<RowDefinition Height="1" /> <!-- line -->
+						<RowDefinition Height="Auto" /> <!-- toggle -->
+						<RowDefinition Height="1" /> <!-- line -->
+						<RowDefinition Height="Auto" /> <!-- picker -->
+				 		<RowDefinition Height="1" /> <!-- line -->
+						<RowDefinition Height="Auto" /> <!-- observation -->
+						<RowDefinition Height="Auto" /> <!-- changes title -->
+						<RowDefinition Height="Auto" /> <!-- changes -->
+						<RowDefinition Height="Auto" /> <!-- comment title -->
+						<RowDefinition Height="Auto" /> <!-- comment -->
+						<RowDefinition Height="Auto" /> <!-- attachment title -->
+						<RowDefinition Height="Auto" /> <!-- attachment -->
+	                </Grid.RowDefinitions>
+	                <Grid.ColumnDefinitions>
+	                    <ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Label Grid.Row="0" Grid.Column="0" Text="{Binding AimTitle}" FontSize="Large" TextColor="Black" XAlign="Center" YAlign="Center" />
+					<BoxView Grid.Row="1" Grid.Column="0" HeightRequest="1" BackgroundColor="Gray"></BoxView>
+					<StackLayout Grid.Row="2" Grid.Column="0"  x:Name="DisaggregateStackLayout" HorizontalOptions="FillAndExpand" Orientation="Horizontal" Padding="10,0,10,0">
+				        <Label Text="Disaggregate" HorizontalOptions="StartAndExpand" YAlign="Center" />
+						<Switch Toggled="DisaggregatedSelected_Toggled" BackgroundColor="Transparent" IsEnabled="{Binding DisaggregatedEnabled}"  IsToggled="{Binding DisaggregatedSelected}" VerticalOptions="CenterAndExpand"/>
+					</StackLayout>
+					<BoxView Grid.Row="3" Grid.Column="0" x:Name="DisaggregateStackLayoutBottom" HeightRequest="1" BackgroundColor="Gray"></BoxView>
+					<StackLayout Grid.Row="4" Grid.Column="0"  HorizontalOptions="FillAndExpand" Orientation="Horizontal" Padding="10,0,10,0">
+				        <Label x:Name="pickerText" Text="Period" HorizontalOptions="StartAndExpand" YAlign="Center" />
+						<custom:CustomPicker Title="Period" x:Name="periodPicker" SelectedIndexChanged="PeriodPickerValueChanged" HorizontalOptions="EndAndExpand" BackgroundColor="Transparent"/>
+					</StackLayout>
+					<BoxView Grid.Row="5" Grid.Column="0"  HeightRequest="1" BackgroundColor="Gray"></BoxView>
+					<StackLayout Grid.Row="6" Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+						<ListView  Footer="{Binding}" x:Name="listObservationsCount" ItemsSource="{Binding Obs}" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"
+								ItemTapped="OnObservationItemTapped" BackgroundColor="Transparent" SeparatorVisibility="None" HasUnevenRows="true" 
+							IsVisible="{Binding IndicatorTypeIsCount }">
+							    <ListView.ItemTemplate>
+							    	<DataTemplate>
+							        	<ViewCell BindingContextChanged="Handle_BindingContextChanged">
+											<ViewCell.View>
+												<Grid x:Name="CountGridTop" Padding="10, 5, 5, 5">
+								                    <Grid.RowDefinitions>
+								                        <RowDefinition Height="*" />
+														
+								                        <RowDefinition Height="35" /> 
+								                        <RowDefinition Height="*" />
+								                       
+								                    </Grid.RowDefinitions>
+								                    <Grid.ColumnDefinitions>
+							                        <ColumnDefinition Width="*" />
+							                        <ColumnDefinition Width="100" />
+							                    </Grid.ColumnDefinitions>
+												<Label Text="{Binding Title}" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0" />
+
+												<Label Text="Indicator" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="1" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+												<custom:CustomEntry Text="{Binding IndicatorCount}"   WidthRequest="100" FontSize="Small"  IsEnabled="{Binding Enabled}" Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="Center" Keyboard="Numeric" HorizontalOptions="End"  BackgroundColor="Transparent"/>
+											
+<!--											<Entry Text="{Binding IndicatorCount}" WidthRequest="100" FontSize="Small" IsEnabled="{Binding Enabled}" Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="Center" Keyboard="Numeric" HorizontalOptions="End" BackgroundColor="Transparent"/>-->
+												<Label Text="{Binding IndicatorDefinition}" YAlign="Center" HorizontalOptions="StartAndExpand" LineBreakMode="TailTruncation" Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+
+							                </Grid>
+										</ViewCell.View>
+									</ViewCell>
+								</DataTemplate>
+					    	</ListView.ItemTemplate>
+						<ListView.FooterTemplate>
+							<DataTemplate>
+								<Grid x:Name="CountGridFooter" Padding="10, 5, 5, 5"  IsVisible="{Binding DisaggregatedSelected}">
+					                    <Grid.RowDefinitions>
+					                        <RowDefinition Height="*" />
+											
+					                        <RowDefinition Height="35" /> 
+					                        <RowDefinition Height="*" />
+					                       
+					                    </Grid.RowDefinitions>
+					                    <Grid.ColumnDefinitions>
+				                        <ColumnDefinition Width="*" />
+				                        <ColumnDefinition Width="100" />
+				                    </Grid.ColumnDefinitions>
+									<Label Text="{Binding IndicatorTitle}" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0" />
+									<Label Text="Indicator" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="1" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+									<Label Text="{Binding IndicatorCount}" WidthRequest="100" FontSize="Small" Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="Center" HorizontalOptions="End" BackgroundColor="Transparent"/>
+									<Label Text="{Binding IndicatorTotalDefinition}" YAlign="Center" HorizontalOptions="StartAndExpand" LineBreakMode="TailTruncation" Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+
+				                </Grid>
+						    </DataTemplate>
+							</ListView.FooterTemplate>
+						</ListView>
+						<ListView x:Name="listObservations" ItemsSource="{Binding Obs}" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"
+								ItemTapped="OnObservationItemTapped" BackgroundColor="Transparent" SeparatorVisibility="None" HasUnevenRows="true" 
+							IsVisible="{Binding IndicatorTypeIsYesNo }">
+							    <ListView.ItemTemplate>
+							    	<DataTemplate>
+							        	<ViewCell BindingContextChanged="Handle_BindingContextChanged">
+											<ViewCell.View>
+												<Grid x:Name="YesNoGridTop" Padding="10, 5, 5, 5">
+								                    <Grid.RowDefinitions>
+								                        <RowDefinition Height="*" />
+														
+								                        <RowDefinition Height="*" />
+								                        <RowDefinition Height="*" />
+								                       
+								                    </Grid.RowDefinitions>
+								                    <Grid.ColumnDefinitions>
+							                        <ColumnDefinition Width="*" />
+							                        <ColumnDefinition Width="100" />
+							                    </Grid.ColumnDefinitions>
+												<Label Text="{Binding Title}" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0" />
+
+												<Label Text="Indicator" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="1" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+												<Switch BackgroundColor="Transparent" IsToggled="{Binding IndicatorYesNo}" Grid.Row="1" Grid.Column="1" VerticalOptions="CenterAndExpand"/>
+												<Label Text="{Binding IndicatorDefinition}"  YAlign="Center" HorizontalOptions="StartAndExpand" Grid.ColumnSpan="2" Grid.Row="2" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+							                </Grid>
+										</ViewCell.View>
+									</ViewCell>
+								</DataTemplate>
+					    	</ListView.ItemTemplate>
+						</ListView>
+						<ListView Footer="{Binding}" x:Name="listObservationsNormal" ItemsSource="{Binding Obs}" HorizontalOptions="FillAndExpand" VerticalOptions="StartAndExpand"
+								ItemTapped="OnObservationItemTapped" BackgroundColor="Transparent" SeparatorVisibility="None" HasUnevenRows="true" 
+							IsVisible="{Binding IndicatorTypeIsNormal }" >
+							    <ListView.ItemTemplate>
+							    	<DataTemplate>
+							        	<ViewCell BindingContextChanged="Handle_BindingContextChanged" Height="250">
+											<ViewCell.View>
+												<Grid x:Name="GridNormalTop" Padding="10, 5, 5, 5">
+								                    <Grid.RowDefinitions>
+								                        <RowDefinition Height="*" /> 
+														
+								                        <RowDefinition Height="35" /> 
+								                        <RowDefinition Height="*" /> 
+								                       
+														<RowDefinition Height="35" />  
+								                        <RowDefinition Height="*" /> 
+
+														<RowDefinition Height="*" /> 
+								                        <RowDefinition Height="*" />
+												 		
+													
+								                    </Grid.RowDefinitions>
+								                    <Grid.ColumnDefinitions>
+							                        <ColumnDefinition Width="*" />
+							                        <ColumnDefinition Width="100" />
+							                    </Grid.ColumnDefinitions>
+												<Label Text="{Binding Title}" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0" />
+							
+												<Label Text="Numerator" YAlign="Center"  HorizontalOptions="StartAndExpand" Grid.Row="1" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}"  />
+												<custom:CustomEntry Text="{Binding NumeratorValue}"  HeightRequest="200"  WidthRequest="100" FontSize="Small"  IsEnabled="{Binding Enabled}" Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="Center" Keyboard="Numeric" HorizontalOptions="End"  BackgroundColor="Transparent"/>
+												<Label Text="{Binding NumeratorDefinition}" LineBreakMode="TailTruncation"  YAlign="Center" HorizontalOptions="StartAndExpand" Grid.ColumnSpan="2"  Grid.Row="2" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+
+												<Label Text="Denominator" YAlign="Center"   HorizontalOptions="StartAndExpand" Grid.Row="3" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+												<custom:CustomEntry Text="{Binding DenominatorValue}" Style="{StaticResource EntryBlackText}"   WidthRequest="100" FontSize="Small" IsEnabled="{Binding Enabled}" Grid.Row="3" Grid.Column="1" HorizontalTextAlignment="Center" Keyboard="Numeric" HorizontalOptions="Start" BackgroundColor="Transparent"/>
+												<Label Text="{Binding DenominatorDefinition}" LineBreakMode="TailTruncation"  YAlign="Center" HorizontalOptions="StartAndExpand"  Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+
+												<Label Text="Indicator" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="5" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+												<Label Text="{Binding IndicatorCountDisplay}" WidthRequest="100" FontSize="Small" Grid.Row="5" Grid.Column="1" HorizontalTextAlignment="Center" HorizontalOptions="End" BackgroundColor="Transparent"/>
+												<Label Text="{Binding DenominatorDefinition}" LineBreakMode="TailTruncation" YAlign="Center" HorizontalOptions="StartAndExpand"  Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+							                </Grid>
+										</ViewCell.View>
+									</ViewCell>
+								</DataTemplate>
+					    	</ListView.ItemTemplate>
+							<ListView.FooterTemplate>
+							<DataTemplate>
+<!--								<Grid x:Name="GridNormalFooter" Padding="10, 5, 5, 5" IsVisible="{Binding DisaggregatedSelected}">-->
+								<Grid x:Name="GridNormalFooter" Padding="10, 5, 5, 5" IsVisible="true">
+				                    <Grid.RowDefinitions>
+				                        <RowDefinition Height="*" /> 
+										
+				                        <RowDefinition Height="35" /> 
+				                        <RowDefinition Height="*" /> 
+				                       
+										<RowDefinition Height="35" />  
+				                        <RowDefinition Height="*" /> 
+
+										<RowDefinition Height="*" /> 
+				                        <RowDefinition Height="*" />
+								 		
+									
+				                    </Grid.RowDefinitions>
+				                    <Grid.ColumnDefinitions>
+			                        <ColumnDefinition Width="*" />
+			                        <ColumnDefinition Width="100" />
+			                    </Grid.ColumnDefinitions>
+								<Label Text="{Binding IndicatorTitle}" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0" />
+			
+								<Label Text="Numerator" YAlign="Center"  HorizontalOptions="StartAndExpand" Grid.Row="1" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}"  />
+								<Label x:Name="Num" Text="{Binding IndicatorNumCount}" WidthRequest="100" FontSize="Small" Grid.Row="1" Grid.Column="1" HorizontalTextAlignment="Center" HorizontalOptions="End" BackgroundColor="Transparent"/>
+								<Label Text="{Binding IndicatorNumDefinition}" LineBreakMode="TailTruncation"  YAlign="Center" HorizontalOptions="StartAndExpand" Grid.ColumnSpan="2"  Grid.Row="2" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+
+								<Label Text="Denominator" YAlign="Center"   HorizontalOptions="StartAndExpand" Grid.Row="3" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+								<Label x:Name="Den" Text="{Binding IndicatorDenCount}" WidthRequest="100" FontSize="Small" Grid.Row="3" Grid.Column="1" HorizontalTextAlignment="Center" HorizontalOptions="End" BackgroundColor="Transparent"/>
+								<Label Text="{Binding IndicatorDenDefinition}" LineBreakMode="TailTruncation"  YAlign="Center" HorizontalOptions="StartAndExpand"  Grid.ColumnSpan="2" Grid.Row="4" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+
+								<Label Text="Indicator" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="5" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+								<Label Text="{Binding IndicatorCountDisplay}" WidthRequest="100" FontSize="Small" Grid.Row="5" Grid.Column="1" HorizontalTextAlignment="Center" HorizontalOptions="End" BackgroundColor="Transparent"/>
+								<Label Text="{Binding IndicatorTotalDefinition}" LineBreakMode="TailTruncation" YAlign="Center" HorizontalOptions="StartAndExpand"  Grid.ColumnSpan="2" Grid.Row="6" Grid.Column="0" Style="{StaticResource ObservationPageLabelStyle}" />
+			                </Grid>
+						    </DataTemplate>
+							</ListView.FooterTemplate>
+						</ListView>
+						<!--<StackLayout Padding="10, 5, 5, 5">
+						<Label Text="Numerator" LineBreakMode="TailTruncation" YAlign="Center" HorizontalOptions="StartAndExpand" Style="{StaticResource ObservationPageLabelStyle}" />
+						<Label Text="Denominator" LineBreakMode="TailTruncation" YAlign="Center" HorizontalOptions="StartAndExpand" Style="{StaticResource ObservationPageLabelStyle}" />
+						<Label Text="Total" LineBreakMode="TailTruncation" YAlign="Center" HorizontalOptions="StartAndExpand" Style="{StaticResource ObservationPageLabelStyle}" />
+						</StackLayout>-->
+						             
+						</StackLayout>
+						<StackLayout Grid.Row="7" Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand" BackgroundColor="#3498DB">
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+							<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Orientation="Horizontal" Padding="10,0,0,0">
+								<Label Text="Changes (if any)" HorizontalOptions="StartAndExpand" TextColor="Black" XAlign="Center" YAlign="Center" />
+								<StackLayout Padding="10, 0, 10, 0" HorizontalOptions="End">
+		                            <StackLayout.GestureRecognizers>
+		                                <TapGestureRecognizer Command="{Binding AddChangeCommand}"/>
+		                            </StackLayout.GestureRecognizers>
+		                        	<custom:FontAwesomeIcon Text="" FontSize="18" TextColor="Black"/>
+		                        </StackLayout>
+							</StackLayout>
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+						</StackLayout>
+						<StackLayout Grid.Row="8"  Grid.Column="0" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent">
+							<ListView x:Name="listChanges" RowHeight="80" ItemsSource="{Binding Changes}" HorizontalOptions="FillAndExpand" VerticalOptions="Start"
+									ItemTapped="OnChangeItemTapped" BackgroundColor="Transparent"  HasUnevenRows="false" >
+							    <ListView.ItemTemplate>
+							    	<DataTemplate>
+							        	<ViewCell>
+								        	<!--<ViewCell.ContextActions>
+								            <MenuItem Clicked="OnDetails" CommandParameter="{Binding .}"
+								               Text="Activity Details" IsDestructive="false" />
+						        			</ViewCell.ContextActions>-->
+											<ViewCell.View>
+												<StackLayout HorizontalOptions="FillAndExpand" Padding="10,0,0,0" BackgroundColor="Transparent" >
+													<Label Text="{Binding Description}" FontSize="Small" VerticalOptions="Start" />
+													<Label Text="{Binding Start_Date, StringFormat='{0:d}'}}" FontSize="Small" VerticalOptions="End" />
+												</StackLayout>
+											</ViewCell.View>
+										</ViewCell>
+									</DataTemplate>
+						    	</ListView.ItemTemplate>
+							<ListView.Footer>
+								<StackLayout></StackLayout>
+							</ListView.Footer>
+							</ListView>
+						</StackLayout>
+						<StackLayout Grid.Row="9" Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand" BackgroundColor="#3498DB">
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+							<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Orientation="Horizontal" Padding="10,0,0,0">
+								<Label Text="Comments (if any)" HorizontalOptions="StartAndExpand" TextColor="Black" XAlign="Center" YAlign="Center" />
+								<StackLayout Padding="10, 0, 10, 0" HorizontalOptions="End">
+		                            <StackLayout.GestureRecognizers>
+		                                <TapGestureRecognizer Command="{Binding AddCommentCommand}"/>
+		                            </StackLayout.GestureRecognizers>
+		                        	<custom:FontAwesomeIcon Text="" FontSize="18" TextColor="Black"/>
+		                        </StackLayout>
+							</StackLayout>
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+						</StackLayout>
+						<!--<StackLayout Grid.Row="9" Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent">
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+							<StackLayout HorizontalOptions="FillAndExpand" Orientation="Horizontal" Padding="10,0,0,0">
+							<Label Text="Comments (if any)" HorizontalOptions="StartAndExpand" TextColor="Black" XAlign="Center" YAlign="Center" />
+							<Button Text="+" HeightRequest="20" Command="{Binding AddCommentCommand}" HorizontalOptions="End" BackgroundColor="Transparent"></Button>
+							</StackLayout>
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+						</StackLayout>-->
+						<StackLayout Grid.Row="10"  Grid.Column="0" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent">
+							<ListView x:Name="listComments" RowHeight="80" ItemsSource="{Binding Comments}" HorizontalOptions="FillAndExpand" VerticalOptions="Start"
+									ItemTapped="OnCommentsItemTapped" BackgroundColor="Transparent"  HasUnevenRows="false" >
+							    <ListView.ItemTemplate>
+							    	<DataTemplate>
+							        	<ViewCell>
+								        	<!--<ViewCell.ContextActions>
+								            <MenuItem Clicked="OnDetails" CommandParameter="{Binding .}"
+								               Text="Activity Details" IsDestructive="false" />
+						        			</ViewCell.ContextActions>-->
+											<ViewCell.View>
+												<StackLayout HorizontalOptions="FillAndExpand" Padding="10,0,0,0" BackgroundColor="Transparent" >
+													<Label Text="{Binding Comment}" FontSize="Small" VerticalOptions="Start" />
+													<Label Text="{Binding Created_Date, StringFormat='{0:d}'}}" FontSize="Small" VerticalOptions="End" />
+												</StackLayout>
+											</ViewCell.View>
+										</ViewCell>
+									</DataTemplate>
+						    	</ListView.ItemTemplate>
+							<ListView.Footer>
+								<StackLayout></StackLayout>
+							</ListView.Footer>
+							</ListView>
+						</StackLayout>
+						<StackLayout Grid.Row="11" Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand" BackgroundColor="#3498DB">
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+							<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Orientation="Horizontal" Padding="10,0,0,0">
+								<Label Text="Attachments (if any)" HorizontalOptions="StartAndExpand" TextColor="Black" XAlign="Center" YAlign="Center" />
+								<StackLayout Padding="10, 0, 10, 0" HorizontalOptions="End">
+		                            <StackLayout.GestureRecognizers>
+		                                <TapGestureRecognizer Tapped="CameraButtonClicked"/>
+		                            </StackLayout.GestureRecognizers>
+		                        	<custom:FontAwesomeIcon Text="" FontSize="18" TextColor="Black"/>
+		                        </StackLayout>
+							</StackLayout>
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+						</StackLayout>
+						<!--<StackLayout Grid.Row="11" Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent">
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+							<StackLayout HorizontalOptions="FillAndExpand" Orientation="Horizontal" Padding="10,0,0,0">
+							<Label Text="Attachments (if any)" HorizontalOptions="StartAndExpand" TextColor="Black" XAlign="Center" YAlign="Center" />
+							<Button Text="+" HeightRequest="20" Clicked="CameraButtonClicked" HorizontalOptions="End" BackgroundColor="Transparent"></Button>
+							</StackLayout>
+							<BoxView HeightRequest="1" BackgroundColor="Gray"></BoxView>
+						</StackLayout>-->
+						<StackLayout Grid.Row="12"  Grid.Column="0" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand" BackgroundColor="Transparent">
+							<ListView x:Name="listAttachments" RowHeight="80" ItemsSource="{Binding Attachments}" HorizontalOptions="FillAndExpand" VerticalOptions="Start"
+									ItemTapped="OnAttachmentsItemTapped" BackgroundColor="Transparent"  HasUnevenRows="false" >
+							    <ListView.ItemTemplate>
+							    	<DataTemplate>
+							        	<ViewCell>
+								        	<!--<ViewCell.ContextActions>
+								            <MenuItem Clicked="OnDetails" CommandParameter="{Binding .}"
+								               Text="Activity Details" IsDestructive="false" />
+						        			</ViewCell.ContextActions>-->
+											<ViewCell.View>
+												<StackLayout HorizontalOptions="FillAndExpand" Padding="10,0,0,0" BackgroundColor="Transparent" >
+													<!--<Image Source="{Binding FileName}" HeightRequest="40" WidthRequest="40"></Image>-->
+													<Label Text="{Binding Attachment_File_Name}" FontSize="Small" VerticalOptions="Start" />
+													<Label Text="{Binding Created_Date, StringFormat='{0:d}'}}" FontSize="Small" VerticalOptions="End" />
+													
+												</StackLayout>
+											</ViewCell.View>
+										</ViewCell>
+									</DataTemplate>
+						    	</ListView.ItemTemplate>
+							<ListView.Footer>
+								<StackLayout></StackLayout>
+							</ListView.Footer>
+							</ListView>
+						</StackLayout>
+			    </Grid>
+				
+				</ScrollView>
+	</StackLayout>
+</local:ObservationPageBase>
+
+

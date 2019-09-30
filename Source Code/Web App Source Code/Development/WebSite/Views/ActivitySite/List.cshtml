@@ -1,0 +1,162 @@
+﻿@using C1.Web.Mvc.Grid
+@using activitySite = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using IID.WebSite.Models
+
+@model ActivitySiteCollection
+
+<section class="max-width-max">
+    <script type="text/javascript">
+        function fgActivitySites_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var gridId = grid.hostElement.id;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.ActivityId) {
+                    switch (panel.columns[c].name) {
+                        case 'Name':
+                            cell.innerHTML = (
+                                '<a href="/Site/View/' + dataItem.SiteId + '">' + dataItem.SiteName + '</a>');
+                            break;
+
+                        case 'CoachReport':
+                            cell.innerHTML = (
+                                '<a class="coachReportIcon" href="/Site/CoachReport/' + dataItem.ActivityId +
+                                '/' + dataItem.SiteId + '" title="@observation.CoachReport"></a>');
+                            break;
+
+                        case 'Export':
+                            cell.innerHTML = (
+                                '<a class="exportIcon" href="/Activity/DataExport/' + dataItem.ActivityId +
+                                '?siteid=' + dataItem.SiteId + '" title="Export Observation Data"></a>');
+                            break;
+
+                        case 'Edit':
+                            cell.innerHTML = (
+                                '<img src="/Images/icons/16/pencil_edit.png" class="cursor-pointer" ' +
+                                    'onclick="showEditActivitySiteDialog(fgActivitySites.control.rows[' + r + '].dataItem)" ' +
+                                    'title="@common.Edit" />');
+                            break;
+
+                        case 'Delete':
+                            var cssClass = 'cursor-pointer';
+                            var onclick = ('confirmDeleteActivitySite(\'' + gridId + '\', ' + r + ')');
+                            var title = '@common.Delete';
+                            if (dataItem.HasObservations) {
+                                cssClass = 'btn disabled';
+                                onclick = '';
+                                title = '@error.LockedBecauseObservations';
+                            }
+                            cell.innerHTML = (
+                                '<img src="/Images/icons/16/delete_2.png" class="' + cssClass + '" ' +
+                                    'onclick="' + onclick + '" title="' + title + '" />');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function getGrid(gridId) {
+            return wijmo.Control.getControl('#' + gridId);
+        }
+
+        function getGridRowDataItem(gridId, rowIdx) {
+
+            var grid = getGrid(gridId);
+            return grid.rows[rowIdx].dataItem;
+        }
+
+
+        function confirmDeleteActivitySite(gridId, rowIdx) {
+
+            var itm = getGridRowDataItem(gridId, rowIdx);
+            var grid = getGrid(gridId);
+            var name = (itm.SiteName);
+            if (confirm('Are you sure you want to remove \'' + name + '\' from this activity?')) {
+                var data = { id: itm.ActivityId, SiteId: itm.SiteId };
+                addAntiForgeryTokenToJson(data);
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    url: '/Activity/RemoveSite',
+                    data: data,
+                    success: function (result) {
+                        if (result.success) {
+                            grid.collectionView.remove(itm)
+                            loadedRows(grid);
+                        }
+                        else {
+                            alert("There was an error attempting to remove this Site from the Activity. The site has observations and therefore cannot be removed from the Activity.");
+                        }
+                    },
+                    error: function (result) {
+                    }
+                })
+            }
+        }
+
+        function fgActivitySites_LoadedRows(s, e) {
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Sites.ToLower() available.');
+            s.columnHeaders.rows[0].wordWrap = true;
+            s.autoSizeRow(0, true);
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @common.Sites
+        </div>
+        @if ((Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.ActivityLeader))
+                                    || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.CountryDirector))
+                                    || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.SystemAdministrator)))
+        {
+         <div class="float-right button">
+            <a class="btn btn-primary" href="#" onclick="showActivitySitesDialog();">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </a>
+         </div>
+        }        
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.Sites)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("Name").Header(common.Name).Name("Name").SortMemberPath("Name").Width("3*"));
+                c.Add(cb => cb.Binding("SiteTypeValue").Align("Center").Header(site.Type).Width("2*"));
+                c.Add().Header(common.Coach).Binding("CoachUserName").Width("2*");
+                c.Add(cb => cb.Binding("SupportStartDate").Align("Center").Header(activitySite.SupportStartDate).Width("140"));
+                c.Add(cb => cb.Binding("SupportEndDate").Align("Center").Header(activitySite.SupportEndDate).Width("140"));
+                c.Add(cb => cb.Binding("WaveValue").Align("Center").Header(activitySite.Wave).Width("70"));
+                c.Add().Align("Center").Header(observation.CoachReport).Name("CoachReport").Width("70");
+                c.Add().Align("Center").Header("Export").Name("Export").Width("70");
+                if((Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.ActivityLeader))
+                            || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.CountryDirector))
+                            || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.SystemAdministrator)))
+                {
+                    c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("70");
+                    c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                }
+
+            })
+            .AutoSizeMode(AutoSizeMode.Cells)
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgActivitySites")
+            .IsReadOnly(true)
+            .ItemFormatter("fgActivitySites_ItemFormatter")
+            .OnClientLoadedRows("fgActivitySites_LoadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>
+
+@Html.Partial("~/Views/ActivitySite/Add.cshtml", new ActivitySiteSearchCriteria(Model.ActivityId))
+@Html.Partial("~/Views/ActivitySite/Edit.cshtml")

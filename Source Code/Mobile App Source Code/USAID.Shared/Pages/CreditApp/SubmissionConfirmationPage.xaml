@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:SubmissionConfirmationPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.SubmissionConfirmationPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="Confirmation">
+	<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+		<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image Source="starbackground.png" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="15,0,15,0">
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<ScrollView>
+						<StackLayout VerticalOptions="CenterAndExpand" Padding="30,0,30,0" Spacing="14">
+							<Label StyleId="label1" TextColor="{StaticResource GAgold}" Text="Your credit application has been successfully submitted." FontSize="Medium" XAlign="Center" />
+							<Label StyleId="label1" TextColor="{StaticResource GAblue}" Text="{Binding AppIdText}" FontSize="Medium" XAlign="Center" />
+							<Label StyleId="label1" TextColor="{StaticResource GAblue}" Text="Would you like to send a copy via email?" FontSize="Medium" XAlign="Center" />
+							<StackLayout Padding="0,40,0,0">
+								<Button Text="Yes" Clicked="YesButtonClicked" Style="{StaticResource PrimaryButtonStyle}" />
+								<Button Text="No" Clicked="NoButtonClicked" Style="{StaticResource PrimaryButtonStyle}" />
+							</StackLayout>
+						</StackLayout>
+					</ScrollView>
+				</StackLayout>
+			</StackLayout>
+		</AbsoluteLayout>
+	</StackLayout>
+</local:SubmissionConfirmationPageBase>

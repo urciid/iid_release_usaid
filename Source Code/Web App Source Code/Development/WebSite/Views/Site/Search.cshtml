@@ -1,0 +1,300 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Helpers
+@using IID.BusinessLayer.Models
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+
+@model SiteSearchCriteria
+@{
+    ViewBag.Title = site.SiteSearch;
+}
+
+<section class="display-inline-block">
+    <script type="text/javascript">
+        var fgSites, administrativeDivisions;
+
+        $(document).ready(function () {
+            // Load countries.
+            var url = '@(Settings.WebApiUrl)/Site/Countries?active=true&languageId=@IidCulture.CurrentLanguageId';
+            loadListBoxFromJson(
+                'lstCountry', url, 'Name', 'CountryId', function () {
+                    // Select United States option.
+                    // NOTE: Since value is set by jQuery, onchange event must be triggered manually.
+                    selectOptionByText('lstCountry', 'United States');
+                    loadCountryAdministrativeDivisions();
+                    loadSiteTypes();
+                });
+
+            fgSites = wijmo.Control.getControl('#fgSites');
+        });
+
+        function loadCountryAdministrativeDivisions() {
+            var countryId = $('#lstCountry').val();
+            var url = ('@(Settings.WebApiUrl)/Site/Countries?countryId=' + countryId + '&active=true&languageId=@IidCulture.CurrentLanguageId');
+            $.getJSON(url, null, function (result) {
+                var country = result[0];
+
+                // Save the administrative divisions to a variable which will be reused when binding search results.
+                administrativeDivisions = [];
+                for (var i = 1; i <= 4; i++)
+                    administrativeDivisions[i] = country[('AdministrativeDivision' + i)];
+
+                for (var i = 1; i <= 4; i++) {
+                    var divisionName = administrativeDivisions[i];
+
+                    var id = ('#trAdministrativeDivision' + i);
+                    var label = $(id + ' label');
+                    label.text(divisionName + ':');
+
+                    var btn = $('#btnAddDivision' + i);
+                    btn.text('@common.Add ' + divisionName);
+
+                    var tr = $(id);
+                    if (divisionName && divisionName != '')
+                        tr.show();
+                    else
+                        tr.hide();
+
+                    // Load first-level administrative divisions.
+                    if (i == 1)
+                        loadAdministrativeDivisions(1, null);
+                    else
+                        loadAdministrativeDivisions(i, -1);
+                }
+            });
+        }
+
+        function loadAdministrativeDivisions(level, parentDivisionId, callback) {
+            if (level == 1 || parentDivisionId != '') {
+                var id = ('lstAdministrativeDivisionId' + level);
+                var countryId = $('#lstCountry').val();
+                var url = ('@(Settings.WebApiUrl)/Site/AdministrativeDivisions?countryId=' + countryId + '&parentDivisionId=' + parentDivisionId + '&languageId=@IidCulture.CurrentLanguageId');
+                loadListBoxFromJson(id, url, 'Name', 'AdministrativeDivisionId', function () {
+                    $('#' + id).prepend('<option value="" selected="selected">[All]</option>');
+
+                    if (callback)
+                        callback();
+                });
+
+                var btnId = ('btnAddDivision' + level);
+                if (level == 1 || parentDivisionId > 0) {
+                    var parentValueElement = $('#lstAdministrativeDivisionId' + level);
+                    var parentValue = parentValueElement ? parentValueElement.val() : null;
+                    enableButton(btnId, function(){ addAdministrativeDivision(level, parentValue); });
+                } else {
+                    disableButton(btnId);
+                }
+            } else {
+                for (var i = level; i <= 4; i++) {
+                    var lst = $('#lstAdministrativeDivisionId' + i);
+                    lst.find('option').remove();
+                    lst.prepend('<option value="" selected="selected">[All]</option>');
+                    disableButton('btnAddDivision' + i);
+                }
+            }
+        }
+
+        function loadSiteTypes() {
+            var countryId = $('#lstCountry').val();
+            var url = ('@(Settings.WebApiUrl)/Site/SiteTypes?countryId=' + countryId + '&languageId=@IidCulture.CurrentLanguageId');
+            loadListBoxFromJson('lstSiteType', url, 'Value', 'FieldId', function () {
+                $('#lstSiteType').prepend('<option value="" selected="selected">[All]</option>');
+            });
+        }
+
+        function loadSiteResults() {
+            var url = '@(Settings.WebApiUrl)/Site/Search';
+            var data = {
+                CountryId: $('#lstCountry').val(),
+                AdministrativeDivisionId1: $('#lstAdministrativeDivisionId1').val(),
+                AdministrativeDivisionId2: $('#lstAdministrativeDivisionId2').val(),
+                AdministrativeDivisionId3: $('#lstAdministrativeDivisionId3').val(),
+                AdministrativeDivisionId4: $('#lstAdministrativeDivisionId4').val(),
+                SiteTypeFieldId: $('#lstSiteType').val()
+            };
+            $.post(url, data, loadSites, 'json');
+        }
+
+        function loadSites(result) {
+            fgSites.itemsSource = result;
+
+            for (var i = 1; i <= 4; i++) {
+                var divisionName = administrativeDivisions[i];
+                var fgColumn = fgSites.getColumn(('AdministrativeDivision' + i));
+                fgColumn.header = divisionName;
+                fgColumn.visible = (divisionName && divisionName != '');
+            }
+
+            $('#secResults').show();
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @site.SiteSearch
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <table class="form-table">
+            <tbody>
+                <tr>
+                    <td>@Html.LabelForForm(m => m.CountryName)</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.CountryId, new SelectListItem[] { },
+                        new
+                        {
+                            @class = "width-300",
+                            id = "lstCountry",
+                            onchange = "loadCountryAdministrativeDivisions(); loadSiteTypes();"
+                        })
+                    </td>
+                </tr>
+                <tr id="trAdministrativeDivision1">
+                    <td><label></label></td>
+                    <td>
+                        @Html.DropDownListFor(
+                            m => m.AdministrativeDivisionId1,
+                            new SelectListItem[] { },
+                            new
+                            {
+                                @class = "width-300",
+                                id = "lstAdministrativeDivisionId1",
+                                onchange = "loadAdministrativeDivisions(2, this.value)"
+                            })
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary blue" id="btnAddDivision1"
+                            onclick="addAdministrativeDivision(1, null);" />
+                    </td>
+                </tr>
+                <tr id="trAdministrativeDivision2">
+                    <td><label></label></td>
+                    <td>
+                        @Html.DropDownListFor(
+                            m => m.AdministrativeDivisionId2,
+                            new SelectListItem[] { },
+                            new
+                            {
+                                @class = "width-300",
+                                id = "lstAdministrativeDivisionId2",
+                                onchange = "loadAdministrativeDivisions(3, this.value)"
+                            })
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary blue" id="btnAddDivision2"
+                           onclick="addAdministrativeDivision(2, $('#lstAdministrativeDivisionId1').val());" />
+                    </td>
+                </tr>
+                <tr id="trAdministrativeDivision3">
+                    <td><label></label></td>
+                    <td>
+                        @Html.DropDownListFor(
+                            m => m.AdministrativeDivisionId3,
+                            new SelectListItem[] { },
+                            new
+                            {
+                                @class = "width-300",
+                                id = "lstAdministrativeDivisionId3",
+                                onchange = "loadAdministrativeDivisions(4, this.value)"
+                            })
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary blue" id="btnAddDivision3"
+                           onclick="addAdministrativeDivision(3, $('#lstAdministrativeDivisionId2').val());" />
+                    </td>
+                </tr>
+                <tr id="trAdministrativeDivision4">
+                    <td><label></label></td>
+                    <td>
+                        @Html.DropDownListFor(
+                            m => m.AdministrativeDivisionId4,
+                            new SelectListItem[] { },
+                            new { @class = "width-300", id = "lstAdministrativeDivisionId4" })
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary blue" id="btnAddDivision4"
+                           onclick="addAdministrativeDivision(4, $('#lstAdministrativeDivisionId3').val());" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelForForm(m => m.SiteTypeValue)</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.SiteTypeFieldId, new SelectListItem[] { },
+                            new { @class = "width-300", id = "lstSiteType" })
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button type="button" onclick="loadSiteResults();">
+                            @common.Search
+                            <img src="~/Images/icons/16/search_lense.png" />
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="display-none max-width-max" id="secResults">
+    <script type="text/javascript">
+        function fgSites_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.SiteId) {
+                    switch (panel.columns[c].name) {
+                        case 'SiteName':
+                            cell.innerHTML = (
+                                '<a href="/Site/View/' + dataItem.SiteId + '">' + dataItem.SiteName + '</a>');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function fgSites_LoadedRows(s, e) {
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Sites.ToLower() available.');
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @common.Results
+        </div>
+        <div class="float-right button">
+            <a class="btn btn-primary" href="@Url.Content("Add")">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </a>
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<SiteSearchResult>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("SiteName").Header(common.Name).Name("SiteName").SortMemberPath("SiteName").Width("2*"));
+                c.Add(cb => cb.Binding("AdministrativeDivisionName1").Name("AdministrativeDivision1").Width("*"));
+                c.Add(cb => cb.Binding("AdministrativeDivisionName2").Name("AdministrativeDivision2").Width("*"));
+                c.Add(cb => cb.Binding("AdministrativeDivisionName3").Name("AdministrativeDivision3").Width("*"));
+                c.Add(cb => cb.Binding("AdministrativeDivisionName4").Name("AdministrativeDivision4").Width("*"));
+                c.Add(cb => cb.Binding("SiteTypeValue").Align("Center").Header("Site Type").Width("90"));
+                c.Add(cb => cb.Binding("QIIndexScore").Align("Center").Header("QI Index Score").Width("120"));
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgSites")
+            .IsReadOnly(true)
+            .ItemFormatter("fgSites_ItemFormatter")
+            .OnClientLoadedRows("fgSites_LoadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>
+
+@Html.Partial("~/Views/Site/AddDivision.cshtml")

@@ -1,0 +1,125 @@
+﻿@using C1.Web.Mvc.Grid
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using IID.WebSite.Models
+
+@model IEnumerable<SyncLog>
+@{
+    ViewBag.Title = "Connected mode";
+
+    bool hasChanges = (Model.Any());
+
+    string summary;
+    if (hasChanges)
+    {
+        bool allSuccessful = Model.All(x => x.Successful);
+        summary = allSuccessful ?
+            "All changes from Disconnected mode were saved successfully." :
+            "Some changes from Disconnected mode could not be saved. The system administrators have been emailed with details of what failed.";
+    }
+    else
+    {
+        summary = "No changes from Disconnected Mode were found.";
+    }
+}
+
+<script type="text/javascript">
+    function itemFormatter(panel, r, c, cell) {
+        if (panel.cellType === wijmo.grid.CellType.Cell) {
+            var binding = panel.columns[c].binding;
+            var value = panel.grid.rows[r].dataItem[binding];
+            switch (binding) {
+                case 'IndicatorName':
+                case 'SiteName':
+                    cell.innerHTML = value || 'Unknown';
+                    break;
+
+                case 'Date':
+                    if (value)
+                        cell.innerHTML = value.format('@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()');
+                    else
+                        cell.innerHTML = 'Unknown';
+                    break;
+
+                case 'Type':
+                    switch (value) {
+                        case @((int)SyncType.Note):
+                            cell.innerHTML = '@common.Note';
+                            break;
+
+                        case @((int)SyncType.Observation):
+                            cell.innerHTML = '@common.Observation';
+                            break;
+
+                        case @((int)SyncType.Change):
+                            cell.innerHTML = '@observation.Change';
+                            break;
+
+                        case @((int)SyncType.Attachment):
+                            cell.innerHTML = '@observation.Attachment';
+                            break;
+
+                        case @((int)SyncType.Comment):
+                            cell.innerHTML = '@observation.Comment';
+                            break;
+                    }
+                    break;
+
+                case 'Successful':
+                    var cssClass = value ? 'color-green' : 'color-red';
+                    var text = value ? 'Successful' : 'Failure';
+                    cell.innerHTML = ('<b class="' + cssClass + '">' + text + '</b>');
+                    break;
+            }
+        }
+    }
+</script>
+
+<h4>You have returned to Connected Mode.</h4>
+<hr />
+<div>
+    <i>@Html.Raw(summary)</i><br />
+    <br />
+
+    @if (hasChanges)
+    {
+        <a href="#" id="details" onclick="$('#secDetails').removeClass('invisible'); disableButton(''); return false;">View details</a>
+        @:&nbsp;&nbsp;&nbsp;&nbsp;
+    }
+    <a href="/Home">Continue to Home</a>
+    @if (hasChanges)
+    {
+        <br />
+        <br />
+
+        <section class="invisible max-width-max" id="secDetails">
+            <div class="header">
+                <div class="float-left title">
+                    @common.Details
+                </div>
+                <div class="clear-floats"></div>
+            </div>
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .Bind(Model)
+                    .Columns(c =>
+                    {
+                        c.Add().Header(common.Indicator).Binding("IndicatorName").Width("4*");
+                        c.Add().Header(common.Site).Binding("SiteName").Width("2*");
+                        c.Add().Header(common.Date).Binding("Date").Width("*");
+                        c.Add().Align("Center").Header(common.Type).Binding("Type").Width("*");
+                        c.Add().Align("Center").Header(common.Status).Binding("Successful").Width("*");
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgSyncLog")
+                    .IsReadOnly(true)
+                    .ItemFormatter("itemFormatter")
+                    .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        </section>
+    }
+</div>

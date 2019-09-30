@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.HelpPage">
+	<ContentPage.Content>
+		<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+			<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+				<Image AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+				<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="30,0,30,0">
+						<StackLayout Padding="0,50,0,0">
+					<Image Source="greatamericaLogo.png">
+					</Image>
+				</StackLayout>
+					<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+
+						<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+							<StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,0,0,100">
+								<Label Text="For Questions: " Style="{StaticResource HelpPageLabelStyle}" XAlign="Center" />
+								<Label Text="Your Sales Rep: " Style="{StaticResource HelpPageLabelStyle}" XAlign="Center" />
+								<Label Text="teamemail@email.com" Style="{StaticResource HelpPageLabelStyle}" XAlign="Center" />
+								<Label Text="123-456-7890" Style="{StaticResource HelpPageLabelStyle}" XAlign="Center" />
+								<Label Text="infozonelink" Style="{StaticResource HelpPageLabelStyle}" XAlign="Center" />
+							</StackLayout>
+							<Button Text="OK" Clicked="OnDismissButtonClicked" Style="{StaticResource PrimaryButtonStyle}"/>
+						</StackLayout>
+					</StackLayout>
+				</StackLayout>
+			</AbsoluteLayout>
+		</StackLayout>
+	</ContentPage.Content>
+</ContentPage>

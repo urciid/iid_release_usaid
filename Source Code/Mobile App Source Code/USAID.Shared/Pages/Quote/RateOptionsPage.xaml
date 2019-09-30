@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:RateOptionsPageBase 
+		xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       	x:Class="USAID.Pages.RateOptionsPage"
+		xmlns:local="clr-namespace:USAID.Pages;assembly=WMP">
+		<ScrollView x:Name="mainScrollView" IsVisible="false">
+		<StackLayout VerticalOptions="CenterAndExpand" Padding="30,30,30,0" Spacing="14">
+			<Label
+	    	HorizontalOptions="Fill" VerticalOptions="Center"
+	    	YAlign="Center"
+			XAlign="Center"
+	    	LineBreakMode="WordWrap"
+			TextColor="{StaticResource GAblue}"
+	    	Text="Enter quote information"/>
+			
+			<Entry Placeholder="company name" Text="{Binding CompanyName}" Style="{StaticResource EntryBlackText}"/>
+			<Entry Placeholder="equipment amount" Text="{Binding EquipmentAmount}" Keyboard="Numeric" Style="{StaticResource EntryBlackText}"/>
+			<Entry Placeholder="equipment description" Text="{Binding EquipmentDescription}" Style="{StaticResource EntryBlackText}"/>
+			<!--<Label Text="Rate Cards"/>-->
+			
+			<StackLayout HorizontalOptions="Center" Padding="0,20,0,15">
+				<BoxView HeightRequest="1" WidthRequest="150" BackgroundColor="{StaticResource GAgold}" />
+			</StackLayout>
+
+				<Label
+	    	HorizontalOptions="Fill" VerticalOptions="Center"
+	    	YAlign="Center"
+			XAlign="Center"
+	    	LineBreakMode="WordWrap"
+			TextColor="{StaticResource GAblue}"
+	    	Text="Select all rates that you would like to receive a quote for"/>
+			<StackLayout>
+			<ListView 			
+		       		x:Name="lstRateCards"
+					HasUnevenRows="true"
+		       		ItemsSource="{Binding RateCards}"
+		       		RowHeight="40"
+		       		IsPullToRefreshEnabled="false"
+                	HorizontalOptions="FillAndExpand"
+                	VerticalOptions="Start"
+					Style="{StaticResource ListViewStyle}"
+					BackgroundColor="#F5FAFF"
+		       		>
+					<ListView.Header>
+					    <StackLayout Padding="10,0,0,0" BackgroundColor="#fef5e6" HeightRequest="20">
+					        <Label VerticalOptions="CenterAndExpand" Text="Rate Cards" FontSize="Small"/>
+					    </StackLayout>
+					  </ListView.Header>
+				    <ListView.ItemTemplate>
+				    	<DataTemplate>
+				        	<ViewCell>
+					        	<ViewCell.View>
+									<Grid Padding="10,5,10,0" RowSpacing="2">
+									    <Grid.RowDefinitions>
+									      <RowDefinition Height="Auto" />
+									     </Grid.RowDefinitions>
+									    <Grid.ColumnDefinitions>
+									      <ColumnDefinition Width="*" />
+									      <ColumnDefinition Width="70" />
+									    </Grid.ColumnDefinitions>	
+									    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+												<Label Text="{Binding RateCardName}" Style="{StaticResource ListViewMiddleLabelStyle}" LineBreakMode="TailTruncation" VerticalOptions="StartAndExpand"/>
+										</StackLayout>
+										<StackLayout Orientation="Horizontal" HorizontalOptions="End" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalOptions="Center">
+											<Switch BackgroundColor="Transparent" HeightRequest="40" IsToggled="{Binding IsSelected}" />
+										</StackLayout>
+									   </Grid>
+								</ViewCell.View>
+							</ViewCell>
+						</DataTemplate>
+			    </ListView.ItemTemplate>
+			  </ListView>
+			</StackLayout>
+			<!--TERMS-->
+			<ListView 			
+		       		x:Name="lstTerms"
+		       		ItemsSource="{Binding Terms}"
+		       		RowHeight="40"
+		       		IsPullToRefreshEnabled="false"
+		        	HorizontalOptions="FillAndExpand"
+                	VerticalOptions="Start"
+					Style="{StaticResource ListViewStyle}"
+					BackgroundColor="#F5FAFF"
+		       		>
+					<ListView.Header>
+					    <StackLayout Padding="10,0,0,0" BackgroundColor="#fef5e6" HeightRequest="20">
+					        <Label VerticalOptions="CenterAndExpand" Text="Terms" FontSize="Small"/>
+					    </StackLayout>
+					</ListView.Header>
+				    <ListView.ItemTemplate>
+				    	<DataTemplate>
+				        	<ViewCell>
+					        	<ViewCell.View>
+									<Grid Padding="10,5,10,0" RowSpacing="2">
+									    <Grid.RowDefinitions>
+									      <RowDefinition Height="Auto" />
+									     </Grid.RowDefinitions>
+									    <Grid.ColumnDefinitions>
+									      <ColumnDefinition Width="*" />
+									      <ColumnDefinition Width="70" />
+									    </Grid.ColumnDefinitions>	
+									    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+												<Label Style="{StaticResource ListViewMiddleLabelStyle}" Text="{Binding TermDisplay}" LineBreakMode="TailTruncation" VerticalOptions="StartAndExpand"/>
+										</StackLayout>
+										<StackLayout Orientation="Horizontal" HorizontalOptions="End" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalOptions="Center">
+											<Switch BackgroundColor="Transparent" HeightRequest="40" IsToggled="{Binding IsSelected}" />
+										</StackLayout>
+									</Grid>
+								</ViewCell.View>
+							</ViewCell>
+						</DataTemplate>
+			    </ListView.ItemTemplate>
+			  </ListView>
+			<!--Maintenance Types-->
+			<ListView 			
+	       		x:Name="lstMaintenanceTypes"
+	       		ItemsSource="{Binding MaintenanceTypes}"
+	       		RowHeight="50"
+	       		IsPullToRefreshEnabled="false"
+	        	HorizontalOptions="FillAndExpand"
+            	VerticalOptions="Start"
+				Style="{StaticResource ListViewStyle}"
+				BackgroundColor="#F5FAFF"
+	       		>
+				<ListView.Header>
+			    	<StackLayout Padding="10,0,0,0" BackgroundColor="#fef5e6" HeightRequest="20">
+			        	<Label VerticalOptions="CenterAndExpand" Text="Maintenance Types" FontSize="Small"/>
+			    	</StackLayout>
+			  	</ListView.Header>
+			    <ListView.ItemTemplate>
+			    	<DataTemplate>
+			        	<ViewCell>
+				        	<ViewCell.View>
+								<Grid Padding="10,5,10,0" RowSpacing="2">
+								    <Grid.RowDefinitions>
+								      <RowDefinition Height="Auto" />
+								     </Grid.RowDefinitions>
+								    <Grid.ColumnDefinitions>
+								      <ColumnDefinition Width="*" />
+								      <ColumnDefinition Width="70" />
+								    </Grid.ColumnDefinitions>	
+								    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+											<Label Style="{StaticResource ListViewMiddleLabelStyle}" Text="{Binding MaintenanceTypeDescription}" LineBreakMode="TailTruncation" VerticalOptions="StartAndExpand"/>
+											<Label Style="{StaticResource ListViewMiddleLabelStyle}" Text="{Binding MaintenanceTypeValue}" LineBreakMode="TailTruncation" VerticalOptions="StartAndExpand"/>
+									</StackLayout>
+									<StackLayout Orientation="Horizontal" HorizontalOptions="End" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalOptions="Center">
+										<Switch BackgroundColor="Transparent" HeightRequest="50" IsToggled="{Binding IsSelected}" />
+									</StackLayout>
+								</Grid>
+							</ViewCell.View>
+						</ViewCell>
+					</DataTemplate>
+		    	</ListView.ItemTemplate>
+		  	</ListView>
+			<ListView 			
+		       		x:Name="lstPurchaseOptions"
+		       		ItemsSource="{Binding PurchaseOptions}"
+		       		HasUnevenRows="false"
+		       		IsPullToRefreshEnabled="false"
+		        	HorizontalOptions="FillAndExpand"
+                	VerticalOptions="Start"
+					RowHeight="40"
+					Style="{StaticResource ListViewStyle}"
+					BackgroundColor="#F5FAFF"
+					>
+					<ListView.Header>
+					    <StackLayout Padding="10,0,0,0" BackgroundColor="#fef5e6" HeightRequest="20">
+					        <Label VerticalOptions="CenterAndExpand" Text="Purchase Options" FontSize="Small"/>
+					    </StackLayout>
+					  </ListView.Header>
+				    <ListView.ItemTemplate>
+				    	<DataTemplate>
+				        	<ViewCell>
+					        	<ViewCell.View>
+								<Grid Padding="10,5,10,0" RowSpacing="2">
+							    <Grid.RowDefinitions>
+							      <RowDefinition Height="Auto" />
+							     </Grid.RowDefinitions>
+							    <Grid.ColumnDefinitions>
+							      <ColumnDefinition Width="*" />
+							      <ColumnDefinition Width="70" />
+							    </Grid.ColumnDefinitions>	
+							    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+										<Label Text="{Binding PurchaseOptionDesc}" Style="{StaticResource ListViewMiddleLabelStyle}" VerticalOptions="StartAndExpand"/>
+								</StackLayout>
+								<StackLayout Orientation="Horizontal" HorizontalOptions="End" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalOptions="Center">
+									<Switch BackgroundColor="Transparent" HeightRequest="40" IsToggled="{Binding IsSelected}" />
+								</StackLayout>
+							    </Grid>
+								</ViewCell.View>
+							</ViewCell>
+						</DataTemplate>
+			    </ListView.ItemTemplate>
+			  </ListView>
+			<ListView 			
+		       		x:Name="lstAdvancePayments"
+		       		ItemsSource="{Binding AdvancePayments}"
+		       		HasUnevenRows="false"
+		       		IsPullToRefreshEnabled="false"
+		        	HorizontalOptions="FillAndExpand"
+                	VerticalOptions="Start"
+					RowHeight="40"
+					Style="{StaticResource ListViewStyle}"
+					BackgroundColor="#F5FAFF"
+					>
+					<ListView.Header>
+					    <StackLayout Padding="10,0,0,0" BackgroundColor="#fef5e6" HeightRequest="20">
+					        <Label VerticalOptions="CenterAndExpand" Text="Advance Payments" FontSize="Small"/>
+					    </StackLayout>
+					  </ListView.Header>
+				    <ListView.ItemTemplate>
+				    	<DataTemplate>
+				        	<ViewCell>
+					        	<ViewCell.View>
+								<Grid Padding="10,5,10,0" RowSpacing="2">
+							    <Grid.RowDefinitions>
+							      <RowDefinition Height="Auto" />
+							     </Grid.RowDefinitions>
+							    <Grid.ColumnDefinitions>
+							      <ColumnDefinition Width="*" />
+							      <ColumnDefinition Width="70" />
+							    </Grid.ColumnDefinitions>	
+							    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+										<Label Text="{Binding AdvancePaymentDescription}" Style="{StaticResource ListViewMiddleLabelStyle}" VerticalOptions="StartAndExpand"/>
+								</StackLayout>
+								<StackLayout Orientation="Horizontal" HorizontalOptions="End" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalOptions="Center">
+									<Switch BackgroundColor="Transparent" HeightRequest="40" IsToggled="{Binding IsSelected}" />
+								</StackLayout>
+							    </Grid>
+								</ViewCell.View>
+							</ViewCell>
+						</DataTemplate>
+			    </ListView.ItemTemplate>
+			  </ListView>
+			<Entry Placeholder="points" x:Name="pointsField" IsVisible="{Binding PointsVisible}" Text="{Binding Points}" Keyboard="Numeric" Style="{StaticResource EntryBlackText}"/>
+			<Entry Placeholder="pass through" x:Name="passThruField" IsVisible="{Binding PassThroughVisible}" Text="{Binding PassThrough}" Keyboard="Numeric" Style="{StaticResource EntryBlackText}"/>
+			<StackLayout Padding="0,0,0,15">
+				<Button Text="Next" Clicked="OnNextButtonClicked" BackgroundColor="#034468" TextColor="White"/>
+			</StackLayout>
+		</StackLayout>
+	</ScrollView>
+</local:RateOptionsPageBase>

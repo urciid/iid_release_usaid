@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:SitesPageBase xmlns="http://xamarin.com/schemas/2014/forms" BackgroundColor="{StaticResource grayLight}" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.SitesPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="{Binding PageTitle}">
+	<StackLayout>
+		<StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Padding="0,0,0,0" x:Name="buttonLayout">
+			<ListView x:Name="list" ItemsSource="{Binding Sites}" RowHeight="80" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" 
+					ItemTapped="OnItemTapped" Style="{StaticResource ListViewStyle}" >
+			    <ListView.ItemTemplate>
+			    	<DataTemplate>
+			        	<ViewCell BindingContextChanged="Handle_BindingContextChanged">
+				        	<ViewCell.ContextActions>
+				            <MenuItem Clicked="OnDetails" CommandParameter="{Binding .}" x:Name="SiteDetail"
+				               Text="Details" IsDestructive="false" />
+		        			</ViewCell.ContextActions>
+							<ViewCell.View>
+								<StackLayout HorizontalOptions="StartAndExpand" Padding="10, 5, 0, 0">
+									<Label Text="{Binding SiteLine1}" FontSize="Medium" />
+									<Label Text="{Binding SiteLine2}" FontSize="Small" />
+									<Label Text="{Binding SiteLine3}" FontSize="Small" />
+								</StackLayout>
+							</ViewCell.View>
+						</ViewCell>
+					</DataTemplate>
+		    	</ListView.ItemTemplate>
+			</ListView>
+			<StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,200,0,0" IsVisible="{Binding NoSitesLabelVisible}">
+				<Label Text="{Binding NoSitesText}"  Style="{StaticResource EmptyText}" />
+			</StackLayout>
+		</StackLayout>
+	</StackLayout>
+</local:SitesPageBase>
+
+<!--<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="15,0,15,0">
+						<StackLayout Padding="0,50,0,0">
+					<Image Source="Logo.png">
+					</Image>
+				</StackLayout>
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<StackLayout VerticalOptions="CenterAndExpand" Padding="30,0,30,0" Spacing="14">
+						<StackLayout Padding="0,0,0,50">
+							<Label StyleId="label1" Text="Sites Page" TextColor="{StaticResource GAblue}" FontSize="38" XAlign="Center" />
+						</StackLayout>
+					</StackLayout>
+				</StackLayout>
+			</StackLayout>
+		</AbsoluteLayout>-->

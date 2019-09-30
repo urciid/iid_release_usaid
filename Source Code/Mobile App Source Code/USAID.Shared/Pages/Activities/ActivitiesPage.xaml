@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ActivitiesPageBase xmlns="http://xamarin.com/schemas/2014/forms" 
+		BackgroundColor="{StaticResource grayLight}" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		x:Class="USAID.Pages.ActivitiesPage" 
+		xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="{Binding PageTitle}"
+		xmlns:custom="clr-namespace:USAID.CustomRenderers;assembly=USAID"
+	>
+	<StackLayout>
+		<StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Padding="0,0,0,0" x:Name="buttonLayout">
+			<ListView x:Name="list" ItemsSource="{Binding IndicatorsGrouped}" RowHeight="150" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"
+					ItemTapped="OnItemTapped" Style="{StaticResource ListViewStyle}" 
+					HasUnevenRows="true"  
+					IsGroupingEnabled="true"
+					>
+					<ListView.GroupHeaderTemplate>
+				      <DataTemplate>
+				        <ViewCell Height="45">
+				          <StackLayout VerticalOptions="FillAndExpand"
+				                       Padding="5"
+				                       BackgroundColor="#3498DB">
+				            <Label Text="{Binding Key}" FontSize="14" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand"/>
+				          </StackLayout>
+				        </ViewCell>
+				      </DataTemplate>
+				    </ListView.GroupHeaderTemplate>
+			    <ListView.ItemTemplate>
+			    	<DataTemplate>
+			        	<ViewCell BindingContextChanged="Handle_BindingContextChanged">
+							<ViewCell.View>
+								<StackLayout HorizontalOptions="FillAndExpand" Padding="5, 5, 5, 0">
+									
+									<Label Text="{Binding Name}" LineBreakMode="WordWrap" FontSize="Small" VerticalOptions="Start" />
+									<Label Text="{Binding Activity.Activity}" LineBreakMode="WordWrap" FontSize="Small" VerticalOptions="Start" />
+									<StackLayout HorizontalOptions="FillAndExpand" >
+										<Label Text="{Binding Frequency}" FontSize="Small" HorizontalOptions="StartAndExpand" />
+										<StackLayout Orientation="Horizontal" HorizontalOptions="EndAndExpand" Padding="0, 0, 0, 0" >
+											<StackLayout Padding="0, 0, 0, 0">
+					                            <StackLayout.GestureRecognizers>
+					                                <TapGestureRecognizer Tapped="OnObservation" CommandParameter="{Binding}"/>
+					                            </StackLayout.GestureRecognizers>
+					                        	<custom:FontAwesomeIcon Text="" FontSize="32" TextColor="Black"/>
+					                        </StackLayout>
+											<StackLayout Padding="20, 0, 0, 0">
+					                            <StackLayout.GestureRecognizers>
+					                                <TapGestureRecognizer Tapped="OnChart" CommandParameter="{Binding}"/>
+					                            </StackLayout.GestureRecognizers>
+					                        	<custom:FontAwesomeIcon Text="" FontSize="32" TextColor="Black"/>
+					                        </StackLayout>
+											<StackLayout Padding="20, 0, 0, 0">
+					                            <StackLayout.GestureRecognizers>
+					                                <TapGestureRecognizer Tapped="OnDetails" CommandParameter="{Binding}"/>
+					                            </StackLayout.GestureRecognizers>
+					                        	<custom:FontAwesomeIcon Text="" FontSize="32" TextColor="Black"/>
+					                        </StackLayout>
+										</StackLayout>
+									</StackLayout>
+								</StackLayout>
+							</ViewCell.View>
+						</ViewCell>
+					</DataTemplate>
+		    	</ListView.ItemTemplate>
+			</ListView>
+			<StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="0,200,0,0" IsVisible="{Binding NoDataLabelVisible}">
+				<Label Text="No Saved Lists"  Style="{StaticResource EmptyText}" />
+			</StackLayout>
+		</StackLayout>
+	</StackLayout>
+</local:ActivitiesPageBase>

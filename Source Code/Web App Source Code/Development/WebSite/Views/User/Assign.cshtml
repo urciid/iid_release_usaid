@@ -1,0 +1,567 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Domain
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using user = IID.BusinessLayer.Globalization.User.Resource
+@using IID.BusinessLayer.Helpers
+@using IID.WebSite.Models
+
+@model User
+@{
+    var permissions = new List<SelectListItem>();
+    permissions.Add(new SelectListItem() { Text = @user.ViewAccess, Value = AccessLevel.View.ToString() });
+    permissions.Add(new SelectListItem() { Text = @user.UpdateAccess, Value = AccessLevel.Update.ToString() });
+}
+
+<script type="text/javascript">
+    function itemFormatter(panel, r, c, cell) {
+        if (panel.cellType == wijmo.grid.CellType.Cell) {
+            var grid = panel.grid;
+            var dataItem = grid.rows[r].dataItem;
+            if (dataItem && dataItem.user_access_id) {
+                var gridId = grid.hostElement.id;
+                var editFunction;
+                switch (grid.hostElement.id) {
+                    case 'fgCountry':
+                        editFunction = 'showAssignCountryDialog';
+                        break;
+
+                    case 'fgActivity':
+                        editFunction = 'showAssignActivityDialog';
+                        break;
+
+                    case 'fgRegion':
+                        editFunction = 'showAssignRegionDialog';
+                        break;
+
+                    case 'fgSite':
+                        editFunction = 'showAssignSiteDialog';
+                        break;
+                }
+
+                switch (panel.columns[c].name) {
+                    case 'Edit':
+                        cell.innerHTML = (
+                            '<img src="/Images/icons/16/pencil_edit.png" class="cursor-pointer" title="@common.Edit" ' +
+                                'onclick="' + editFunction + '(getGridRowDataItem(\'' + gridId + '\', ' + r + '));" />');
+                        break;
+
+                    case 'Delete':
+                        cell.innerHTML = (
+                            '<img src="/Images/icons/16/delete_2.png" class="cursor-pointer" title="@common.Delete" ' +
+                                'onclick="confirmDeleteUserAccess(\'' + gridId + '\', ' + r + ');" />');
+                        break;
+                }
+            }
+        }
+    }
+
+    function getGrid(gridId) {
+        return wijmo.Control.getControl('#' + gridId);
+    }
+
+    function getGridRowDataItem(gridId, rowIdx) {
+        var grid = getGrid(gridId);
+        return grid.rows[rowIdx].dataItem;
+    }
+
+    function confirmDeleteUserAccess(gridId, rowIdx) {
+        var grid = getGrid(gridId);
+        var itm = getGridRowDataItem(gridId, rowIdx);
+        var name = (itm.site_name || itm.access_level_name || itm.country);
+        if (confirm('Are you sure you want to delete access to \'' + name + '\'?')) {
+            var data = { id : itm.user_access_id };
+            addAntiForgeryTokenToJson(data);
+
+            $.ajax({
+                type: 'post',
+                dataType: 'json',
+                url: '/UserAccess/Delete',
+                data: data,
+                success: function (result) {
+                    grid.collectionView.remove(itm)
+                    loadedRows(grid);
+                },
+                error: function (result) {
+                    alert(result);
+                }
+            })
+        }
+    }
+
+    function loadedRows(s, e) {
+        if (s._rows.length == 0) {
+            var entityType;
+            switch (s.hostElement.id) {
+                case 'fgActivity':
+                    entityType = '@common.Activities.ToLower()';
+                    break;
+
+                case 'fgCountry':
+                    entityType = '@common.Countries.ToLower()';
+                    break;
+
+                case 'fgRegion':
+                    entityType = '@common.AdministrativeDivisions.ToLower()';
+                    break;
+
+                case 'fgSite':
+                    entityType = '@common.Sites.ToLower()';
+                    break;
+            }
+
+            showFlexGridNoDataMessage(s, 'No ' + entityType + ' assigned.');
+        }
+    }
+
+    function showAssignCountryDialog(itm) {
+        // Show the dialog first so the controls are accessible to set their values.
+        dlgAssignCountry.show();
+
+        if (itm == null)
+            itm = new Object();
+
+        $('#countryUAId').val(itm.user_access_id || 0);
+        $('#countryPermissions').val(itm.permission || 'View');
+
+        if (itm.country_id) {
+            $('#countryId').empty().append($('<option />', { val: itm.country_id, text: itm.country }));
+        } else {
+            var url = '/UserAccess/GetUserCountries?userId=@Model.UserId.ToString()&accessLevel=None';
+            loadListBoxFromJson('countryId', url, 'name', 'country_id');
+        }
+    }
+
+    function showAssignActivityDialog(itm) {
+        // Show the dialog first so the controls are accessible to set their values.
+        dlgAssignActivity.show();
+
+        if (itm == null)
+            itm = new Object();
+
+        $('#activityUAId').val(itm.user_access_id || 0);
+        $('#activityPermissions').val(itm.permission || 'View');
+
+        if (itm.country_id && itm.activity_id) {
+            $('#activityCountryId').empty().append($('<option />', { val: itm.country_id, text: itm.country }));
+            $('#activityId').empty().append($('<option />', { val: itm.activity_id, text: itm.access_level_name }));
+        } else {
+            var url = '/Geography/GetActiveOrSelectedCountries';
+            loadListBoxFromJson('activityCountryId', url, 'name', 'country_id', loadCountryActivities);
+        }
+    }
+
+    function loadCountryActivities() {
+        var countryId = $('#activityCountryId').val();
+        var url = ('/UserAccess/GetUserActivities?userId=@Model.UserId.ToString()&countryId=' + countryId + '&accessLevel=None');
+        loadListBoxFromJson('activityId', url, 'name', 'activity_id');
+    }
+
+    function showAssignRegionDialog(itm) {
+        // Show the dialog first so the controls are accessible to set their values.
+        dlgAssignRegion.show();
+
+        if (itm == null)
+            itm = new Object();
+
+        $('#regionUAId').val(itm.user_access_id || 0);
+        $('#regionPermissions').val(itm.permission || 'View');
+
+        if (itm.country_id && itm.administrative_division_id) {
+            $('#regionCountryId').empty().append($('<option />', { val: itm.country_id, text: itm.country }));
+            $('#regionId').empty().append($('<option />', { val: itm.administrative_division_id, text: itm.access_level_name }));
+        } else {
+            var url = '/Geography/GetActiveOrSelectedCountries';
+            loadListBoxFromJson('regionCountryId', url, 'name', 'country_id', loadCountryRegions);
+        }
+    }
+
+    function loadCountryRegions() {
+        var countryId = $('#regionCountryId').val();
+        var url = ('/UserAccess/GetUserAdministrativeDivisions?userId=@Model.UserId.ToString()&countryId=' + countryId + '&accessLevel=None');
+        loadListBoxFromJson('regionId', url, 'concatenated_name', 'administrative_division_id');
+    }
+
+    function showAssignSiteDialog(itm) {
+        // Show the dialog first so the controls are accessible to set their values.
+        dlgAssignSite.show();
+
+        if (itm == null)
+            itm = new Object();
+
+        $('#siteUAId').val(itm.user_access_id || 0);
+        $('#sitePermissions').val(itm.permission || 'View');
+
+        if (itm.country_id && itm.site_id) {
+            $('#siteCountryId').empty().append($('<option />', { val: itm.country_id, text: itm.country }));
+            $('#siteId').empty().append($('<option />', { val: itm.site_id, text: itm.site_name }));
+        } else {
+            var url = '/Geography/GetActiveOrSelectedCountries';
+            loadListBoxFromJson('siteCountryId', url, 'name', 'country_id', loadCountrySites);
+        }
+    }
+
+    function loadCountrySites() {
+        var countryId = $('#siteCountryId').val();
+        var url = ('/UserAccess/GetUserSites?userId=@Model.UserId.ToString()&countryId=' + countryId + '&accessLevel=None');
+        loadListBoxFromJson('siteId', url, 'concatenated_name', 'site_id');
+    }
+
+    function getViewAccess(permission) {
+        return (['View', 'Update']).indexOf(permission) > -1;
+    }
+
+    function getUpdateAccess(permission) {
+        return permission == 'Update';
+    }
+
+    function upsertCountryAssignment() {
+        var data = {
+            user_access_id : $('#countryUAId').val(),
+            country_id : $('#countryId').val(),
+            view_access : getViewAccess($('#countryPermissions').val()),
+            update_access : getUpdateAccess($('#countryPermissions').val())
+        };
+        upsertUserAccess(data, fgCountry.control, dlgAssignCountry);
+    }
+
+    function upsertActivityAssignment() {
+        var data = {
+            user_access_id : $('#activityUAId').val(),
+            activity_id : $('#activityId').val(),
+            view_access : getViewAccess($('#activityPermissions').val()),
+            update_access : getUpdateAccess($('#activityPermissions').val())
+        };
+        upsertUserAccess(data, fgActivity.control, dlgAssignActivity);
+    }
+
+    function upsertRegionAssignment() {
+        var data = {
+            user_access_id : $('#regionUAId').val(),
+            administrative_division_id : $('#regionId').val(),
+            view_access : getViewAccess($('#regionPermissions').val()),
+            update_access : getUpdateAccess($('#regionPermissions').val())
+        };
+        upsertUserAccess(data, fgRegion.control, dlgAssignRegion);
+    }
+
+    function upsertSiteAssignment() {
+        var data = {
+            user_access_id : $('#siteUAId').val(),
+            site_id : $('#siteId').val(),
+            view_access : getViewAccess($('#sitePermissions').val()),
+            update_access : getUpdateAccess($('#sitePermissions').val())
+        };
+        upsertUserAccess(data, fgSite.control, dlgAssignSite);
+    }
+
+    function upsertUserAccess(data, grid, dlg) {
+        data.user_id = @Model.UserId.ToString();
+        addAntiForgeryTokenToJson(data);
+
+        $.ajax({
+            type: 'post',
+            dataType: 'json',
+            url: ('/UserAccess/' + (data.user_access_id > 0 ? 'Edit' : 'Add')),
+            data: data,
+            success: function (result) {
+                if (data.user_access_id > 0)
+                    editUserAccess(result, grid);
+                else
+                    addUserAccess(result, grid);
+                dlg.hide();
+            },
+            error: function (result) { alert(result.responseText); }
+        })
+    }
+
+    function addUserAccess(result, grid) {
+        if (!grid.rows[0].dataItem || !grid.rows[0].dataItem.user_access_id)
+            grid.rows.removeAt(0);
+
+        var cv = grid.collectionView;
+        var itm = cv.addNew();
+        itm.user_access_id = result.user_access_id;
+        itm.user_id = result.user_id;
+        copyResultToDataItem(result, itm, grid);
+        cv.commitNew();
+
+        loadedRows(grid);
+    }
+
+    function editUserAccess(result, grid) {
+        var itm;
+        for (var i in grid.rows) {
+            if (result.user_access_id == grid.rows[i].dataItem.user_access_id) {
+                itm = grid.rows[i].dataItem;
+                break;
+            }
+        }
+
+        var cv = grid.collectionView;
+        cv.editItem(itm);
+        copyResultToDataItem(result, itm, grid);
+        cv.commitEdit();
+    }
+
+    function copyResultToDataItem(result, itm, grid) {
+        var props = [];
+        switch (grid.hostElement.id) {
+            case 'fgCountry':
+                props = ['country_id', 'access_level_name'];
+                break;
+            case 'fgActivity':
+                props = ['country_id', 'country', 'activity_id', 'access_level_name'];
+                break;
+            case 'fgRegion':
+                props = ['country_id', 'country', 'administrative_division_id', 'access_level', 'access_level_name'];
+                break;
+            case 'fgSite':
+                props = ['country_id', 'country', 'site_id', 'site_name'];
+                break;
+        }
+        props.push('permission');
+        for (var i in props)
+            itm[props[i]] = result[props[i]];
+    }
+
+    var dlgAssignCountry, dlgAssignActivity, dlgAssignRegion, dlgAssignSite;
+    $(document).ready(function () {
+        dlgAssignCountry = wijmo.Control.getControl('#assignCountryDialog');
+        dlgAssignActivity = wijmo.Control.getControl('#assignActivityDialog');
+        dlgAssignRegion = wijmo.Control.getControl('#assignRegionDialog');
+        dlgAssignSite = wijmo.Control.getControl('#assignSiteDialog');
+    });
+</script>
+
+<section class="width-800">
+    <div class="header">
+        <div class="float-left title">@common.Countries</div>
+        <div class="float-right button">
+            <button type="button" onclick="showAssignCountryDialog(null)">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+        </div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<v_user_access>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.AssignedCountries)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("access_level_name").Header(common.Country).Width("*"));
+                c.Add(cb => cb.Binding("permission").Align("Center").Header(user.AccessType).Width("100"));
+                c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("75");
+                c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("75");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgCountry")
+            .IsReadOnly(true)
+            .ItemFormatter("itemFormatter")
+            .OnClientLoadedRows("loadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>
+<div id="assignCountryDialog" class="width-600">
+    <div class="modal-header">
+        @user.Assign @common.Country
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="flexbox label-and-input">
+            @Html.Hidden("userAccessId", null, new { id = "countryUAId" })
+
+            <label>@common.Country:</label>&nbsp;
+            @Html.DropDownList("countryId", new SelectListItem[] { }, new { id = "countryId", @class = "flex-1" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>@user.AccessType:</label>&nbsp;
+            @Html.DropDownList("countryPermissions", permissions, new { id = "countryPermissions" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="btn btn-primary" onclick="upsertCountryAssignment();">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+        </div>
+    </div>
+</div>
+@(Html.C1().Popup("#assignCountryDialog").Modal(true).HideTrigger(PopupTrigger.Click))
+
+<section class="width-800">
+    <div class="header">
+        <div class="float-left title">@common.Activities</div>
+        <div class="float-right button">
+            <button type="button" onclick="showAssignActivityDialog();">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+        </div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<v_user_access>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.AssignedActivities)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("country").Header(common.Country).Width("*"));
+                c.Add(cb => cb.Binding("access_level_name").Header(common.Activity).Width("2*"));
+                c.Add(cb => cb.Binding("permission").Align("Center").Header(user.AccessType).Width("100"));
+                c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("75");
+                c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("75");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgActivity")
+            .IsReadOnly(true)
+            .ItemFormatter("itemFormatter")
+            .OnClientLoadedRows("loadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>
+<div id="assignActivityDialog" class="width-1000">
+    <div class="modal-header">
+        @user.Assign @common.Activity
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="flexbox label-and-input">
+            @Html.Hidden("userAccessId", null, new { id = "activityUAId" })
+
+            <label>@common.Country:</label>&nbsp;
+            @Html.DropDownList("activityCountryId", new SelectListItem[] { }, new { id = "activityCountryId", @class = "flex-1", onchange = "loadCountryActivities();" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>@common.Activity:</label>&nbsp;
+            @Html.DropDownList("activityId", new SelectListItem[] { }, new { id = "activityId", @class = "flex-2" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>@user.AccessType:</label>&nbsp;
+            @Html.DropDownList("activityPermissions", permissions, new { id = "activityPermissions" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="btn btn-primary" onclick="upsertActivityAssignment();">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+        </div>
+    </div>
+</div>
+@(Html.C1().Popup("#assignActivityDialog").Modal(true).HideTrigger(PopupTrigger.Click))
+
+<section class="width-1000">
+    <div class="header">
+        <div class="float-left title">@common.AdministrativeDivisions</div>
+        <div class="float-right button">
+            <button type="button" onclick="showAssignRegionDialog();">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+        </div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<v_user_access>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.AssignedRegions)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("country").Header(common.Country).Width("2*"));
+                c.Add(cb => cb.Binding("access_level").Header(user.AccessType).Width("*"));
+                c.Add(cb => cb.Binding("access_level_name").Header(common.Region).Width("3*"));
+                c.Add(cb => cb.Binding("permission").Align("Center").Header(user.AccessType).Width("100"));
+                c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("75");
+                c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("75");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgRegion")
+            .IsReadOnly(true)
+            .ItemFormatter("itemFormatter")
+            .OnClientLoadedRows("loadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>
+<div id="assignRegionDialog" class="width-1000">
+    <div class="modal-header">
+        @user.Assign @common.AdministrativeDivision
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="flexbox label-and-input">
+            @Html.Hidden("userAccessId", null, new { id = "regionUAId" })
+
+            <label>@common.Country:</label>&nbsp;
+            @Html.DropDownList("regionCountryId", new SelectListItem[] { }, new { id = "regionCountryId", @class = "flex-1", onchange = "loadCountryRegions();" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>@common.AdministrativeDivision:</label>&nbsp;
+            @Html.DropDownList("regionId", new SelectListItem[] { }, new { id = "regionId", @class = "flex-2", style = "max-width: 400px;" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>@user.AccessType:</label>&nbsp;
+            @Html.DropDownList("regionPermissions", permissions, new { id = "regionPermissions" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="btn btn-primary" onclick="upsertRegionAssignment();">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+        </div>
+    </div>
+</div>
+@(Html.C1().Popup("#assignRegionDialog").Modal(true).HideTrigger(PopupTrigger.Click))
+
+<section class="width-800">
+    <div class="header">
+        <div class="float-left title">@common.Sites</div>
+        <div class="float-right button">
+            <button type="button" onclick="showAssignSiteDialog();">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+        </div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<v_user_access>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.AssignedSites)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("country").Header(common.Country).Width("*"));
+                c.Add(cb => cb.Binding("site_name").Header(common.Site).Width("2*"));
+                c.Add(cb => cb.Binding("permission").Align("Center").Header(user.AccessType).Width("100"));
+                c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("75");
+                c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("75");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgSite")
+            .IsReadOnly(true)
+            .ItemFormatter("itemFormatter")
+            .OnClientLoadedRows("loadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>
+<div id="assignSiteDialog" class="width-1000">
+    <div class="modal-header">
+        @user.Assign @common.Site
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="flexbox label-and-input">
+            @Html.Hidden("userAccessId", null, new { id = "siteUAId" })
+
+            <label>@common.Country:</label>&nbsp;
+            @Html.DropDownList("siteCountryId", new SelectListItem[] { }, new { id = "siteCountryId", @class = "flex-1", onchange = "loadCountrySites();" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>@common.Site:</label>&nbsp;
+            @Html.DropDownList("siteId", new SelectListItem[] { }, new { id = "siteId", @class = "flex-2", style="max-width: 400px;" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <label>@user.AccessType:</label>&nbsp;
+            @Html.DropDownList("sitePermissions", permissions, new { id = "sitePermissions" })
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <button class="btn btn-primary" onclick="upsertSiteAssignment();">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+        </div>
+    </div>
+</div>
+@(Html.C1().Popup("#assignSiteDialog").Modal(true).HideTrigger(PopupTrigger.Click))

@@ -1,0 +1,136 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using home = IID.BusinessLayer.Globalization.Home.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@{
+    ViewBag.Title = "Home (Offline)";
+}
+
+<script type="text/javascript">
+    function itemFormatter(panel, r, c, cell) {
+        if (panel.cellType == wijmo.grid.CellType.Cell) {
+            var grid = panel.grid;
+            var dataItem = grid.rows[r].dataItem;
+            if (dataItem && (dataItem.ActivityId || dataItem.SiteId || dataItem.ChartName)) {
+                switch (panel.columns[c].name) {
+                    case 'ActivityName':
+                        cell.innerHTML = (
+                            '<a href="/Offline/Activity#activityId=' + dataItem.ActivityId + '">' + dataItem.ActivityName + '</a>');
+                        break;
+
+                    case 'SiteName':
+                        cell.innerHTML = (
+                            '<a href="/Offline/Site#siteId=' + dataItem.SiteId + '">' + dataItem.SiteName + '</a>');
+                        break;
+
+                    case 'SiteLinks':
+                        cell.innerHTML = (
+                            '<a class="dataIcon" href="/Offline/ObservationView#indicatorId=' + dataItem.IndicatorId + '&siteId=' + dataItem.SiteId + '" title="@observation.ViewData"></a>' +
+                            '&nbsp;&nbsp;' +
+                            '<a class="coachReportIcon" href="/Offline/CoachReport#activityId=' + dataItem.ActivityId + '&siteId=' + dataItem.SiteId + '" title="@observation.CoachReport"></a>');
+                        break;
+                }
+            }
+        }
+    }
+
+    function loadedActivityRows(s, e) {
+        if (s._rows.length == 0)
+            showFlexGridNoDataMessage(s, 'No @common.Activities.ToLower() available.');
+    }
+
+    function loadedSiteRows(s, e) {
+        if (s._rows.length == 0)
+            showFlexGridNoDataMessage(s, 'No @common.Sites.ToLower() available.');
+    }
+</script>
+
+<h4>@home.Welcome</h4>
+<hr />
+<i>You are working in Disconnected Mode. Data was last synchronized at <span id="spnOfflineSyncDateTime"></span>.</i>
+<br />
+<br />
+
+<div class="flexbox width-100p">
+    <div class="flex-1">
+        <section>
+            <div class="header">
+                <div class="float-left title">
+                    @home.AssignedActivities
+                </div>
+            </div>
+            <div class="content">
+	            <div id="fgAssignedActivities"></div>
+	        </div>
+        </section>
+    </div>
+
+    <div class="width-25">&nbsp;</div>
+
+    <div class="flex-1">
+        <section class="home-section">
+            <div class="header">
+                <div class="float-left title">
+                    @home.AssignedSites
+                </div>
+            </div>
+            <div class="content">
+                <div id="fgAssignedSites"></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Assigned activities
+        var assignedActivities = [];
+        var activityIds = getLocalStorageEntity('AssignedActivityIds');
+        for (var i in activityIds)
+            assignedActivities.push(getLocalStorageEntity('AssignedActivity', activityIds[i]));
+		var fgAssignedActivities = new wijmo.grid.FlexGrid('#fgAssignedActivities');
+		fgAssignedActivities.initialize({
+		    autoGenerateColumns: false,
+		    columns: [
+                { header: '@common.Name', binding: 'ActivityName', name: 'ActivityName', width: '2*' },
+                { header: '@common.Project', binding: 'ProjectName', width: '*' },
+                { header: '@common.Country', binding: 'CountryName', width: '*' }
+		    ],
+			headersVisibility: 1,
+			isReadOnly: true,
+			itemFormatter: itemFormatter,
+			itemsSource: assignedActivities,
+			loadedRows: loadedActivityRows,
+			selectionMode: 0
+		});
+        if (assignedActivities.length == 0)
+            loadedActivityRows(fgAssignedActivities);
+
+        // Assigned sites
+        var assignedSites = [];
+        var siteIds = getLocalStorageEntity('AssignedSiteKeys');
+        for (var i in siteIds)
+            assignedSites.push(getLocalStorageEntity('AssignedSite', siteIds[i]));
+        var fgAssignedSites = new wijmo.grid.FlexGrid('#fgAssignedSites');
+        fgAssignedSites.initialize({
+            columns: [
+                { width: '*', name: 'SiteName', header: '@common.Name', binding: 'SiteName' },
+                { width: '2*', header: '@common.Activity', binding: 'ActivityName' },
+                { width: '*', header: '@common.Country', binding: 'CountryName' },
+                { width: 60, name: 'SiteLinks', header: '', align: 'Center' }
+            ],
+            autoGenerateColumns: false,
+            itemFormatter: itemFormatter,
+            itemsSource:  assignedSites,
+            headersVisibility: 1,
+            isReadOnly: true,
+            loadedRows: loadedSiteRows,
+            selectionMode: 0
+        });
+        if (assignedSites.length == 0)
+            loadedSiteRows(fgAssignedSites);
+
+        var offlineSyncTime = getOfflineSyncTime();
+        if (offlineSyncTime)
+            $('#spnOfflineSyncDateTime').text(offlineSyncTime.format('h:MM tt @IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()'))
+    });
+</script>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ChartPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		x:Class="USAID.Pages.ChartPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP"
+		xmlns:xuni="clr-namespace:Xuni.Forms.FlexChart;assembly=Xuni.Forms.FlexChart"
+		>
+	 <StackLayout>
+    <Label Text="{Binding Indicator.Name}" HorizontalOptions="Center" Font="Medium"/>
+    <Grid  VerticalOptions="FillAndExpand">
+    <xuni:FlexChart x:Name="flexChart" ChartType="Line" BindingX="BeginDateDisplay" VerticalOptions="FillAndExpand" Padding="10,0,0,10">
+      <xuni:FlexChart.Series>
+        <xuni:ChartSeries Binding="CountDisplay" Name="" Color="#002060" BorderWidth="4" />
+      </xuni:FlexChart.Series>
+		<xuni:FlexChart.AxisX>
+        <xuni:ChartAxis LineWidth=".2"
+                        TitleText=""
+                        MajorGridVisible="False"
+                        MajorTickWidth="2"
+                        MajorTickOverlap= "0"
+                        MinorTickOverlap="0"
+						LineColor="#dddddd"
+						MajorGridColor="#dddddd"
+                        />
+      </xuni:FlexChart.AxisX>
+			<xuni:FlexChart.AxisY>
+        	<xuni:ChartAxis LineWidth=".2"
+                        MajorTickWidth = "2"
+                        MajorTickOverlap= "0"
+
+                        MajorGridWidth = ".5"
+
+                       MajorGridColor="#dddddd"
+                       LineColor="#dddddd"
+                        AxisLineVisible = "true"
+                        MinorTickWidth="1"
+                        />
+      </xuni:FlexChart.AxisY>
+    </xuni:FlexChart>
+    </Grid>
+  </StackLayout>
+</local:ChartPageBase>

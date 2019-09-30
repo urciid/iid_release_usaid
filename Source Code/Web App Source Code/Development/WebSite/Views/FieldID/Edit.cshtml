@@ -1,0 +1,41 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using IID.BusinessLayer.Identity;
+@using IID.WebSite.Helpers;
+@using IID.WebSite.Models;
+
+@model FieldID
+
+@{
+    ViewBag.Title = "Edit FieldID: " + Model.Value + " (" + Model._FieldID + ")";
+    string cancelHref = Identity.CurrentUser.IsInRole(Role.SystemAdministrator) ? "/Manage/" + Model.ParentFieldID : "~/Home/Index";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+</script>
+
+@using (Html.BeginForm("Edit", "FieldID", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m._FieldID)
+    <section class="width-50p">
+        <div class="header">
+            <div class="float-left title">@ViewBag.Title</div>
+            <div class="float-right button">
+                <a class="btn btn-primary" href="@Url.Action(cancelHref)">
+                    @common.Cancel
+                    <img src="~/Images/icons/16/close_delete.png" />
+                </a>
+                <button type="submit">
+                    @common.Save
+                    <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+                </button>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            @Html.Partial("~/Views/FieldID/Form.cshtml", Model)
+        </div>
+    </section>
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ProfilePageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.ProfilePage"
+		xmlns:local="clr-namespace:USAID.Pages;assembly=WMP"
+		xmlns:custom="clr-namespace:USAID.CustomRenderers;assembly=WMP">
+	<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+		<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image Source="starbackground.png" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="30,0,30,0">
+				<StackLayout Padding="0,50,0,0">
+					<Image Source="greatamericaLogo.png">
+					</Image>
+				</StackLayout>
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<StackLayout Padding="0,0,0,15">
+						<Label Text="Profile Information" FontSize="22" TextColor="{StaticResource GAblue}" XAlign="Center"/>
+					</StackLayout>
+
+					<ScrollView>
+						
+						<StackLayout VerticalOptions="CenterAndExpand" Padding="22,0,22,0" Spacing="14">
+							<custom:NoHelperEntry Placeholder="dealer name" Text="{Binding DealerName}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<custom:NoHelperEntry Placeholder="company" Text="{Binding Company}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<custom:NoHelperEntry Placeholder="email" Text="{Binding Email}" FontSize="Medium" Keyboard="Email" Style="{StaticResource EntryBlackText}"/>
+							<custom:NoHelperEntry Placeholder="mobile phone" Text="{Binding PhoneNumber}" FontSize="Medium" Keyboard="Telephone" Style="{StaticResource EntryBlackText}"/>
+							<custom:NoHelperEntry Placeholder="auto cc email" Text="{Binding AutoCcEmail}" FontSize="Medium" Keyboard="Email" Style="{StaticResource EntryBlackText}"/>
+							<StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="0,13,0,10">
+								<Button Text="Save" Clicked="OnSaveButtonClicked" Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="FillAndExpand" />
+								<Button x:Name="cancelButton" Text="Cancel" Clicked="OnCancelButtonClicked" Style="{StaticResource SecondaryButtonStyle}" HorizontalOptions="FillAndExpand" />
+							</StackLayout>
+						</StackLayout>
+							
+					</ScrollView>
+						
+				</StackLayout>
+			</StackLayout>
+		</AbsoluteLayout>
+	</StackLayout>
+</local:ProfilePageBase>

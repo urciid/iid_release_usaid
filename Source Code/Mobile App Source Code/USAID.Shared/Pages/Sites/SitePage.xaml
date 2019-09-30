@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:SitePageBase xmlns="http://xamarin.com/schemas/2014/forms" BackgroundColor="{StaticResource grayLight}" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.SitePage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="{Binding PageTitle}">
+	<!--<ContentPage.ToolbarItems> 		<ToolbarItem Text="Save" Icon="edit.png" Command="{Binding TestCommand}" /> 	</ContentPage.ToolbarItems>-->
+<TableView BackgroundColor="White" Intent="Form" HorizontalOptions="FillAndExpand">
+	<TableRoot>
+		<TableSection Title="{Binding SiteInformationLabel}">
+			<TextCell Text="{Binding Site.SiteName}" Detail="{Binding SiteNameLabel}" />
+			<TextCell Text="{Binding Site.Country}" Detail="{Binding CountryLabel}" />
+			<TextCell Text="{Binding Site.SiteType}" Detail="{Binding SiteTypeLabel}" />
+			<TextCell Text="{Binding Site.Region}" Detail="{Binding RegionLabel}" />
+			<TextCell Text="{Binding Site.District}" Detail="{Binding DistrictLabel}" />
+			<TextCell Text="{Binding Site.SubDistrict}" Detail="{Binding SubDistrictLabel}" />
+			<TextCell Text="{Binding Site.CityTownVillage}" Detail="{Binding CityTownVillageLabel}" />
+			<TextCell Text="{Binding Site.FundingType}" Detail="{Binding FundingTypeLabel}" />
+			<TextCell Text="{Binding Site.Partner}" Detail="{Binding PartnerLabel}" />
+			<TextCell Text="{Binding Site.Longitude}" Detail="{Binding LongitudeLabel}" />
+			<TextCell Text="{Binding Site.Lattitude}" Detail="{Binding LatitudeLabel}" />
+			<TextCell Text="{Binding Site.QIIndexScore}" Detail="{Binding QIIndexScoreLabel}" />
+			<TextCell Text="{Binding Site.RuralUrban}" Detail="{Binding RuralUrbanLabel}" />
+			<!--<EntryCell Label="{Binding SiteNameLabel}" Text="{Binding Site.SiteName}" Keyboard="Text" IsEnabled="false" /> 			<EntryCell Label="{Binding CountryLabel}" Text="{Binding Site.Country}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding SiteTypeLabel}" Text="{Binding Site.SiteType}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding RegionLabel}" Text="{Binding Site.Region}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding DistrictLabel}" Text="{Binding Site.District}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding SubDistrictLabel}" Text="{Binding Site.SubDistrict}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding CityTownVillageLabel}" Text="{Binding Site.CityTownVillage}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding FundingTypeLabel}" Text="{Binding Site.FundingType}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding PartnerLabel}" Text="{Binding Site.Partner}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding LongitudeLabel}" Text="{Binding Site.Longitude}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding LatitudeLabel}" Text="{Binding Site.Lattitude}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding QIIndexScoreLabel}" Text="{Binding Site.QIIndexScore}" Keyboard="Text" IsEnabled="false" />
+			<EntryCell Label="{Binding RuralUrbanLabel}" Text="{Binding Site.RuralUrban}" Keyboard="Text" IsEnabled="false" />--> 		</TableSection>
+		<TableSection Title="{Binding OtherKeyInformationLabel}">
+			<TextCell Text="{Binding Site.OtherKeyInformation}" />
+		</TableSection> 
+	</TableRoot>
+</TableView>
+</local:SitePageBase>
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ChangePageBase xmlns="http://xamarin.com/schemas/2014/forms" BackgroundColor="{StaticResource grayLight}" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		x:Class="USAID.Pages.ChangePage" 
+		xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" 
+		Title="{Binding PageTitle}"
+		xmlns:custom="clr-namespace:USAID.CustomRenderers;assembly=USAID">
+	<!--<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Cancel" Command="{Binding CancelCommand}"/>
+		<ToolbarItem Text="Save" Command="{Binding SaveCommand}" />
+	</ContentPage.ToolbarItems>-->
+	<StackLayout Padding="0, 0, 0, 0">
+		<StackLayout Padding="10,0,10,0" HeightRequest="60" x:Name="buttonLayout" Orientation="Horizontal" VerticalOptions="Start" HorizontalOptions="FillAndExpand">
+			<Button TextColor="White" Text="Cancel" FontSize="Medium" BackgroundColor="Transparent" VerticalOptions="EndAndExpand" HorizontalOptions="StartAndExpand" Command="{Binding CancelCommand}"></Button>
+			<Button TextColor="White" Text="Save" FontSize="Medium" BackgroundColor="Transparent" VerticalOptions="EndAndExpand" HorizontalOptions="EndAndExpand" Command="{Binding SaveCommand}"></Button>
+		</StackLayout>
+		<Grid Padding="5, 0, 5, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+			<Label Text="Start Date" YAlign="Center" HorizontalOptions="StartAndExpand" Grid.Row="0" Grid.Column="0" />
+			<DatePicker x:Name="dtPicker" Date="{Binding Change.StartDate}" HorizontalOptions="FillAndExpand" Grid.Row="0" Grid.Column="1" />
+			<BoxView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="Gray"></BoxView>
+			<Editor Text="{Binding Change.Description}"  FontSize="Small" Style="{StaticResource EntryBlackText}" Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="150" MinimumHeightRequest="150" x:Name="txtDesc"/>
+			<BoxView x:Name="BoxView" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" HeightRequest="1" BackgroundColor="Gray"></BoxView>
+		</Grid>
+	</StackLayout>
+</local:ChangePageBase>

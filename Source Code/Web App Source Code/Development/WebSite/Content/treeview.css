@@ -1,0 +1,14 @@
+﻿.aimsIndicators {
+    background-color: #E0E0E0;
+    border-bottom: 1px solid #1D405E;
+}
+
+.treeview .item {
+    padding: 4px;
+    border-bottom: 1px solid #1D405E;
+}
+
+.treeview .item * {
+    line-height: 13px;
+    font-size: 11px;
+}

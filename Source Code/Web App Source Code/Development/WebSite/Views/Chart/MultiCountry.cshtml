@@ -1,0 +1,561 @@
+﻿@using System.Data;
+@using IID.BusinessLayer.Domain;
+@using IID.BusinessLayer.Helpers;
+@using activity = IID.BusinessLayer.Globalization.Activity.Resource
+@using activitySite = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@using chart = IID.BusinessLayer.Globalization.Chart.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+@using IID.WebSite.Helpers
+@using IID.WebSite.Models
+
+@model ChartModel
+
+@{
+    ViewBag.Title = "Build Multi-Country Chart";
+    var indicatorType = Enumerations.Parse<IndicatorType>(Model.Indicator.TypeValue);
+}
+
+@section scripts {
+    <script type="text/ecmascript" src="/Scripts/carto/helper_functions.js"></script>
+    <script type="text/ecmascript" src="/Scripts/carto/textFlow.js"></script>
+    <script type="text/javascript" src="/Scripts/chartmc.js"></script>
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml", ProjectBreadcrumbs.ForChart(Model.Indicator.IndicatorId.Value))
+}
+
+<style type="text/css">
+    #criteriaTabContainer {
+        height: 30px;
+    }
+
+        #criteriaTabContainer div:first-child {
+            border-top-left-radius: 4px;
+        }
+
+        #criteriaTabContainer div:not(:last-child) {
+            height: 30px;
+        }
+
+    .wj-flexchart {
+        border: none !important;
+        padding: 0 0 0 10px !important;
+    }
+</style>
+
+<script type="text/javascript">
+    var chartFilters = @Html.Raw(Json.Encode(Model.ChartFilters));
+    var chartCriterias = @Html.Raw(Json.Encode(Model.ChartCriteria));
+    var allCountriesText = '@chart.AllCountries';
+
+    function postChartOptions() {
+        var data = {
+            Indicator: @Model.Indicator.IndicatorId,
+            SiteIds: $('[name=SiteIds]').val(),
+            AgeRangeIds: $('[name=AgeRangeIds]').val(),
+            Sexes: $('[name=Sexes]').val(),
+            BeginDate: BeginDate.value,
+            EndDate: EndDate.value,
+            ChangeIds: $('[name=ChangeIds]').val()
+        };
+        addAntiForgeryTokenToJson(data);
+
+        $.post('/Observation/GetDatePeriods', data, addDatePeriods, 'json');
+    }
+
+    function itemFormatter(engine, hitTestInfo, defaultFormat) {
+        switch (hitTestInfo.chartElement) {
+            case wijmo.chart.ChartElement.SeriesSymbol:
+                var defaultFill = engine.fill;
+                if (!hitTestInfo.item.HasChanges)
+                    engine.fill = 'rgba(255,255,255,1.0)';
+                defaultFormat();
+                engine.fill = defaultFill;
+                break;
+
+            default:
+                defaultFormat();
+                break;
+        }
+    }
+
+    function showSaveDialog() {
+        wijmo.Control.getControl("#chart-dialog").show();
+    }
+
+    function saveNewChart() {
+        var form = $('form');
+        // Copy the chart name from the modal dialog to the form.
+        form.children('[name=chartName]').val($('#chart-dialog-name').val());
+        // Change the form action to save instead of modify.
+        form.attr('action', '/Chart/Save');
+        form.submit();
+    }
+
+    function saveExistingChart() {
+        var form = $('form');
+        form.attr('action', '/Chart/Save');
+        form.submit();
+    }
+
+    // NOTE: I used onRendering because none of the axis settings or the axis itemFormatter seem to work.
+    function onRendering(e) {
+        var texts = [];
+        switch (e.hostElement.id) {
+            case 'fcValue':
+                texts.push({ text : '@Html.Raw(Mvc.EscapeForJavaScript(Model.Indicator.ReportClassValue))', hexColor : '666666' });
+                @if (Model.ChartResult != null)
+                {
+                    @:texts.push({ text : ' @chart.In ', hexColor : '666666' });
+
+                    int n = Model.ChartResult.Series.Count;
+                    for (int i = 0; i < n; i++)
+                    {
+
+                        var series = Model.ChartResult.Series.ElementAt(i);
+                        var seriesName = (
+                            (series.SiteIds == null ? $"{series.AdministrativeDivisionName} " : null) +
+                            (series.SeriesName ?? chart.AllCountries) +
+                            (i < n - 1 ? ", " : null)
+                        );
+                        @:texts.push({ text : '@Html.Raw(Mvc.EscapeForJavaScript(seriesName))', hexColor : '@series.Color.Hexadecimal' });
+                                    }
+                }
+                break;
+
+            case 'fcDenominator':
+                texts.push({ text : '@Html.Raw(Mvc.EscapeForJavaScript(Model.Indicator.DenominatorName))', hexColor : '666666' });
+                break;
+        }
+        var svg = $(e.hostElement.getElementsByTagName('svg')[0]);
+        title = svg.find('.wj-title');
+        var topMargin = textFlow(texts, title[0], 850, 0, 22);
+        e.plotMargin = ('' + (topMargin + 10).toString() + ' 10 40 50');
+
+        // Set the X-Axis labels using the values from the first chart series.
+        // If the chart shows > 3 months' data, date is condenses to MMM yyyy, so don't repeat.
+        e.axisX._actualAngle = 0;
+        var lbls = e.axisX._lbls;
+        var items = e.series[e.series.length - 1].itemsSource.items;
+        // Logic for short daily frequency ranges:
+        //  1 - 15 days: fill ever label.
+        // 16 - 31 days: fill every other label.
+        // 31 - 62 days: fill every seventh label.
+        // Anything else (including frequencies other than daily): fill every unique label returned from the stored proc.
+        var mod = 1;
+        if ('@Model.Indicator.DataCollectionFrequencyFieldId' === 'frqdai') {
+            if (lbls.length <= 15) {
+                mod = 1;
+            } else if (lbls.length <= 31) {
+                mod = 2;
+            } else if (lbls.length <= 62) {
+                mod = 7;
+            } else {
+                mod = 1;
+            }
+        }
+        for (var i = items.length - 1; i >= 0; i--) {
+            if ((i % mod != 0) || (i > 0 && items[i].Label == items[i - 1].Label))
+                lbls[i] = '';
+            else
+                lbls[i] = items[i].Label;
+        }
+
+        // Remove the border. We set our own around both charts.
+        e.hostElement.style.border = 'none';
+
+        $(e.hostElement.getElementsByTagName('svg')[0]).prepend(
+            '<defs>\n' +
+            '    <style type="text/css"><![CDATA[\n' +
+            '        * { font-family: "Arial"; }\n' +
+            '        .wj-title * { font-size: 16px; font-weight: bold; }\n' +
+            '        .wj-label { font-size: 12px !important; }\n' +
+            '        .wj-gridline { color: #333333; stroke: #333333; stroke-width: 2px; }\n' +
+            '    ]]></style>\n' +
+            '</defs>');
+    }
+
+    var valueExported = false, denominatorExported = false, imgValue = null, imgDenominator = null, canvas = null, context = null;
+    function exportCharts() {
+        // The denominator chart might not exist, depending on the indicator type.
+        if ($('#fcDenominator').length > 0)
+            fcDenominator.control.saveImageToDataUrl(0, function (data) {
+                imgDenominator = new Image();
+                imgDenominator.src = data;
+                denominatorExported = true;
+                combineChartsAndStream();
+            });
+        else
+            denominatorExported = true;
+
+        fcValue.control.saveImageToDataUrl(0, function (data) {
+            imgValue = new Image();
+            imgValue.src = data;
+            valueExported = true;
+            combineChartsAndStream();
+        });
+    }
+
+    function combineChartsAndStream() {
+        if (valueExported && denominatorExported) {
+            if (!canvas) {
+                canvas = document.getElementById('exportCanvas');
+                context = canvas.getContext('2d');
+            }
+            canvas.width = imgValue.width;
+            canvas.height = imgValue.height;
+            if ($('#fcDenominator').length > 0)
+                canvas.height += imgDenominator.height;
+            context.globalAlpha = 1.0;
+            context.drawImage(imgValue, 0, 0);
+            if (imgDenominator)
+                context.drawImage(imgDenominator, 0, imgValue.height);
+
+            var base64 = canvas.toDataURL('image/png');
+            if (window.navigator.msSaveOrOpenBlob) {
+                base64 = base64.substring(base64.indexOf(',') + 1);
+                var byteChars = atob(base64);
+                var byteCharCodes = new Array(byteChars.length);
+                for (var i = 0; i < byteChars.length; i++)
+                    byteCharCodes[i] = byteChars.charCodeAt(i);
+                var bytes = new Uint8Array(byteCharCodes);
+                var blob = new Blob([bytes], { type: 'image/png' });
+                window.navigator.msSaveOrOpenBlob(blob, 'chart.png');
+            } else {
+                base64 = base64.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+                base64 = base64.replace(/^data:application\/octet-stream/, 'data:application/octet-stream;headers=Content-Disposition%3A%20attachment%3B%20filename=Chart.png');
+                base64DownloadFile(base64, 'Chart.png');
+            }
+        }
+    }
+
+    function setCultureCallback() {
+        $('#frmChart').submit();
+    }
+</script>
+
+<table class="height-100p width-100p" style="table-layout: fixed;">
+    <tr>
+        <td class="height-100p width-300 vertical-align-top">
+            @Html.Partial("~/Views/Activity/EntityTree.cshtml", new ActivityTree(
+                Model.Activity.ActivityId.Value, Model.Indicator.IndicatorId.Value, Model.RefererSiteId, Mode.Chart))
+        </td>
+        <td class="width-25"></td>
+        <td class="vertical-align-top">
+            <section class="flexbox flex-v height-100p margin-0">
+                <div class="header">
+                    @*<div class="float-right button">
+                        <a class="btn btn-primary" href="@Url.Action("MultiCountry", "Chart", new { id = 1 })">
+                            Multi Country Charts</>
+                        </a>
+                    </div>*@
+                    <div class="float-left title">
+                        @chart.OptionsMultiCountry
+                    </div>
+                    <div class="clear-floats"></div>
+                </div>
+                <div class="content flex-2" style="height: 0; overflow-y: scroll;">
+                    <div id="criteriaTabContainer" class="font-weight-bold">
+                        <div class="border-gray cursor-pointer float-left padding-4" id="addLine" onclick="addCriteria();" style="border-top-right-radius: 4px;">
+                            <img src="~/Images/icons/16/plus.png" title="@common.Add @chart.Line" />
+                        </div>
+                        <div id="criteriaTabTemplate" class="display-none border-gray cursor-pointer float-left" style="border-right: none; padding: 6px 13px 0 10px; position: relative;">
+                            <span>@chart.Line </span>&nbsp;
+                            <div style="font-size: 10px; line-height: 4px; position: absolute; top: 4px; right: 4px;">x</div>
+                        </div>
+                        <div class="clear-floats"></div>
+                    </div>
+                    <div id="criteriaContainer" class="border-gray padding-4 width-100p" style="height: 175px; margin-top: -1px;">
+                        <div class="display-none flexbox width-100p" id="criteriaTemplate">
+                            <div class="flex-2">
+                                <table class="form-table width-100p" id="tblGeography">
+                                    <colgroup>
+                                        <col style="text-wrap: none;" />
+                                        <col style="width: 90%" />
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <td class="tdLabel">Indicator Report Class:</td>
+                                            <td><select name="lstReportClass" /></td>
+                                        </tr>                                      
+                                        <tr>
+                                            <td class="tdLabel">@common.Countries:</td>
+                                            <td id="tdCountries"><div id="inpCountries"></div></td>
+                                        </tr>                                        
+                                        <tr>
+                                            <td class="tdLabel">@activity.StartDate:</td>
+                                            <td id="tdStartDate"><div id="inpStartDate"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdLabel">@activity.EndDate:</td>
+                                            <td id="tdEndDate"><div id="inpEndDate"></div></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tdLabel">@common.Color:</td>
+                                            <td id="tdColor"><div id="inpColor"></div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                           
+                        </div>
+                    </div>
+                    <div class="text-align-right" style="margin: 10px 0 10px 0;">
+                        @using (Html.BeginForm("ModifyMultiCountry", "Chart", FormMethod.Post, new { id = "frmChart", onsubmit = "setCriteriasFormValue();" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="indicatorId" value="@Model.Indicator.IndicatorId.ToString()" />
+                            <input type="hidden" id="criterias" name="criterias" />
+                            <input type="hidden" id="activeCriteria" name="activeCriteria" value="@Model.ActiveCriteria.ToString()" />
+                            <input type="hidden" name="chartName" value="@Model.ChartName" />
+                            <input type="hidden" name="siteId" value="@Model.RefererSiteId" />
+                            <input type="hidden" name="reportClassFieldID" value="@Model.Indicator.ReportClassFieldId" />
+
+                            <div id="divAddMedian">
+                                <input type="hidden" id="addMedian" name="addMedian" value="@Model.AddMedian.ToString().ToLower()" />
+                                <input type="checkbox" id="chkaddMedian" />
+                                <label for="chkaddMedian">Run Chart Rules</label>
+                                <span>&nbsp;&nbsp;</span>
+                            </div>
+
+                            <button class="btn btn-primary" type="submit">
+                                @common.Chart
+                                <img src="~/Images/icons/16/line-chart.png" title="Make Chart" />
+                            </button>
+                            <span>&nbsp;&nbsp;</span>
+
+                            <button class="btn btn-primary" onclick="exportCharts();" type="button">
+                                @chart.Export
+                                <img src="~/Images/icons/16/picture.png" title="Export File" />
+                            </button>
+                            <canvas id="exportCanvas" class="display-none"></canvas>
+                                <span>&nbsp;&nbsp;</span>
+
+                            {
+                                string saveButtonEvent = String.IsNullOrEmpty(Model.ChartName) ? "showSaveDialog" : "saveExistingChart";
+                                <button class="btn btn-primary" type="button" onclick="@(saveButtonEvent)();">
+                                    @common.Save
+                                    <img src="~/Images/icons/16/save_diskette_floppy_disk.png" title="Save Chart" />
+                                </button>
+                            }
+                        }
+                    </div>
+                    <div>
+                        @if (Model.ChartResult != null && Model.ChartResult.Series.Count > 0)
+                        {
+                            string yAxisFormat = "";
+                            double lineMaxValue = 0D, barMaxValue = 0D, minValue = 0D;
+                            bool showDenominatorChart = true;
+                            int numeratorChartHeight = 467;
+                            int denominatorChartHeight = 193;
+
+                            // Get the maximum value and denominator.
+                            double maxValue = 1;
+                            int maxDenominator = 1;
+                            foreach (var series in Model.ChartResult.Series.Where(x => x.Points.Any(y => y.YValue.HasValue)))
+                            {
+                                maxValue = Math.Max(maxValue, Convert.ToDouble(series.Points.Where(x => x.YValue.HasValue).Max(x => x.YValue.Value)));
+                                maxDenominator = Math.Max(maxDenominator, series.Points.Where(x => x.Denominator.HasValue).Max(x => x.Denominator.Value));
+                            }
+
+                            // Round each max up to the nearest 1, 10, 100, etc.
+                            // Value chart
+                            var power10 = Math.Floor(Math.Log10(maxValue));
+                            var factor = Math.Pow(10, power10);
+                            lineMaxValue = (Math.Floor(maxValue / factor) * factor) + factor;
+                            // Denominator chart
+                            power10 = Math.Floor(Math.Log10(maxDenominator));
+                            factor = Math.Pow(10, power10);
+                            barMaxValue = (Math.Floor(maxDenominator / factor) * factor) + factor;
+
+                            switch (indicatorType)
+                            {
+                                case IndicatorType.Percentage:
+                                    yAxisFormat = "p0";
+                                    lineMaxValue = 1.0;
+                                    break;
+                                case IndicatorType.Average:
+                                    yAxisFormat = "n1";
+                                    break;
+                                case IndicatorType.Ratio:
+                                    yAxisFormat = "n1";
+                                    break;
+                                case IndicatorType.Count:
+                                    yAxisFormat = "n0";
+                                    showDenominatorChart = false;
+                                    numeratorChartHeight += denominatorChartHeight;
+                                    break;
+                                case IndicatorType.YesNo:
+                                    yAxisFormat = "n0";
+                                    lineMaxValue = 1D;
+                                    showDenominatorChart = false;
+                                    numeratorChartHeight += denominatorChartHeight;
+                                    break;
+                            }
+                            <br />
+
+                            <div style="margin: auto; margin-bottom: 20px; min-height: 660px; width: 880px;">
+                                <div class="border-light-gray background-color-white" style="padding-top: 10px;">
+                                    @(Html.C1().FlexChart()
+                                    .AxisY(x =>
+                                    {
+                                        x.Format(yAxisFormat).Max(lineMaxValue).Min(minValue);
+                                        if (indicatorType == IndicatorType.YesNo)
+                                            x.MajorUnit(1D);
+                                    })
+                                    .ChartType(C1.Web.Mvc.Chart.ChartType.LineSymbols)
+                                    .Header(Model.Indicator.ReportClassValue)
+                                    .HeaderStyle(x => x.Halign("Left"))
+                                    .Height(numeratorChartHeight)
+                                    .Id("fcValue")
+                                    .ItemFormatter("itemFormatter")
+                                    .Legend(C1.Web.Mvc.Chart.Position.None)
+                                    .OnClientRendering("onRendering")
+                                    .Series(s =>
+                                    {
+                                        if (Model.ChartResult.RulesResult != null)
+                                        {
+                                            foreach (var mv in Model.ChartResult.RulesResult.MedianValues)
+                                            {
+                                                string hexColor = ("#" + Model.ChartFilters.Colors.Where(x => x.Name == "Red").First().Hexadecimal);
+                                                s.Add().Bind(mv).Binding("YValue").ChartType(C1.Web.Mvc.Chart.ChartType.Line)
+                                                    .Name("Median").Style(st => st.Fill(hexColor).Stroke(hexColor).StrokeWidth(4));
+                                            }
+                                        }
+                                        foreach (var series in Model.ChartResult.Series)
+                                        {
+                                            var hexString = ("#" + (series.Color?.Hexadecimal ?? "000000"));
+                                            s.Add().Bind(series.Points).Binding("YValue").Name(series.SeriesName ?? chart.AllCountries)
+                                                .Style(st => st.Fill(hexString).Stroke(hexString).StrokeWidth(4));
+                                        }
+                                    })
+                                    .AddAnnotationLayer(al =>
+                                    {
+                                        int changeNumber = 65;
+                                        for (int i = 0; i < Model.ChartResult.Series.Count; i++)
+                                        {
+                                            var series = Model.ChartResult.Series.ElementAt(i);
+                                            int n = series.Points.Count;
+                                            for (int j = 0; j < n; j++)
+                                            {
+                                                var style = new SVGStyle { Fill = "#F0F0F0", Stroke = "#" + series.Color.Hexadecimal, StrokeWidth = 2 };
+                                                var point = series.Points.ElementAt(j);
+
+                                                var changes = Model.ChartResult.Changes?.Where(x => series.SeriesId.Equals(x.SeriesId) && point.XValue.Equals(x.BeginDate));
+                                                if (changes.Any())
+                                                {
+                                                    Dictionary<char, string> changeTexts = new Dictionary<char, string>();
+                                                    foreach (var c in changes)
+                                                    {
+                                                        changeTexts.Add(Convert.ToChar(changeNumber), $"{c.Description} ({c.StartDate.ToString("d")})");
+
+                                                        // Increment the change number for the next letter.
+                                                        changeNumber++;
+                                                    }
+                                                    var letters = String.Join(", ", changeTexts.Select(c => c.Key).OrderBy(c => c));
+                                                    var tooltip = String.Join("<br />", changeTexts.Select(c => $"<b>{c.Key}:</b> {c.Value}"));
+
+                                                    double x = j * (1.0 / (n - 1));
+                                                    double y = Convert.ToDouble(point.YValue ?? 0);
+                                                    var offset = new System.Drawing.Point(0, 30 * (y > (lineMaxValue * 0.9D) ? 1 : -1));
+                                                    int width = Math.Max(changeTexts.Count * 20, 30);
+
+                                                    al.AddRectangle(square => square.Attachment(AnnotationAttachment.DataCoordinate)
+                                                        .Point(new DataPoint(j, y))
+                                                        .Content(letters)
+                                                        .Height(30)
+                                                        .Offset(offset)
+                                                        .Position(AnnotationPosition.Center)
+                                                        .Style(style)
+                                                        .Tooltip(tooltip)
+                                                        .Width(width)
+                                                    );
+                                                }
+                                            }
+                                        }
+                                    })
+                                    )
+                                    @if (showDenominatorChart)
+                                    {
+                                        @(Html.C1().FlexChart()
+                                        .AxisY(x => x.Max(barMaxValue).Min(minValue))
+                                        .ChartType(C1.Web.Mvc.Chart.ChartType.Column)
+                                        .Header(String.Format("<tspan style=\"font-weight: bold;\" fill=\"#666666\">{0}</tspan>", Model.Indicator.DenominatorName))
+                                        .HeaderStyle(x => x.Halign("left"))
+                                        .Height(denominatorChartHeight)
+                                        .Id("fcDenominator")
+                                        .Legend(C1.Web.Mvc.Chart.Position.None)
+                                        .OnClientRendering("onRendering")
+                                        .Series(s =>
+                                        {
+                                            foreach (var series in Model.ChartResult.Series)
+                                            {
+                                                var hexString = ("#" + (series.Color?.Hexadecimal ?? "000000"));
+                                                s.Add().Bind(series.Points).Binding("Denominator")
+                                                    .Name(series.SeriesName)
+                                                    .Style(st => st.Fill(hexString).Stroke(hexString));
+                                            }
+                                        })
+                                        )
+                                    }
+                                </div>
+                                @if (Model.ChartResult?.Changes?.Any() ?? false)
+                                {
+                                    int changeNumber = 65;
+                                    <ul>
+                                        @foreach (var c in Model.ChartResult.Changes)
+                                        {
+                                            <li>
+                                                <b>@(Convert.ToChar(changeNumber)):</b>
+                                                @c.Description (@c.StartDate.ToString("d"))
+                                            </li>
+                                            changeNumber++;
+                                        }
+                                    </ul>
+                                }
+                                @if (Model.ChartResult?.RulesResult?.RulesTriggered?.Count > 0)
+                                {
+                                    <div style="padding: 10px 10px 0 10px;">
+                                        <span>@chart.RulesTriggered:</span>
+                                        <ul>
+                                            @foreach (var trigger in Model.ChartResult.RulesResult.RulesTriggered)
+                                            {
+                                                <li><i>@trigger.XValue.ToString("d")</i>: @trigger.Rule</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </td>
+    </tr>
+
+</table>
+
+<div id="chart-dialog" class="width-400" style="display: none;">
+    <div class="modal-header">
+        <span id="chart-dialog-title"></span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="flexbox label-and-input">
+            <label>@common.Name</label>&nbsp;
+            <input class="flex-1" id="chart-dialog-name" type="text" value="" />
+            <span id="chart-dialog-error"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="saveNewChart();" type="button">
+            @common.Save
+            <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+        </button>
+    </div>
+</div>
+@(Html.C1().Popup("#chart-dialog").Modal(true).HideTrigger(PopupTrigger.Click))

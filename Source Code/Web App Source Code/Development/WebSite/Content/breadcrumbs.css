@@ -1,0 +1,33 @@
+﻿.breadcrumbs .separator {
+    line-height: 28px;
+    padding: 0 4px 0 4px;
+    vertical-align: top;
+}
+
+.breadcrumbs .wj-template,
+.breadcrumbs .wj-input-group,
+.breadcrumbs .wj-form-control,
+.breadcrumbs .wj-input-group-btn {
+    border: none !important;
+    cursor: pointer !important;
+    height: 26px !important;
+    line-height: normal;
+    padding: 0 !important;
+}
+
+.breadcrumbs .wj-dropdown {
+    background-color: transparent !important;
+    border: none !important;
+    line-height: normal;
+    margin-top: -3px;
+}
+
+.breadcrumbs .wj-btn {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 0 0 4px !important;
+}
+
+.breadcrumbs>.item {
+    display: inline-block;
+}

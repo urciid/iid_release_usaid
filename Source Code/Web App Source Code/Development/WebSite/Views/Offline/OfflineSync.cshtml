@@ -1,0 +1,145 @@
+﻿@using System.Text
+@using System.Text.RegularExpressions
+@using Newtonsoft.Json
+@using IID.WebSite.Models
+
+@model OfflineSync
+
+@{
+    Layout = null;
+}
+
+@functions {
+    IHtmlString LoadToLocalStorage<T, I>(IEnumerable<T> objects, Func<T, I> keyField, string localStorageKey)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var obj in objects.Select(o => new { Key = keyField(o), Value = o }))
+        {
+            sb.Append(String.Format("localStorage.{0}_{1} = '{2}';\r\n", localStorageKey, obj.Key, Mvc.EscapeForJavaScript(Json.Encode(obj.Value))));
+        }
+        return Html.Raw(RemoveNullProperties(sb.ToString()));
+    }
+
+    IHtmlString LoadToLocalStorage<T, K>(Dictionary<T, K> dictionary, string localStorageKey)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var kvp in dictionary)
+        {
+            sb.Append(String.Format("localStorage.{0}_{1} = '{2}';\r\n", localStorageKey, kvp.Key, Mvc.EscapeForJavaScript(Json.Encode(kvp.Value))));
+        }
+        return Html.Raw(RemoveNullProperties(sb.ToString()));
+    }
+
+    IHtmlString LoadArrayToLocalStorage<T>(IEnumerable<T> objects, string localStorageKey)
+    {
+        return Html.Raw(
+            RemoveNullProperties(
+                String.Format("localStorage.{0} = '{1}';\r\n", localStorageKey, Mvc.EscapeForJavaScript(Json.Encode(objects)))));
+    }
+
+    IHtmlString LoadToLocalStorage<T>(List<Tuple<T, string>> tuples, string localStorageKey)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var tuple in tuples)
+        {
+            sb.Append(String.Format("localStorage.{0}_{1} = '{2}';\r\n", localStorageKey, tuple.Item1, Mvc.EscapeForJavaScript(tuple.Item2)));
+        }
+        return Html.Raw(RemoveNullProperties(sb.ToString()));
+    }
+
+    Regex regEx = new Regex("\"[^\"]+\":null,?");
+    string RemoveNullProperties(string input)
+    {
+        return regEx.Replace(input, "").Replace(",}","}");
+    }
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Loader</title>
+    <script src="/Scripts/jquery-1.10.2.js" type="text/javascript"></script>
+    <script src="/Scripts/iid.js" type="text/javascript"></script>
+    <script src="/Scripts/offline.js" type="text/javascript"></script>
+</head>
+<body>
+    <div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                localStorage.clear();
+                @LoadToLocalStorage(Model.Projects, x => x.ProjectId, "Project")
+                @LoadToLocalStorage(Model.Activities, x => x.ActivityId, "Activity")
+                @LoadToLocalStorage(Model.ActivityAdditionalManagerIds, "ActivityAdditionalManagerIds")
+                @LoadToLocalStorage(Model.ActivityTechnicalAreaSubTypes, "ActivityTechnicalAreaSubTypes")
+                @LoadToLocalStorage(Model.ActivityAimIds, "ActivityAimIds")
+                @LoadToLocalStorage(Model.ActivitySiteIds, "ActivitySiteIds")
+                @LoadToLocalStorage(Model.ActivityNoteIds, "ActivityNoteIds")
+                @LoadToLocalStorage(Model.Aims, x => x.AimId, "Aim")
+                @LoadToLocalStorage(Model.AimIndicatorIds, "AimIndicatorIds")
+                @LoadToLocalStorage(Model.Indicators, x => x.IndicatorId, "Indicator")
+                @LoadToLocalStorage(Model.IndicatorAgeRangeIds, "IndicatorAgeRangeIds")
+                @LoadToLocalStorage(Model.IndicatorAgeRanges, "IndicatorAgeRange")
+                @LoadToLocalStorage(Model.Sites, x => x.SiteId, "Site")
+                @LoadToLocalStorage(Model.SiteActivityIds, "SiteActivityIds")
+                @LoadToLocalStorage(Model.SiteNoteIds, "SiteNoteIds")
+                @LoadToLocalStorage(Model.Observations, x => x.ObservationId, "Observation")
+                @LoadToLocalStorage(Model.ObservationDatePeriods, "ObservationDatePeriods")
+                @LoadToLocalStorage(Model.ObservationIdIndex, "ObservationIdIndex")
+                @LoadToLocalStorage(Model.ObservationChangeIds, "ObservationChangeIds")
+                @LoadToLocalStorage(Model.ObservationChanges, x => x.ChangeId, "ObservationChange")
+                @LoadToLocalStorage(Model.ObservationCommentIds, "ObservationCommentIds")
+                @LoadToLocalStorage(Model.ObservationComments, x => x.CommentId, "ObservationComment")
+                @LoadToLocalStorage(Model.ActivitySites, x => x.Key, "ActivitySite")
+                @LoadToLocalStorage(Model.Notes, x => x.NoteId, "Note")
+                @LoadArrayToLocalStorage(Model.AssignedActivityIds, "AssignedActivityIds")
+                @LoadToLocalStorage(Model.AssignedActivities, x => x.ActivityId, "AssignedActivity")
+                @LoadArrayToLocalStorage(Model.AssignedSiteKeys, "AssignedSiteKeys")
+                @LoadToLocalStorage(Model.AssignedSites, x => x.Key, "AssignedSite")
+                @LoadToLocalStorage(Model.FieldIds, "FieldId")
+                @LoadToLocalStorage(Model.Countries, x => x.CountryId, "Country")
+                @LoadToLocalStorage(Model.UserNames, "UserName")
+                localStorage.Sexes = '@Html.Raw(JsonConvert.SerializeObject(Model.Sexes))';
+                setOfflineSyncTime();
+            });
+        </script>
+        <table>
+            <tr><td>Projects</td><td>@(Model.Projects?.Count())</td></tr>
+            <tr><td>Activities</td><td>@(Model.Activities?.Count())</td></tr>
+            <tr><td>ActivityAdditionalManagerIds</td><td>@(Model.ActivityAdditionalManagerIds?.Count())</td></tr>
+            <tr><td>ActivityTechnicalAreaSubTypes</td><td>@(Model.ActivityTechnicalAreaSubTypes?.Count())</td></tr>
+            <tr><td>ActivityAimIds</td><td>@(Model.ActivityAimIds?.Count())</td></tr>
+            <tr><td>ActivitySiteIds</td><td>@(Model.ActivitySiteIds?.Count())</td></tr>
+            <tr><td>ActivityNoteIds</td><td>@(Model.ActivityNoteIds?.Count())</td></tr>
+            <tr><td>Aims</td><td>@(Model.Aims?.Count())</td></tr>
+            <tr><td>AimIndicatorIds</td><td>@(Model.AimIndicatorIds?.Count())</td></tr>
+            <tr><td>Indicators</td><td>@(Model.Indicators?.Count())</td></tr>
+            <tr><td>IndicatorAgeRangeIds</td><td>@(Model.IndicatorAgeRangeIds?.Count())</td></tr>
+            <tr><td>IndicatorAgeRanges</td><td>@(Model.IndicatorAgeRanges?.Count())</td></tr>
+            <tr><td>Sites</td><td>@(Model.Sites?.Count())</td></tr>
+            <tr><td>SiteActivityIds</td><td>@(Model.SiteActivityIds?.Count())</td></tr>
+            <tr><td>SiteNoteIds</td><td>@(Model.SiteNoteIds?.Count())</td></tr>
+            <tr><td>Observations</td><td>@(Model.Observations?.Count())</td></tr>
+            <tr><td>ObservationDatePeriods</td><td>@(Model.ObservationDatePeriods?.Count())</td></tr>
+            <tr><td>ObservationIdIndex</td><td>@(Model.ObservationIdIndex?.Count())</td></tr>
+            <tr><td>ObservationChangeIds</td><td>@(Model.ObservationChangeIds?.Count())</td></tr>
+            <tr><td>ObservationChanges</td><td>@(Model.ObservationChanges?.Count())</td></tr>
+            <tr><td>ObservationCommentIds</td><td>@(Model.ObservationCommentIds?.Count())</td></tr>
+            <tr><td>ObservationComments</td><td>@(Model.ObservationComments?.Count())</td></tr>
+            <tr><td>ActivitySites</td><td>@(Model.ActivitySites?.Count())</td></tr>
+            <tr><td>Notes</td><td>@(Model.Notes?.Count())</td></tr>
+            <tr><td>AssignedActivityIds</td><td>@(Model.AssignedActivityIds?.Count())</td></tr>
+            <tr><td>AssignedActivities</td><td>@(Model.AssignedActivities?.Count())</td></tr>
+            <tr><td>AssignedSiteKeys</td><td>@(Model.AssignedSiteKeys?.Count())</td></tr>
+            <tr><td>AssignedSites</td><td>@(Model.AssignedSites?.Count())</td></tr>
+            <tr><td>FieldIds</td><td>@(Model.FieldIds?.Count())</td></tr>
+            <tr><td>Countries</td><td>@(Model.Countries?.Count())</td></tr>
+            <tr><td>UserNames</td><td>@(Model.UserNames?.Count())</td></tr>
+            <tr><td>Sexes</td><td>@(Model.Sexes?.Count())</td></tr>
+        </table>
+        <br />
+        Elapsed: @Model.Elapsed
+   </div>
+</body>
+</html>

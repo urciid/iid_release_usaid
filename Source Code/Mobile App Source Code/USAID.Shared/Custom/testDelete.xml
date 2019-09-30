@@ -1,0 +1,1356 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<root>
+   <Activities>
+      <element>
+         <Activity>Test Activity</Activity>
+         <ActivityId>1</ActivityId>
+         <ActivityManager />
+         <Country>United States</Country>
+         <Organization>URC</Organization>
+         <Project>ASSIST</Project>
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <ActivityId>6</ActivityId>
+         <ActivityManager />
+         <Country>United States</Country>
+         <Organization>URC</Organization>
+         <Project>John's Test Project</Project>
+      </element>
+   </Activities>
+   <IndicatorAgePeriods>
+      <element>
+         <age_range>0-12</age_range>
+         <indicator_age_range_id>42</indicator_age_range_id>
+         <indicator_id>17</indicator_id>
+      </element>
+      <element>
+         <age_range>13-19</age_range>
+         <indicator_age_range_id>43</indicator_age_range_id>
+         <indicator_id>17</indicator_id>
+      </element>
+      <element>
+         <age_range>20-39</age_range>
+         <indicator_age_range_id>44</indicator_age_range_id>
+         <indicator_id>17</indicator_id>
+      </element>
+      <element>
+         <age_range>40-64</age_range>
+         <indicator_age_range_id>45</indicator_age_range_id>
+         <indicator_id>17</indicator_id>
+      </element>
+      <element>
+         <age_range>65+</age_range>
+         <indicator_age_range_id>46</indicator_age_range_id>
+         <indicator_id>17</indicator_id>
+      </element>
+      <element>
+         <age_range>0-19</age_range>
+         <indicator_age_range_id>47</indicator_age_range_id>
+         <indicator_id>14</indicator_id>
+      </element>
+      <element>
+         <age_range>20-39</age_range>
+         <indicator_age_range_id>48</indicator_age_range_id>
+         <indicator_id>14</indicator_id>
+      </element>
+      <element>
+         <age_range>40-59</age_range>
+         <indicator_age_range_id>49</indicator_age_range_id>
+         <indicator_id>14</indicator_id>
+      </element>
+      <element>
+         <age_range>60-79</age_range>
+         <indicator_age_range_id>50</indicator_age_range_id>
+         <indicator_id>14</indicator_id>
+      </element>
+      <element>
+         <age_range>80+</age_range>
+         <indicator_age_range_id>51</indicator_age_range_id>
+         <indicator_id>14</indicator_id>
+      </element>
+   </IndicatorAgePeriods>
+   <Indicators>
+      <element>
+         <Activity>Test Activity</Activity>
+         <Aim>Test AIM for development</Aim>
+         <Definition />
+         <DenominatorDefinition>Total number of patients</DenominatorDefinition>
+         <DenominatorName />
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>1</IndicatorId>
+         <IndicatorType>Percentage</IndicatorType>
+         <Name>Brush Twice A Day</Name>
+         <NumeratorDefinition>Brush Twice A Day</NumeratorDefinition>
+         <NumeratorName />
+      </element>
+      <element>
+         <Activity>Test Activity</Activity>
+         <Aim>Test AIM for development</Aim>
+         <Definition />
+         <DenominatorDefinition>Total number of survey respondents</DenominatorDefinition>
+         <DenominatorName />
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>2</IndicatorId>
+         <IndicatorType>Percentage</IndicatorType>
+         <Name>Change Socks Daily</Name>
+         <NumeratorDefinition>Change Socks Daily</NumeratorDefinition>
+         <NumeratorName />
+      </element>
+      <element>
+         <Activity>Test Activity</Activity>
+         <Aim>Preventitive Measures</Aim>
+         <Definition>Distribute, use mosquitos nets per recommendations</Definition>
+         <DenominatorDefinition />
+         <DenominatorName />
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>3</IndicatorId>
+         <IndicatorType>Percentage</IndicatorType>
+         <Name>Distribute mosquito nets</Name>
+         <NumeratorDefinition />
+         <NumeratorName />
+      </element>
+      <element>
+         <Activity>Test Activity</Activity>
+         <Aim>Preventitive Measures</Aim>
+         <Definition>Spray lots of DEET everywhere several times a day</Definition>
+         <DenominatorDefinition />
+         <DenominatorName />
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>4</IndicatorId>
+         <IndicatorType>Percentage</IndicatorType>
+         <Name>Spray DEET everywhere</Name>
+         <NumeratorDefinition />
+         <NumeratorName />
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <Aim>To test various Indicator Types</Aim>
+         <Definition>This is the definition of the percentage indicator...</Definition>
+         <DenominatorDefinition>This is the definition of the denominator of the percentage indicator...</DenominatorDefinition>
+         <DenominatorName>[the denominator name]</DenominatorName>
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>13</IndicatorId>
+         <IndicatorType>Percentage</IndicatorType>
+         <Name>Sample percentage Indicator</Name>
+         <NumeratorDefinition>This is the definition of the numerator of the percentage indicator...</NumeratorDefinition>
+         <NumeratorName>[the numerator name]</NumeratorName>
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <Aim>To test various Indicator Types</Aim>
+         <Definition>This is the definition of the average indicator...</Definition>
+         <DenominatorDefinition>This is the definition of the denominator of the average indicator...</DenominatorDefinition>
+         <DenominatorName>[the denominator name]</DenominatorName>
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>14</IndicatorId>
+         <IndicatorType>Average</IndicatorType>
+         <Name>Sample average Indicator</Name>
+         <NumeratorDefinition>This is the definition of the numerator of the average indicator...</NumeratorDefinition>
+         <NumeratorName>[the numerator name]</NumeratorName>
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <Aim>To test various Indicator Types</Aim>
+         <Definition>This is the definition of the count indicator...</Definition>
+         <DenominatorDefinition>This is the definition of the denominator of the count indicator...</DenominatorDefinition>
+         <DenominatorName>[the denominator name]</DenominatorName>
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>15</IndicatorId>
+         <IndicatorType>Count</IndicatorType>
+         <Name>Sample count Indicator</Name>
+         <NumeratorDefinition>This is the definition of the numerator of the count indicator...</NumeratorDefinition>
+         <NumeratorName>[the numerator name]</NumeratorName>
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <Aim>To test various Indicator Types</Aim>
+         <Definition>This is the definition of the yes/no indicator...</Definition>
+         <DenominatorDefinition>This is the definition of the denominator of the yes/no indicator...</DenominatorDefinition>
+         <DenominatorName />
+         <Frequency>Daily</Frequency>
+         <IndicatorId>16</IndicatorId>
+         <IndicatorType>Yes/No</IndicatorType>
+         <Name>Sample yes/no Indicator</Name>
+         <NumeratorDefinition>This is the definition of the numerator of the yes/no indicator...</NumeratorDefinition>
+         <NumeratorName />
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <Aim>To test various Indicator Types</Aim>
+         <Definition>This is the definition of the ratio indicator...</Definition>
+         <DenominatorDefinition>This is the definition of the denominator of the ratio indicator...</DenominatorDefinition>
+         <DenominatorName>[the denominator name]</DenominatorName>
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>17</IndicatorId>
+         <IndicatorType>Ratio</IndicatorType>
+         <Name>Sample ratio Indicator</Name>
+         <NumeratorDefinition>This is the definition of the numerator of the ratio indicator...</NumeratorDefinition>
+         <NumeratorName>[the numerator name]</NumeratorName>
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <Aim>New Aim</Aim>
+         <Definition>Adding via UI</Definition>
+         <DenominatorDefinition />
+         <DenominatorName />
+         <Frequency>Quarterly</Frequency>
+         <IndicatorId>20</IndicatorId>
+         <IndicatorType>Average</IndicatorType>
+         <Name>New Indicator</Name>
+         <NumeratorDefinition />
+         <NumeratorName />
+      </element>
+      <element>
+         <Activity>Data Entry Test Project 2016</Activity>
+         <Aim>New Aim</Aim>
+         <Definition>Testing again</Definition>
+         <DenominatorDefinition />
+         <DenominatorName />
+         <Frequency>Daily</Frequency>
+         <IndicatorId>24</IndicatorId>
+         <IndicatorType>Count</IndicatorType>
+         <Name>Another Indicator</Name>
+         <NumeratorDefinition />
+         <NumeratorName />
+      </element>
+      <element>
+         <Activity>Test Activity</Activity>
+         <Aim>This is a new AIM.</Aim>
+         <Definition>Test Indicator</Definition>
+         <DenominatorDefinition>denominator def</DenominatorDefinition>
+         <DenominatorName>This is the Denominator</DenominatorName>
+         <Frequency>Weekly</Frequency>
+         <IndicatorId>25</IndicatorId>
+         <IndicatorType>Average</IndicatorType>
+         <Name>This is a new indicator</Name>
+         <NumeratorDefinition>numerator def</NumeratorDefinition>
+         <NumeratorName>This is the Numerator</NumeratorName>
+      </element>
+   </Indicators>
+   <ObservationAttachments>
+      <element>
+         <AttachmentId>4</AttachmentId>
+         <attachment_file_name>Basic-20.jpg</attachment_file_name>
+         <created_date>2016-12-05T00:00:00</created_date>
+         <observation_id>64</observation_id>
+      </element>
+   </ObservationAttachments>
+   <ObservationChanges>
+      <element>
+         <ChangeId>2</ChangeId>
+         <description>I made a change at this site today. I think this will impact the indicator positively.</description>
+         <observation_id>12</observation_id>
+         <start_date>2016-11-04T00:00:00</start_date>
+      </element>
+      <element>
+         <ChangeId>7</ChangeId>
+         <description>Distributed 6-pack of socks to everyone.</description>
+         <observation_id>23</observation_id>
+         <start_date>2016-10-07T00:00:00</start_date>
+      </element>
+      <element>
+         <ChangeId>8</ChangeId>
+         <description>Sock distribution has reached 100% saturation.</description>
+         <observation_id>24</observation_id>
+         <start_date>2016-10-17T00:00:00</start_date>
+      </element>
+      <element>
+         <ChangeId>10</ChangeId>
+         <description>December testing. Added and edited by JMR.</description>
+         <observation_id>64</observation_id>
+         <start_date>2016-12-05T00:00:00</start_date>
+      </element>
+   </ObservationChanges>
+   <ObservationComments>
+      <element>
+         <CommentId>2</CommentId>
+         <comment>This site has a lot of problems! Maybe we should hire new coaches.</comment>
+         <created_date>2016-11-04T00:00:00</created_date>
+         <observation_id>12</observation_id>
+      </element>
+      <element>
+         <CommentId>3</CommentId>
+         <comment>testing the web service</comment>
+         <created_date>2016-12-01T00:00:00</created_date>
+         <observation_id>1</observation_id>
+      </element>
+      <element>
+         <CommentId>5</CommentId>
+         <comment>December testing. Adding comment at 8:32 AM CST. Editing at 8:33 AM CST.</comment>
+         <created_date>2016-12-05T00:00:00</created_date>
+         <observation_id>64</observation_id>
+      </element>
+   </ObservationComments>
+   <ObservationEntries>
+      <element>
+         <ObservationEntryId>43</ObservationEntryId>
+         <count null="true" />
+         <denominator>45</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>31</numerator>
+         <observation_id>1</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>21</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>7</observation_id>
+         <rate null="true" />
+         <yes_no>false</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>23</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>8</observation_id>
+         <rate null="true" />
+         <yes_no>false</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>24</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>9</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>25</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>10</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>26</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>11</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>27</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>12</observation_id>
+         <rate null="true" />
+         <yes_no>false</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>48</ObservationEntryId>
+         <count null="true" />
+         <denominator>2</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>1</numerator>
+         <observation_id>15</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>49</ObservationEntryId>
+         <count null="true" />
+         <denominator>17</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>15</numerator>
+         <observation_id>16</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>50</ObservationEntryId>
+         <count null="true" />
+         <denominator>28</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>22</numerator>
+         <observation_id>17</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>51</ObservationEntryId>
+         <count null="true" />
+         <denominator>33</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>27</numerator>
+         <observation_id>18</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>52</ObservationEntryId>
+         <count null="true" />
+         <denominator>45</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>35</numerator>
+         <observation_id>19</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>53</ObservationEntryId>
+         <count null="true" />
+         <denominator>48</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>39</numerator>
+         <observation_id>20</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>54</ObservationEntryId>
+         <count null="true" />
+         <denominator>50</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>41</numerator>
+         <observation_id>21</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>55</ObservationEntryId>
+         <count null="true" />
+         <denominator>50</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>47</numerator>
+         <observation_id>22</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>56</ObservationEntryId>
+         <count null="true" />
+         <denominator>10</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>7</numerator>
+         <observation_id>23</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>57</ObservationEntryId>
+         <count null="true" />
+         <denominator>20</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>19</numerator>
+         <observation_id>24</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>58</ObservationEntryId>
+         <count null="true" />
+         <denominator>40</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>39</numerator>
+         <observation_id>25</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>59</ObservationEntryId>
+         <count null="true" />
+         <denominator>50</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>49</numerator>
+         <observation_id>26</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>60</ObservationEntryId>
+         <count null="true" />
+         <denominator>10</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>3</numerator>
+         <observation_id>27</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>61</ObservationEntryId>
+         <count null="true" />
+         <denominator>10</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>2</numerator>
+         <observation_id>28</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>62</ObservationEntryId>
+         <count null="true" />
+         <denominator>10</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>2</numerator>
+         <observation_id>29</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>64</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>31</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>65</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>32</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>66</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>33</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>67</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>34</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>68</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>35</observation_id>
+         <rate null="true" />
+         <yes_no>false</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>69</ObservationEntryId>
+         <count null="true" />
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>36</observation_id>
+         <rate null="true" />
+         <yes_no>true</yes_no>
+      </element>
+      <element>
+         <ObservationEntryId>73</ObservationEntryId>
+         <count null="true" />
+         <denominator>93</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>M</indicator_gender>
+         <numerator>9</numerator>
+         <observation_id>40</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>74</ObservationEntryId>
+         <count null="true" />
+         <denominator>102</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>F</indicator_gender>
+         <numerator>17</numerator>
+         <observation_id>40</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>75</ObservationEntryId>
+         <count null="true" />
+         <denominator>195</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>26</numerator>
+         <observation_id>40</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>76</ObservationEntryId>
+         <count null="true" />
+         <denominator>85</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>M</indicator_gender>
+         <numerator>1</numerator>
+         <observation_id>41</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>77</ObservationEntryId>
+         <count null="true" />
+         <denominator>92</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>F</indicator_gender>
+         <numerator>3</numerator>
+         <observation_id>41</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>78</ObservationEntryId>
+         <count null="true" />
+         <denominator>177</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>4</numerator>
+         <observation_id>41</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>82</ObservationEntryId>
+         <count null="true" />
+         <denominator>10</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>M</indicator_gender>
+         <numerator>1</numerator>
+         <observation_id>43</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>83</ObservationEntryId>
+         <count null="true" />
+         <denominator>9</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>F</indicator_gender>
+         <numerator>8</numerator>
+         <observation_id>43</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>84</ObservationEntryId>
+         <count null="true" />
+         <denominator>19</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>9</numerator>
+         <observation_id>43</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>85</ObservationEntryId>
+         <count null="true" />
+         <denominator>10</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>M</indicator_gender>
+         <numerator>2</numerator>
+         <observation_id>44</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>86</ObservationEntryId>
+         <count null="true" />
+         <denominator>10</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>F</indicator_gender>
+         <numerator>8</numerator>
+         <observation_id>44</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>87</ObservationEntryId>
+         <count null="true" />
+         <denominator>20</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>10</numerator>
+         <observation_id>44</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>100</ObservationEntryId>
+         <count>12</count>
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>53</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>101</ObservationEntryId>
+         <count>17</count>
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>54</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>102</ObservationEntryId>
+         <count>22</count>
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>55</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>103</ObservationEntryId>
+         <count>23</count>
+         <denominator null="true" />
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator null="true" />
+         <observation_id>56</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>104</ObservationEntryId>
+         <count null="true" />
+         <denominator>3</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>17</numerator>
+         <observation_id>57</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>105</ObservationEntryId>
+         <count null="true" />
+         <denominator>4</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>18</numerator>
+         <observation_id>58</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>106</ObservationEntryId>
+         <count null="true" />
+         <denominator>4</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>19</numerator>
+         <observation_id>59</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>107</ObservationEntryId>
+         <count null="true" />
+         <denominator>5</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>24</numerator>
+         <observation_id>60</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>109</ObservationEntryId>
+         <count null="true" />
+         <denominator>22</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>11</numerator>
+         <observation_id>62</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>110</ObservationEntryId>
+         <count null="true" />
+         <denominator>44</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>34</numerator>
+         <observation_id>63</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>111</ObservationEntryId>
+         <count null="true" />
+         <denominator>97</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>M</indicator_gender>
+         <numerator>53</numerator>
+         <observation_id>64</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>112</ObservationEntryId>
+         <count null="true" />
+         <denominator>108</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender>F</indicator_gender>
+         <numerator>62</numerator>
+         <observation_id>64</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+      <element>
+         <ObservationEntryId>113</ObservationEntryId>
+         <count null="true" />
+         <denominator>205</denominator>
+         <indicator_age_range_id null="true" />
+         <indicator_gender null="true" />
+         <numerator>115</numerator>
+         <observation_id>64</observation_id>
+         <rate null="true" />
+         <yes_no null="true" />
+      </element>
+   </ObservationEntries>
+   <Observations>
+      <element>
+         <begin_date>2016-10-03T00:00:00</begin_date>
+         <end_date>2016-10-09T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>1</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-24T00:00:00</begin_date>
+         <end_date>2016-10-24T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>7</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-25T00:00:00</begin_date>
+         <end_date>2016-10-25T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>8</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-26T00:00:00</begin_date>
+         <end_date>2016-10-26T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>9</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-27T00:00:00</begin_date>
+         <end_date>2016-10-27T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>10</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-28T00:00:00</begin_date>
+         <end_date>2016-10-28T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>11</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-31T00:00:00</begin_date>
+         <end_date>2016-10-31T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>12</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-04T00:00:00</begin_date>
+         <end_date>2016-09-11T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>14</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-05T00:00:00</begin_date>
+         <end_date>2016-09-11T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>15</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-12T00:00:00</begin_date>
+         <end_date>2016-09-18T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>16</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-19T00:00:00</begin_date>
+         <end_date>2016-09-25T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>17</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-26T00:00:00</begin_date>
+         <end_date>2016-10-02T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>18</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-10T00:00:00</begin_date>
+         <end_date>2016-10-16T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>19</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-17T00:00:00</begin_date>
+         <end_date>2016-10-23T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>20</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-24T00:00:00</begin_date>
+         <end_date>2016-10-30T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>21</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-31T00:00:00</begin_date>
+         <end_date>2016-11-06T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>22</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-10T00:00:00</begin_date>
+         <end_date>2016-10-16T00:00:00</end_date>
+         <indicator_id>2</indicator_id>
+         <observation_id>23</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-17T00:00:00</begin_date>
+         <end_date>2016-10-23T00:00:00</end_date>
+         <indicator_id>2</indicator_id>
+         <observation_id>24</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-24T00:00:00</begin_date>
+         <end_date>2016-10-30T00:00:00</end_date>
+         <indicator_id>2</indicator_id>
+         <observation_id>25</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-31T00:00:00</begin_date>
+         <end_date>2016-11-06T00:00:00</end_date>
+         <indicator_id>2</indicator_id>
+         <observation_id>26</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-03T00:00:00</begin_date>
+         <end_date>2016-10-09T00:00:00</end_date>
+         <indicator_id>2</indicator_id>
+         <observation_id>27</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-26T00:00:00</begin_date>
+         <end_date>2016-10-02T00:00:00</end_date>
+         <indicator_id>2</indicator_id>
+         <observation_id>28</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-19T00:00:00</begin_date>
+         <end_date>2016-09-25T00:00:00</end_date>
+         <indicator_id>2</indicator_id>
+         <observation_id>29</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-01T00:00:00</begin_date>
+         <end_date>2016-11-01T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>31</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-02T00:00:00</begin_date>
+         <end_date>2016-11-02T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>32</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-03T00:00:00</begin_date>
+         <end_date>2016-11-03T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>33</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-04T00:00:00</begin_date>
+         <end_date>2016-11-04T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>34</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-05T00:00:00</begin_date>
+         <end_date>2016-11-05T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>35</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-06T00:00:00</begin_date>
+         <end_date>2016-11-06T00:00:00</end_date>
+         <indicator_id>16</indicator_id>
+         <observation_id>36</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-01T00:00:00</begin_date>
+         <end_date>2016-11-01T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>37</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-02T00:00:00</begin_date>
+         <end_date>2016-11-02T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>38</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-21T00:00:00</begin_date>
+         <end_date>2016-11-27T00:00:00</end_date>
+         <indicator_id>13</indicator_id>
+         <observation_id>40</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-09-12T00:00:00</begin_date>
+         <end_date>2016-09-18T00:00:00</end_date>
+         <indicator_id>13</indicator_id>
+         <observation_id>41</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-24T00:00:00</begin_date>
+         <end_date>2016-10-30T00:00:00</end_date>
+         <indicator_id>13</indicator_id>
+         <observation_id>43</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-21T00:00:00</begin_date>
+         <end_date>2016-11-27T00:00:00</end_date>
+         <indicator_id>13</indicator_id>
+         <observation_id>44</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-31T00:00:00</begin_date>
+         <end_date>2016-11-06T00:00:00</end_date>
+         <indicator_id>15</indicator_id>
+         <observation_id>53</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-07T00:00:00</begin_date>
+         <end_date>2016-11-13T00:00:00</end_date>
+         <indicator_id>15</indicator_id>
+         <observation_id>54</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-14T00:00:00</begin_date>
+         <end_date>2016-11-20T00:00:00</end_date>
+         <indicator_id>15</indicator_id>
+         <observation_id>55</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-21T00:00:00</begin_date>
+         <end_date>2016-11-27T00:00:00</end_date>
+         <indicator_id>15</indicator_id>
+         <observation_id>56</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-10-31T00:00:00</begin_date>
+         <end_date>2016-11-06T00:00:00</end_date>
+         <indicator_id>14</indicator_id>
+         <observation_id>57</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-07T00:00:00</begin_date>
+         <end_date>2016-11-13T00:00:00</end_date>
+         <indicator_id>14</indicator_id>
+         <observation_id>58</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-21T00:00:00</begin_date>
+         <end_date>2016-11-27T00:00:00</end_date>
+         <indicator_id>14</indicator_id>
+         <observation_id>59</observation_id>
+         <site_id>2</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-21T00:00:00</begin_date>
+         <end_date>2016-11-27T00:00:00</end_date>
+         <indicator_id>14</indicator_id>
+         <observation_id>60</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-08-29T00:00:00</begin_date>
+         <end_date>2016-09-04T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>62</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-07T00:00:00</begin_date>
+         <end_date>2016-11-13T00:00:00</end_date>
+         <indicator_id>1</indicator_id>
+         <observation_id>63</observation_id>
+         <site_id>1</site_id>
+      </element>
+      <element>
+         <begin_date>2016-11-28T00:00:00</begin_date>
+         <end_date>2016-12-04T00:00:00</end_date>
+         <indicator_id>13</indicator_id>
+         <observation_id>64</observation_id>
+         <site_id>1</site_id>
+      </element>
+   </Observations>
+   <SiteIndicators>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>1</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>2</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>3</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>4</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>25</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>13</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>14</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>15</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>16</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>17</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>20</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>24</IndicatorId>
+         <SiteId>1</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>1</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>2</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>3</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>4</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>1</ActivityId>
+         <IndicatorId>25</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>13</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>14</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>15</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>16</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>17</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>20</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+      <element>
+         <ActivityId>6</ActivityId>
+         <IndicatorId>24</IndicatorId>
+         <SiteId>2</SiteId>
+      </element>
+   </SiteIndicators>
+   <Sites>
+      <element>
+         <AdminDivision1>Illinois</AdminDivision1>
+         <AdminDivision2>Lake</AdminDivision2>
+         <AdminDivision3>Waukegan</AdminDivision3>
+         <AdminDivision4 />
+         <AdminDivisionLabel1>State</AdminDivisionLabel1>
+         <AdminDivisionLabel2>County</AdminDivisionLabel2>
+         <AdminDivisionLabel3>City</AdminDivisionLabel3>
+         <AdminDivisionLabel4 />
+         <Country>United States</Country>
+         <FundingType />
+         <Latitude />
+         <Longitude />
+         <Partner />
+         <QIIndexScore />
+         <RuralUrban />
+         <SiteID>1</SiteID>
+         <SiteName>Vista East</SiteName>
+      </element>
+      <element>
+         <AdminDivision1>Illinois</AdminDivision1>
+         <AdminDivision2>Lake</AdminDivision2>
+         <AdminDivision3>Waukegan</AdminDivision3>
+         <AdminDivision4 />
+         <AdminDivisionLabel1>State</AdminDivisionLabel1>
+         <AdminDivisionLabel2>County</AdminDivisionLabel2>
+         <AdminDivisionLabel3>City</AdminDivisionLabel3>
+         <AdminDivisionLabel4 />
+         <Country>United States</Country>
+         <FundingType>Government</FundingType>
+         <Latitude />
+         <Longitude />
+         <Partner />
+         <QIIndexScore />
+         <RuralUrban />
+         <SiteID>2</SiteID>
+         <SiteName>Vista West</SiteName>
+      </element>
+   </Sites>
+</root>

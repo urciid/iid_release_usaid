@@ -1,0 +1,101 @@
+﻿@using C1.Web.Mvc.Grid
+@using aim = IID.BusinessLayer.Globalization.Aim.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+
+@model IID.WebSite.Models.Indicator
+
+<section class="max-width-max">
+    <script type="text/javascript">
+        function fgIndicators_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.IndicatorId) {
+                    switch (panel.columns[c].name) {
+                        case 'Name':
+                            cell.innerHTML = (
+                                '<a href="/Indicator/View/' + dataItem.IndicatorId + '">' +
+                                dataItem.Name + '</a>');
+                            break;
+
+                        case 'Delete':
+                            cell.innerHTML = (
+                                '<img src="/Images/icons/16/delete_2.png" class="cursor-pointer" ' +
+                                    'onclick="confirmDeleteIndicator(' + r + ')" title="@common.Delete" />');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function fgIndicators_LoadedRows(s, e) {
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Indicators.ToLower() available.');
+        }
+
+        function confirmDeleteIndicator(rowIdx) {
+            var dataItem = fgIndicators.control.rows[rowIdx].dataItem;
+            if (confirm('Are you sure you want to delete the Indicator \'' + dataItem.Name + '\'?')) {
+                var formData = new FormData();
+                formData.append('IndicatorId', dataItem.IndicatorId);
+
+                $.ajax({
+                    url: '/Indicator/Delete',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (result) {
+                        fgIndicators.control.collectionView.remove(dataItem)
+
+                        if (fgIndicators.control.rows.length == 0)
+                            showFlexGridNoDataMessage(fgIndicators.control, 'No Indicators available.')
+                    },
+                    error: function (result) {
+                        alert(result.responseText);
+                    }
+                })
+            }
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @aim.OtherIndicators
+        </div>
+        @if ((Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.ActivityLeader))
+                                    || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.CountryDirector))
+                                    || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.SystemAdministrator)))
+        {
+            <div class="float-right button">
+                <a class="btn btn-primary" href="@Url.Action("Add", new { activityId = Model.ActivityId })">
+                    @common.Add
+                    <img src="~/Images/icons/16/plus.png" />
+                </a>
+            </div>
+        }
+        
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.OtherIndicators)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("Name").Header(common.Name).Name("Name").Width("4*"));
+                c.Add(cb => cb.Binding("DataCollectionFrequencyValue").Align("Center").Header(indicator.DataCollectionFrequency).Width("*"));
+                c.Add(cb => cb.Binding("DisaggregationText").Align("Center").Header(indicator.Disaggregation).Width("*"));
+                c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgIndicators")
+            .IsReadOnly(true)
+            .ItemFormatter("fgIndicators_ItemFormatter")
+            .OnClientLoadedRows("fgIndicators_LoadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>

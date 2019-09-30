@@ -1,0 +1,140 @@
+﻿@using aim = IID.BusinessLayer.Globalization.Aim.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using IID.BusinessLayer.Identity;
+
+@model IID.WebSite.Models.Aim
+
+<script type="text/javascript">
+    var dlgAim, hidAimMode, hidAimId, inpAimName, inpAimActive,
+        spnAimDialogTitle, btnAimDialogSave, fncAimDialogAfterSave;
+
+    function showAimDialog(mode, aimId, aimName, aimActive, fncAfterSave) {
+        if (!dlgAim) {
+            dlgAim = wijmo.Control.getControl("#aim-dialog");
+            hidAimMode = $('#aim-dialog-mode');
+            hidAimId = $('#aim-dialog-id');
+            inpAimName = $('#aim-dialog-name');
+            inpAimActive = $('#aim-dialog-active');
+            spnAimDialogTitle = $('#aim-dialog-title');
+            btnAimDialogSave = $('#aim-dialog-save');
+        }
+        ButtonRemoveDisabled(btnAimDialogSave);
+        fncAimDialogAfterSave = fncAfterSave;
+
+        hidAimMode.val(mode);
+        if (mode == 'edit') {
+            hidAimId.val(aimId);
+            inpAimName.val(aimName);
+            inpAimActive.val(aimActive == null ? '' : aimActive.toString());
+            spnAimDialogTitle.text('@aim.EditAim');
+            btnAimDialogSave.click(editAim);
+        } else {
+            hidAimId.val(null);
+            inpAimName.val('');
+            inpAimActive.val('');
+            spnAimDialogTitle.text('@aim.AddAim');
+            btnAimDialogSave.click(addAim);
+        }
+
+        dlgAim.show();
+    }
+
+    function validateAimForm() {
+        return $('#aim-dialog-name').valid();
+    }
+
+    function addAim() {
+
+        if (validateAimForm()) {
+            var formData = new FormData();
+            formData.append('ActivityId', @Model.ActivityId);
+            formData.append('Name', inpAimName.val());
+            formData.append('Active', inpAimActive.val());
+            addAntiForgeryTokenToForm(formData);
+
+            $.ajax({
+                url: '/Aim/Add',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: aimSaveSuccess,
+                error: aimSaveError
+            });
+        }
+    }
+
+    function editAim() {
+        if (validateAimForm()) {
+            var formData = new FormData();
+            formData.append('ActivityId', @Model.ActivityId);
+            formData.append('AimId', hidAimId.val());
+            formData.append('Name', inpAimName.val());
+            formData.append('Active', inpAimActive.val());
+            addAntiForgeryTokenToForm(formData);
+
+            $.ajax({
+                url: '/Aim/Edit',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: aimSaveSuccess,
+                error: aimSaveError
+            });
+        }
+    }
+
+    function aimSaveSuccess(result) {
+        btnAimDialogSave.off('click');
+        dlgAim.hide();
+
+        fncAimDialogAfterSave(result);
+    }
+
+    function aimSaveError(result) {
+        alert(result.responseText);
+    }
+
+    function clickSaveOnEnter(e) {
+        e = e || event;
+        if (e.which == 13) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).blur();
+            $('#aim-dialog-save').focus().click();
+        }
+    }
+
+    
+
+</script>
+
+<div id="aim-dialog" class="width-500">
+    <div class="modal-header">
+        <span id="aim-dialog-title"></span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("aimMode", null, new { id = "aim-dialog-mode" })
+            @Html.HiddenFor(m => m.AimId, new { id = "aim-dialog-id" })
+
+            <div class="flexbox label-and-input">
+                @Html.LabelForForm(m => m.Name)&nbsp;
+                @Html.TextBoxFor(m => m.Name, new { @class = "flex-1", id = "aim-dialog-name", onkeypress = "clickSaveOnEnter();" })
+                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "error" })&nbsp;
+                @Html.EditorFor(m => m.Active, null, "aim-dialog-active").Disable(!Identity.CurrentUser.IsInRole(Role.SystemAdministrator))
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="aim-dialog-save" onclick="ButtonSetDisabled(this);">
+            @common.Save
+            <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+        </button>
+    </div>
+</div>
+@(Html.C1().Popup("#aim-dialog").Modal(true).HideTrigger(PopupTrigger.Click))

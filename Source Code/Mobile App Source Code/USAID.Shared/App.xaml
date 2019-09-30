@@ -1,0 +1,137 @@
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="USAID.App">
+    <Application.Resources>
+        <ResourceDictionary>
+        	<Color x:Key="asphaltPrimary">#365271</Color>
+        	<Color x:Key="asphaltLight">#889DB5</Color>
+        	<Color x:Key="asphaltDark">#1C2B39</Color>
+
+        	<Color x:Key="bluePrimary">#1FAECE</Color>
+        	<Color x:Key="blueLight">#91E2F4</Color>
+        	<Color x:Key="blueDark">#2C7797</Color>
+
+        	<Color x:Key="purplePrimary">#9378CD</Color>
+        	<Color x:Key="purpleLight">#CEC0EC</Color>
+        	<Color x:Key="purpleDark">#614CA0</Color>
+
+        	<Color x:Key="greenPrimary">#B3E770</Color>
+        	<Color x:Key="greenLight">#CFEFA7</Color>
+        	<Color x:Key="greenDark">#5A8622</Color>
+
+        	<Color x:Key="redLight">#F69781</Color>
+        	<Color x:Key="redPrimary">#F56D4F</Color>
+        	<Color x:Key="redDark">#BC3C26</Color>
+        	
+        	<Color x:Key="yellowPrimary">#F1C40F</Color>
+        	<Color x:Key="yellowLight">#F7E28B</Color>
+        	<Color x:Key="yellowDark">#E7963B</Color>
+
+        	<Color x:Key="grayPrimary">#ADB7BE</Color>
+        	<Color x:Key="grayLight">#ECF0F1</Color>
+        	<Color x:Key="grayDark">#76828A</Color>
+        	<Color x:Key="grayMedium">#9AA4AB</Color>
+
+			<!-- Great America Colors -->
+			<Color x:Key="GAblue">#034468</Color>
+			<Color x:Key="GAgold">#FAA31B</Color>
+			<Color x:Key="GAbackgroundColor">White</Color>
+
+			<Style x:Key="ListViewStyle" TargetType="ListView">
+                <Setter Property="BackgroundColor" Value="#F7F7F7" />
+				<Setter Property="SeparatorColor" Value="#b7b7b8" />
+            </Style>
+
+			 <Style x:Key="ListViewMiddleLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="#333130" />
+                <Setter Property="FontSize" Value="Small" />
+            </Style>
+
+			<Style x:Key="SmallLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="#333130" />
+                <Setter Property="FontSize" Value="Small" />
+            </Style>
+			<Style x:Key="SmallLabelStyleBold" TargetType="Label">
+                <Setter Property="TextColor" Value="#333130" />
+                <Setter Property="FontSize" Value="Small" />
+				<Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+			<Style x:Key="SmallValueStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="#333130" />
+                <Setter Property="FontSize" Value="Small" />
+            </Style>
+
+			<Style x:Key="SecondaryButtonStyle" TargetType="Button">
+				<Setter Property="TextColor" Value="#034468" />
+				<Setter Property="BackgroundColor" Value="White" />
+				<Setter Property="BorderWidth" Value="1" />
+				<Setter Property="BorderColor" Value="#034468" />
+			</Style>
+			<Style x:Key="PrimaryButtonStyle" TargetType="Button">
+				<Setter Property="TextColor" Value="White" />
+				<Setter Property="BackgroundColor" Value="#034468" />
+			</Style>
+			<Style x:Key="HelpPageLabelStyle" TargetType="Label">
+				<Setter Property="TextColor" Value="#034468" />
+				<Setter Property="FontSize" Value="20" />
+			</Style>
+			<Style x:Key="ObservationPageLabelStyle" TargetType="Label">
+				<Setter Property="TextColor" Value="#034468" />
+				<Setter Property="FontSize" Value="Small" />
+			</Style>
+
+
+
+			<Style x:Key="EntryBlackText" TargetType="Entry">
+				<Setter Property="TextColor" Value="Black" />
+			</Style>
+			<Style x:Key="EditorBlackText" TargetType="Editor">
+				<Setter Property="TextColor" Value="Black" />
+			</Style>
+
+			<Style x:Key="EmptyText" TargetType="Label">
+				<Setter Property="TextColor" Value="Silver" />
+				<Setter Property="FontSize" Value="23" />
+				
+			</Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+<!--<Application
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Sport.Shared;assembly=Sport"
+    x:Class="WMP.Shared.App">
+     <Application.Resources>
+        <ResourceDictionary>
+        	<Color x:Key="asphaltPrimary">#365271</Color>
+        	<Color x:Key="asphaltLight">#889DB5</Color>
+        	<Color x:Key="asphaltDark">#1C2B39</Color>
+
+        	<Color x:Key="bluePrimary">#1FAECE</Color>
+        	<Color x:Key="blueLight">#91E2F4</Color>
+        	<Color x:Key="blueDark">#2C7797</Color>
+
+        	<Color x:Key="purplePrimary">#9378CD</Color>
+        	<Color x:Key="purpleLight">#CEC0EC</Color>
+        	<Color x:Key="purpleDark">#614CA0</Color>
+
+        	<Color x:Key="greenPrimary">#B3E770</Color>
+        	<Color x:Key="greenLight">#CFEFA7</Color>
+        	<Color x:Key="greenDark">#5A8622</Color>
+
+        	<Color x:Key="redLight">#F69781</Color>
+        	<Color x:Key="redPrimary">#F56D4F</Color>
+        	<Color x:Key="redDark">#BC3C26</Color>
+        	
+        	<Color x:Key="yellowPrimary">#F1C40F</Color>
+        	<Color x:Key="yellowLight">#F7E28B</Color>
+        	<Color x:Key="yellowDark">#E7963B</Color>
+
+        	<Color x:Key="grayPrimary">#ADB7BE</Color>
+        	<Color x:Key="grayLight">#ECF0F1</Color>
+        	<Color x:Key="grayDark">#76828A</Color>
+        	<Color x:Key="grayMedium">#9AA4AB</Color>
+        	  </ResourceDictionary>
+    </Application.Resources>
+</Application>-->

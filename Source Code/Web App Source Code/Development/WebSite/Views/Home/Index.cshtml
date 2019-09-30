@@ -1,0 +1,323 @@
+﻿@using C1.Web.Mvc.Grid
+@using activity = IID.BusinessLayer.Globalization.Activity.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using home = IID.BusinessLayer.Globalization.Home.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+
+@model IID.WebSite.Models.HomeViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<script type="text/javascript">
+    function itemFormatter(panel, r, c, cell) {
+        if (panel.cellType == wijmo.grid.CellType.Cell) {
+            var grid = panel.grid;
+            var dataItem = grid.rows[r].dataItem;
+            if (dataItem && (dataItem.ActivityId || dataItem.SiteId || dataItem.ChartName || dataItem.CountryId)) {
+                switch (panel.columns[c].name) {
+                    case 'ActivityName':
+                        cell.innerHTML = (
+                            '<a href="/Activity/View/' + dataItem.ActivityId + '">' + dataItem.ActivityName + '</a>');
+                        break;
+                    case 'CountryName':
+                        cell.innerHTML = (
+                            '<a href="/Home/CountryDashboard/' + dataItem.CountryId + '">' + dataItem.CountryName + '</a>');
+                        break;
+
+                    case 'ProjectName':
+                        // Disabled for now as we do not have a project page.
+                        //    cell.innerHTML = (
+                        //        '<a href="/Project/View/' + dataItem.ProjectId + '">' + dataItem.ProjectName + '</a>');
+                        cell.innerHTML = dataItem.ProjectName;
+                        break;
+
+                    case 'SiteName':
+                        cell.innerHTML = (
+                            '<a href="/Site/View/' + dataItem.SiteId + '">' + dataItem.SiteName + '</a>');
+                        break;
+
+                    case 'ChartName':
+                        cell.innerHTML = (
+                            '<a href="/Chart/Load/' + dataItem.UserId + '/' + btoa(dataItem.ChartName) + '">' + dataItem.ChartName + '</a>');
+                        break;
+
+                    case 'ActivityLinks':
+                        if ( (@Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.SiteManager).ToString().ToLower())) {
+                            cell.innerHTML = ('');
+                        } else if (dataItem.HasActiveIndicators) {
+                            cell.innerHTML = (
+                                '<a class="rankIcon" href="/Activity/RankByImprovement/' + dataItem.ActivityId + '" title="@activity.RankByImprovement"></a>' +
+                                '&nbsp;&nbsp;' +
+                                '<a class="chartIcon" href="/Chart/Activity/' + dataItem.ActivityId + '" title="@common.Chart"></a>');
+                        }
+                        else {
+                            cell.innerHTML = (
+                                '<div class="rankIcon disabled" title="@activity.RankByImprovement"></div>' +
+                                '&nbsp;&nbsp;' +
+                                '<div class="chartIcon disabled" title="@common.Chart"></div>');
+                        }
+                        break;
+
+                    case 'SiteLinks':
+                        cell.innerHTML = (
+                            '<a class="dataIcon" href="/Observation/View/' + dataItem.IndicatorId + '/' + dataItem.SiteId + '" title="@observation.ViewData"></a>' +
+                            '&nbsp;&nbsp;' +
+                            '<a class="coachReportIcon" href="/Site/CoachReport/' + dataItem.ActivityId + '/' + dataItem.SiteId + '" title="@observation.CoachReport"></a>');
+                        break;
+
+                    case 'CountryLinks':
+                        cell.innerHTML = (
+                            '<a class="coachReportIcon" href="/Home/CountryDirectorReport/' + dataItem.CountryId  + '" title="@home.CountryDirectorReport"></a>');
+                        break;
+
+                    case 'DeleteChart':
+                        cell.innerHTML = (
+                            '<img src="/Images/icons/16/delete_2.png" class="cursor-pointer" ' +
+                                'onclick="confirmDeleteChart(' + r + ')" title="@common.Delete" />');
+                        break;
+
+                }
+            }
+        }
+    }
+
+    function loadedCountryRows(s, e) {
+        if (s._rows.length == 0)
+            showFlexGridNoDataMessage(s, 'No @common.Countries.ToLower() available.');
+    }
+    function loadedActivityRows(s, e) {
+        if (s._rows.length == 0)
+            showFlexGridNoDataMessage(s, 'No @common.Activities.ToLower() available.');
+    }
+
+    function loadedSiteRows(s, e) {
+        if (s._rows.length == 0)
+            showFlexGridNoDataMessage(s, 'No @common.Sites.ToLower() available.');
+    }
+
+    function loadedChartRows(s, e) {
+        if (s._rows.length == 0)
+            showFlexGridNoDataMessage(s, 'No @common.Charts.ToLower() available.');
+    }
+
+    function confirmDeleteChart(rowIdx) {
+        var dataItem = fgMyCharts.control.rows[rowIdx].dataItem;
+        if (confirm('Are you sure you want to delete this chart?')) {
+            var formData = new FormData();
+            formData.append('chartName', dataItem.ChartName);
+            addAntiForgeryTokenToForm(formData);
+
+            $.ajax({
+                url: '/Chart/Delete',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (result) {
+                    fgMyCharts.control.collectionView.remove(dataItem)
+                    loadedChartRows();
+                },
+                error: function (result) {
+                    alert(result.responseText);
+                }
+            })
+        }
+    }
+</script>
+
+<h4>@home.Welcome</h4>
+<hr />
+
+
+<div class="flexbox width-100p">
+    <div class="flex-1">
+
+
+        @if (Model.HomeObjects.AssignedCountries.Count > 0)
+        {
+            <section class="home-section">
+                <div class="header">
+                    <div class="title">
+                        @home.AssignedCountries
+                    </div>
+                </div>
+                <div class="content">
+                    @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .Bind(Model.HomeObjects.AssignedCountries)
+                    .Columns(c =>
+                    {
+                        c.Add().Header(common.Name).Name("CountryName").Width("2*");
+                        c.Add(cb => cb.Binding("ObservationsLast7Days").Align("Right").Header(home.Last7Days).Width("*"));
+                        c.Add(cb => cb.Binding("ObservationsLast30Days").Align("Right").Header(home.Last30Days).Width("*"));
+                        c.Add(cb => cb.Binding("ObservationsTotal").Align("Right").Header(home.Total).Width("*"));
+                        c.Add().Align("Center").Header("").Name("CountryLinks").Width("60");
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgAssignedCountries")
+                    .IsReadOnly(true)
+                    .ItemFormatter("itemFormatter")
+                    .OnClientLoadedRows("loadedCountryRows")
+                    .OrderBy("CountryName")
+                    .SelectionMode(SelectionMode.None)
+                    )
+                </div>
+            </section>
+        }
+        
+
+        <section>
+            <div class="header">
+                <div class="float-left title">
+                    @home.AssignedActivities
+                </div>
+            </div>
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .Bind(Model.HomeObjects.AssignedActivities)
+                    .Columns(c =>
+                    {
+                        c.Add().Header(common.Name).Name("ActivityName").Width("2*");
+                        c.Add().Header(common.Project).Name("ProjectName").Width("*");
+                        c.Add(cb => cb.Binding("CountryName").Header(common.Country).Width("*"));
+                        c.Add().Align("Center").Header("").Name("ActivityLinks").Width("60");
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgAssignedActivities")
+                    .IsReadOnly(true)
+                    .ItemFormatter("itemFormatter")
+                    .OnClientLoadedRows("loadedActivityRows")
+                    .OrderBy("ActivityName")
+                    .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        </section>
+
+@if (!Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.Funder))
+{
+    <section class="home-section">
+        <div class="header">
+            <div class="float-left title">
+                @home.AssignedSites
+            </div>
+        </div>
+        <div class="content">
+            @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .AutoSizeMode(AutoSizeMode.Both)
+                    .Bind(Model.HomeObjects.AssignedSites)
+                    .Columns(c =>
+                    {
+                        c.Add().Header(common.Name).Name("SiteName").Width("*");
+                        c.Add(cb => cb.Binding("ActivityName").Header(common.Activity).Width("2*"));
+                        c.Add(cb => cb.Binding("CountryName").Header(common.Country).Width("*"));
+                        c.Add().Align("Center").Header("").Name("SiteLinks").Width("60");
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgAssignedSites")
+                    .IsReadOnly(true)
+                    .ItemFormatter("itemFormatter")
+                    .OnClientLoadedRows("loadedSiteRows")
+                    .OrderBy("SiteName", "ActivityName")
+                    .SelectionMode(SelectionMode.None)
+            )
+        </div>
+    </section>
+}
+       
+    </div>
+
+    <div class="width-25">&nbsp;</div>
+
+    <div class="flex-1">
+        
+        <section class="home-section">
+            <div class="header">
+                <div class="title">
+                    @home.MyActivities
+                </div>
+            </div>
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .Bind(Model.HomeObjects.FavoriteActivities)
+                    .Columns(c =>
+                    {
+                        c.Add().Header(common.Name).Name("ActivityName").Width("2*");
+                        c.Add().Header(common.Project).Name("ProjectName").Width("*");
+                        c.Add(cb => cb.Binding("CountryName").Header(common.Country).Width("*"));
+                        c.Add().Align("Center").Header("").Name("ActivityLinks").Width("60");
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgMyActivities")
+                    .IsReadOnly(true)
+                    .ItemFormatter("itemFormatter")
+                    .OnClientLoadedRows("loadedActivityRows")
+                    .OrderBy("ActivityName")
+                    .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="header">
+                <div class="title">
+                    @home.MySites
+                </div>
+            </div>
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .Bind(Model.HomeObjects.FavoriteSites)
+                    .Columns(c =>
+                    {
+                        c.Add().Header(common.Name).Name("SiteName").Width("*");
+                        c.Add(cb => cb.Binding("CountryName").Header(common.Country).Width("*"));
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgMySites")
+                    .IsReadOnly(true)
+                    .ItemFormatter("itemFormatter")
+                    .OnClientLoadedRows("loadedSiteRows")
+                    .OrderBy("SiteName")
+                    .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        </section>
+
+        <section class="home-section">
+            <div class="header">
+                <div class="title">
+                    @home.MyCharts
+                </div>
+            </div>
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .Bind(Model.HomeObjects.FavoriteCharts)
+                    .Columns(c =>
+                    {
+                        c.Add().Header(common.Name).Name("ChartName").Width("*");
+                        c.Add(cb => cb.Align("Right").Binding("UpdatedDate").Format("d").Header(common.UpdatedOn).Width("100"));
+                        c.Add().Align("Center").Header(common.Delete).Name("DeleteChart").Width("70");
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgMyCharts")
+                    .IsReadOnly(true)
+                    .ItemFormatter("itemFormatter")
+                    .OnClientLoadedRows("loadedChartRows")
+                    .OrderBy("ChartName")
+                    .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        </section>
+    </div>
+</div>

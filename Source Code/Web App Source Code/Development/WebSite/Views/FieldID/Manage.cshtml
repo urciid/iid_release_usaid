@@ -1,0 +1,65 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Domain
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using IID.WebSite.Models
+
+@model FieldIDViewModel
+
+@{
+    ViewBag.Title = "Field ID Maintenance";
+    ViewBag.GridTitle = "Field ID Maintenance:  " + Model.ParentFieldIDValue;
+}
+
+@Html.HiddenFor(m => m.ParentFieldID)
+<script type="text/javascript">
+    function itemFormatter(panel, r, c, cell) {
+        if (panel.cellType == wijmo.grid.CellType.Cell) {
+            var grid = panel.grid;
+            var dataItem = grid.rows[r].dataItem;
+            if (dataItem && (dataItem.Value)) {
+                switch (panel.columns[c].name) {
+                    case 'Value':
+                        cell.innerHTML = (
+                            '<a href="/FieldID/Edit/' + dataItem.FieldID + '">' +
+                            dataItem.Value + '</a>');
+                        break;
+                }
+            }
+        }
+    }
+</script>
+
+<section class="width-700">
+    <div class="header">
+        <div class="float-left title">@ViewBag.GridTitle</div>
+        <div class="float-right button">
+            <button type="button" onclick="showAddFieldIDDialog();">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+        </div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<FieldIDModel>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .AutoSizeMode(AutoSizeMode.Both)
+            .Bind(Model.AllFieldIDs)
+            .Columns(c =>
+            {
+                c.Add().Header("Value").Name("Value").Width("*");
+                c.Add(cb => cb.Binding("ParentFieldID").Header("Parent Field ID").Width("110"));
+                c.Add(cb => cb.Binding("FieldID").Header("Field ID").Width("90"));
+                c.Add(cb => cb.Binding("Active").Header("Active").Width("90"));
+            })
+            .Id("fgFieldIDs")
+            .HeadersVisibility(HeadersVisibility.Column)
+            .IsReadOnly(true)
+            .ItemFormatter("itemFormatter")
+            .SelectionMode(SelectionMode.None)
+
+        )
+    </div>
+</section>
+
+@Html.Partial("~/Views/FieldID/Add.cshtml", new FieldID(Model.ParentFieldID, 1) { _FieldID = "***" })

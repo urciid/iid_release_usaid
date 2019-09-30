@@ -1,0 +1,78 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+
+<div id="change-dialog" class="width-75p">
+    <div class="modal-header">
+        <span id="change-dialog-title"></span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        @Html.Hidden("changeMode", null, new { id = "changeMode" })
+        @Html.Hidden("changeRowIdx", null, new { id = "changeRowIdx" })
+        @Html.Hidden("ChangeId", null, new { id = "changeId" })
+
+        <div>
+            @Html.Label(@observation.WhenDidYouStartTestingThisChange + "? ", new { style = "line-height: 20px;" })&nbsp;
+            @(Html.C1().InputDate(null)
+                        .Id("changeStartDate")
+                        .IsRequired(false)
+                        .Name("StartDate")
+                        .Width(100)
+            )
+        </div>
+        <br />
+
+        @Html.TextArea("Description", new { @class = "height-100 width-100p", id = "changeDescription" })
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="change-dialog-save" type="button" >
+            @common.Save
+            <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+        </button>
+    </div>
+</div>
+@(Html.C1().Popup("#change-dialog").Modal(true).HideTrigger(PopupTrigger.Click))
+
+
+
+<div id="attachment-dialog" class="width-400">
+    <div class="modal-header">
+        <span id="attachment-dialog-title">@observation.AddAttachment</span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <div class="flexbox padding-4">
+            <input type="hidden" name="FileName" id="attachmentName" value="TestUpload" />
+            <input type="file" name="FileBytes" id="attachmentFile" class="flex-1 display-inline-block" />
+            &nbsp;&nbsp;&nbsp;
+            <button id="attachment-dialog-save" onclick="ButtonSetDisabled(this); addAttachment();" type="button">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+        </div>
+    </div>
+</div>
+@(Html.C1().Popup("#attachment-dialog").Modal(true).HideTrigger(PopupTrigger.Click))
+
+
+
+<div id="comment-dialog" class="width-75p">
+    <div class="modal-header">
+        <span id="comment-dialog-title"></span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        @Html.Hidden("commentMode", null, new { id = "commentMode" })
+        @Html.Hidden("commentRowIdx", null, new { id = "commentRowIdx" })
+        @Html.Hidden("CommentId", null, new { id = "commentId" })
+
+        @Html.TextArea("Comment", new { @class = "height-400 width-100p", id = "comment" })
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" id="comment-dialog-save" type="button">
+            @common.Save
+            <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+        </button>
+    </div>
+</div>
+@(Html.C1().Popup("#comment-dialog").Modal(true).HideTrigger(PopupTrigger.Click))

@@ -1,0 +1,62 @@
+﻿/* Necessary to specify LTR for these elements because sometimes we wish to position menus from the right edge instead of (default) left. */
+.wj-dropdown-panel.wj-listbox .wj-listbox-item {
+    direction: ltr;
+}
+
+.wj-btn {
+    padding: 3px !important;
+    margin: auto;
+    text-align: center;
+}
+
+.wj-input-group-btn {
+    width: 20px !important;
+}
+
+.wj-state-selected,
+.wj-grid-editor {
+    border: 2px solid #003366 !important;
+    cursor: text !important;
+    background: #FFFFFF !important;
+    color: #003366 !important;
+}
+
+.wj-cell .wj-grid-editor {
+    height: 24px;
+}
+
+.wj-topleft .wj-header,
+.wj-colheaders .wj-header {
+    background-color: #E0E0E0 !important;
+}
+
+.wj-rowheaders .wj-header {
+    background-color: #E0E0E0 !important;
+}
+
+.wj-cell .wj-alt {
+    background-color: #F0F0F0 !important;
+}
+
+.wj-top-group-header {
+    background-color: #C0C0C0 !important;
+}
+
+.wj-popup {
+    border: 1px solid #7088A8 !important;
+}
+
+.wj-super-header {
+    background-color: #597790 !important;
+    color: #FFFFFF !important;
+}
+
+.wj-flexchart {
+    margin: 0 !important;
+    border: 1px solid #CCCCCC !important;
+}
+
+.wj-title {
+    font-size: 16px !important;
+    font-weight: bold !important;
+}

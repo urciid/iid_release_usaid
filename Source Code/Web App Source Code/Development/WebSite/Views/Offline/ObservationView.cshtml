@@ -1,0 +1,83 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@{
+    ViewBag.Title = "Observation View (Offline)";
+}
+
+@section contentHeader{
+    <div id="contentHeader" class="breadcrumbs">
+        <b>@common.Activity:</b>
+        <a id="breadCrumbActivity"></a>
+
+        <span class="separator">&#187;</span>
+        <b>@common.Indicator:</b>
+        <div id="breadCrumbIndicator"></div>
+
+        <span class="separator">&#187;</span>
+        <b>@common.Site:</b>
+        <div id="breadCrumbSites"></div>
+    </div>
+}
+
+<table class="height-100p width-100p" style="table-layout: fixed;">
+    <tbody>
+        <tr>
+            <td class="height-100p width-300 vertical-align-top" id="aimIndicatorTreeHost"></td>
+            <td class="width-25"></td>
+            <td class="vertical-align-top">
+                <div class="border-top-rounded" id="fgObservations"></div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    var localized = {
+        dateFormat: '@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+        aims: '@common.Aims',
+        indicators: '@common.Indicators',
+        viewData: '@observation.ViewData',
+        ageRange: '@observation.AgeRange',
+        sex: '@observation.Sex',
+        total: '@observation.Total',
+        yes: '@common.Yes',
+        no: '@common.No'
+    };
+
+    window.onresize = function () { setGridToFillViewport('fgObservations'); };
+    $(document).ready(function () { setGridToFillViewport('fgObservations'); });
+
+    var sexes = JSON.parse(localStorage.Sexes);
+    sexes[null] = 'Total';
+
+    var indicatorId, siteId, disAggByAge = false, disAggBySex = false;
+    $(document).ready(function () {
+        indicatorId = parseInt(getUrlFragmentValue('indicatorId'));
+        siteId = parseInt(getUrlFragmentValue('siteId'));
+        if (!(isNaN(indicatorId) || isNaN(siteId))) {
+            setBreadcrumbs('ObservationView', [indicatorId, siteId]);
+            var indicator = getLocalStorageEntity('Indicator', indicatorId);
+            localized.indicatorId = indicatorId;
+            localized.siteId = siteId;
+            localized.numeratorDefinition = indicator.NumeratorDefinition,
+            localized.numeratorName = indicator.NumeratorName;
+            localized.denominatorDefinition = indicator.DenominatorDefinition;
+            localized.denominatorName = indicator.DenominatorName;
+            localized.indicatorDefinition = indicator.Definition;
+            localized.indicatorName = indicator.Name;
+            localized.indicatorType = indicator.TypeFieldId;
+            localized.disAggByAge = indicator.DisaggregateByAge;
+            localized.disAggBySex = indicator.DisaggregateBySex;
+
+            localized.ageRanges = [];
+            var ageRangeIds = getLocalStorageEntity('IndicatorAgeRangeIds', indicatorId);
+            if (ageRangeIds)
+                ageRangeIds.map(function (x) { localized.ageRanges[x] = getIndicatorAgeRange(x); });
+            localized.ageRanges[null] = 'Total';
+
+            getAimIndicatorTree('aimIndicatorTreeHost', null, indicatorId, siteId);
+            loadObservations('fgObservations', indicatorId, siteId, null);
+        }
+    });
+</script>
+@Scripts.Render("~/Scripts/observation.js")

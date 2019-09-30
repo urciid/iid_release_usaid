@@ -1,0 +1,4 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource;
+
+@model bool?
+@Html.Encode(Model.HasValue ? Model.Value ? common.ActiveStatus : common.InactiveStatus : common.PendingStatus)

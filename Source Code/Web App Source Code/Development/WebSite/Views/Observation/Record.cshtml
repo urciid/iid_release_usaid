@@ -1,0 +1,860 @@
+﻿@using System.Data
+@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Domain
+@using IID.BusinessLayer.Identity;
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using IID.BusinessLayer.Helpers
+@using IID.WebSite.Models
+
+@model Observation
+@{
+    if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+    {
+        ViewBag.Title = "Enter Data";
+    }
+    else
+    {
+        ViewBag.Title = "View Data";
+    }
+
+    var groupBys = new List<string>()
+        {
+            Model.Indicator.DisaggregateByAge ? "age_range_name" : null,
+            Model.Indicator.DisaggregateBySex ? "sex_description" : null
+        }.Where(s => s != null).ToArray();
+}
+@functions {
+    public string GetValueColumnAlign()
+    {
+        switch (Model.Indicator.Type)
+        {
+            case IndicatorType.Count:
+            case IndicatorType.YesNo:
+                return "Center";
+            default:
+                return "Right";
+        }
+    }
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml",
+        ProjectBreadcrumbs.ForObservationRecord(Model.IndicatorId, Model.SiteId, Model.BeginDate, Model.EndDate))
+}
+
+<script type="text/javascript">
+    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+</script>
+
+<b class="font-size-big">Observation Dates:</b>
+<br />
+
+<div class="flexbox width-100p">
+    <div class="background-color-blue border-light-gray color-white cursor-pointer float-left text-align-center"
+         onclick="getDatePeriods(numberOfDatePeriods * -1);" style="height: 37px; line-height: 28px; width: 15px;">&#171;</div>
+    <div class="flex-2" id="datePeriods"></div>
+    <div class="background-color-blue border-light-gray color-white cursor-pointer float-left text-align-center"
+         onclick="getDatePeriods(numberOfDatePeriods);" style="height: 37px; line-height: 28px; width: 20px;">&#187;</div>
+    <div class="clear-floats"></div>
+</div>
+<br />
+
+<script type="text/javascript">
+    var localized = {
+        dateFormat: '@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+        observationId: @(Model.ObservationId.HasValue ? Model.ObservationId.ToString() : "null"),
+        indicatorId: @Model.IndicatorId,
+        siteId: @Model.SiteId,
+        viewData: '@observation.ViewData',
+        ageRange: '@observation.AgeRange',
+        sex: '@observation.Sex',
+        total: '@observation.Total',
+        yes: '@common.Yes',
+        no: '@common.No',
+        numeratorDefinition: '@Mvc.EscapeForJavaScript(Model.Indicator.NumeratorDefinition)',
+        numeratorName: '@Mvc.EscapeForJavaScript(Model.Indicator.NumeratorName)',
+        denominatorDefinition: '@Mvc.EscapeForJavaScript(Model.Indicator.DenominatorDefinition)',
+        denominatorName: '@Mvc.EscapeForJavaScript(Model.Indicator.DenominatorName)',
+        indicatorDefinition: '@Mvc.EscapeForJavaScript(Model.Indicator.Definition)',
+        indicatorName: '@Mvc.EscapeForJavaScript(Model.Indicator.Name)',
+        indicatorType: '@Model.Indicator.TypeFieldId',
+        indicatorRatioPer: @(Model.Indicator.RatioPer ?? 1000),
+        ageRanges: @Html.Raw(Json.Encode(Model.Indicator.AgeRanges)),
+        disAggByAge: @Model.IsAgeDisaggregated.ToString().ToLower(),
+        disAggBySex: @Model.IsSexDisaggregated.ToString().ToLower(),
+        beginDate: '@Model.BeginDate.ToString("yyyy-MM-dd")',
+        endDate: '@Model.EndDate.ToString("yyyy-MM-dd")',
+        minMaxTolerance: @Html.Raw(Json.Encode(Model.MinMaxTolerance)),
+        add: '@common.Add',
+        edit: '@common.Edit',
+        delete: '@common.Delete',
+        change: '@observation.Change',
+        changes: '@observation.Changes',
+        attachment: '@observation.Attachment',
+        attachments: '@observation.Attachments',
+        comment: '@observation.Comment',
+        comments: '@observation.Comments',
+        isAdmin: @Identity.CurrentUser.IsInRole(Role.SystemAdministrator).ToString().ToLower()
+    };
+    if (localized.ageRanges)
+        localized.ageRanges[null] = 'Total';
+
+    var sexes = @Html.Raw(Json.Encode(Model.Sexes));
+    sexes[null] = 'Total';
+
+    var thisObservationBeginDate = convertJsonDateToJavaScript(@Html.Raw(Json.Encode(DateTime.SpecifyKind(Model.BeginDate, DateTimeKind.Local))));
+    var preferredLastDateShown = thisObservationBeginDate;
+    var datePeriods = @Html.Raw(Json.Encode(Model.DatePeriods));
+    $(document).ready(function(){ getDatePeriods(0); });
+
+    var disAggByAge, disAggBySex;
+    $(document).ready(function () {
+        disAggByAge = $('#disAggByAge');
+        disAggBySex = $('#disAggBySex');
+
+        disableButton('btnSave');
+    });
+
+
+    function saveEntries() {
+        var entries = [];
+        var cv = fgEntries.control.collectionView;
+        var entryIdx, _ageRangeId = null, _sexCode = null;
+        var out_of_tolerance = false;
+
+        for (var i = 0; i < cv.itemCount; i++) {
+            var itm = cv.items[i];
+
+            if ((entryIdx == null) || (itm.age_range_id != _ageRangeId) || (itm.sex_code != _sexCode)) {
+                entryIdx = entries.push({ AgeRangeId: itm.age_range_id, SexCode: itm.sex_code }) - 1;
+                _ageRangeId = itm.age_range_id;
+                _sexCode = itm.sex_code;
+            }
+            var strSexCode = ' ';
+            if (itm.sex_code != null) {
+                strSexCode = itm.sex_code;
+            }
+            var strAgeRangeID = 0;
+            if (itm.age_range_id != null) {
+                strAgeRangeID = itm.age_range_id;
+            }
+            
+            switch (itm.type) { 
+                case 'numerator':
+                    entries[entryIdx]['Numerator'] = itm.value;
+                    break;
+                case 'denominator':
+                    entries[entryIdx]['Denominator'] = itm.value;
+                    break;
+                case 'result':
+                    switch (localized.indicatorType) {                        
+                        case 'indyes':
+                            entries[entryIdx]['YesNo'] = itm.value;
+                            break;
+                            //case 'indrat':
+                            //    entries[entryIdx]['Ratio'] = itm.value;
+                            //    break;
+    
+                        case 'indrat' :   {                                  
+                            entries[entryIdx]['Ratio'] = itm.value;
+                            var item_key = 'MIN' + strSexCode + strAgeRangeID;                              
+                            for (var key in localized.minMaxTolerance) {
+                                var value = localized.minMaxTolerance[key];
+                                if (item_key == key) {
+                                    if (itm.value < value) {    
+                                        //alert("itemval="+itm.value);
+                                        //alert("val="+value);
+                                        out_of_tolerance = true;
+                                    }
+                                }
+                            }
+                            var item_key = 'MAX' + strSexCode + strAgeRangeID;                            
+                            for (var key in localized.minMaxTolerance) {
+                                var value = localized.minMaxTolerance[key];
+                                if (item_key == key) {    
+                                    if (itm.value > value) {
+                                        out_of_tolerance = true;
+                                    }
+                                }
+                            }                
+                            break; 
+                        }           
+                        case 'indcnt':{
+                            entries[entryIdx]['Count'] = itm.value;
+                            if (itm.value > 0) {
+                                var item_key = 'MIN' + strSexCode + strAgeRangeID;
+                                for (var key in localized.minMaxTolerance) {
+                                    var value = localized.minMaxTolerance[key];
+                                  
+                                    if (item_key == key) {
+                                        if (itm.value < value) {
+                                            out_of_tolerance = true;
+                                        }
+                                    }
+                                }
+                                var item_key = 'MAX' + strSexCode + strAgeRangeID;
+                                for (var key in localized.minMaxTolerance) {
+                                    var value = localized.minMaxTolerance[key];
+                                    if (item_key == key) {
+                                        if (itm.value > value) {
+                                            out_of_tolerance = true;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+
+                        case 'indper' :         
+                            var item_key = 'MIN' + strSexCode + strAgeRangeID;                              
+                            for (var key in localized.minMaxTolerance) {
+                                var value = localized.minMaxTolerance[key];
+                                if (item_key == key) {
+                                    if (itm.value * 100 < value) {
+                                        out_of_tolerance = true;
+                                    }
+                                }
+                            }
+                            var item_key = 'MAX' + strSexCode + strAgeRangeID;                            
+                            for (var key in localized.minMaxTolerance) {
+                                var value = localized.minMaxTolerance[key];
+                                if (item_key == key) {
+                                    if (itm.value * 100 > value) {
+                                        out_of_tolerance = true;
+                                    }
+                                }
+                            }                
+                            break;            
+    
+                        case 'indavg' :         
+                            var item_key = 'MIN' + strSexCode + strAgeRangeID;                              
+                            for (var key in localized.minMaxTolerance) {
+                                var value = localized.minMaxTolerance[key];
+                                if (item_key == key) {
+                                    if (itm.value * 100 < value) {
+                                        out_of_tolerance = true;
+                                    }
+                                }
+                            }
+                            var item_key = 'MAX' + strSexCode + strAgeRangeID;                            
+                            for (var key in localized.minMaxTolerance) {
+                                var value = localized.minMaxTolerance[key];    
+                                if (item_key == key) {
+                                    if (itm.value * 100 > value) {
+                                        out_of_tolerance = true;
+                                    }
+                                }
+                            }                
+                            break;                                     
+                    }                             
+                }
+        }
+        
+
+        //var toleranceMessage = 'This indicator value has changed by a large amount compared to the last time period. If you believe this is more than just random variation, please enter a comment or change(s) that you think might explain the large change in this indicator value. Do you want to save this entry?';
+        var toleranceMessage = '@observation.ObservationBigChange';
+        if (!out_of_tolerance || confirm(toleranceMessage)) {
+            var data = {
+                IndicatorId: localized.indicatorId,
+                SiteId: localized.siteId,
+                BeginDate: localized.beginDate,
+                EndDate: localized.endDate,
+                IsAgeDisaggregated: $('#disAggByAge').is(':checked'),
+                IsSexDisaggregated: $('#disAggBySex').is(':checked'),
+                Entries: entries
+            };
+            addAntiForgeryTokenToJson(data);
+            $.post('/Observation/Record', data, saveEntriesCallback, 'json');
+            disableButton('btnSave');
+        }
+    }
+
+    function saveEntriesCallback(result) {
+        if (result.success) {
+            var url = ('/Observation/Record/' + localized.indicatorId + '/' + localized.siteId + '/' + localized.beginDate);
+            window.location.assign(url);
+        } else {
+            alert(result.responseText);
+        }
+    }
+    
+    function addChange() {
+        
+        try{                
+                       
+            var formData = new FormData();
+            formData.append('ObservationId', localized.observationId);
+            formData.append('StartDate', inpChangeStartDate.value.toISOString().split('T')[0]);
+            formData.append('Description', inpChangeDescription.value);
+            addAntiForgeryTokenToForm(formData);
+
+            $.ajax({
+                url: '/Observation/AddChange',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: changeSaveSuccess,
+                error: handleAjaxError
+            });
+        }        
+        catch(ex1)
+        {
+            alert("Date is required.");
+        }
+               
+
+    }
+
+    function editChange() {
+        var formData = new FormData();
+        formData.append('ChangeId', hidChangeId.value);
+        formData.append('ObservationId', localized.observationId);
+        formData.append('StartDate', inpChangeStartDate.value.toISOString());
+        formData.append('Description', inpChangeDescription.value);
+        addAntiForgeryTokenToForm(formData);
+
+        $.ajax({
+            url: '/Observation/EditChange',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: changeSaveSuccess,
+            error: handleAjaxError
+        });
+    }
+
+        function deleteChange(rowIdx) {
+            var dataItem = fgChanges.control.rows[rowIdx].dataItem;
+            var formData = new FormData();
+            formData.append('changeId', dataItem.ChangeId);
+            addAntiForgeryTokenToForm(formData);
+
+        $.ajax({
+            url: '/Observation/DeleteChange',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (result) {
+                fgChanges.control.collectionView.remove(dataItem)
+
+                if (fgChanges.control.rows.length == 0)
+                    showFlexGridNoDataMessage(fgComments.control, 'No changes available.')
+            },
+            error: function (result) {
+                alert(result.responseText);
+            }
+
+        });
+        }
+    
+        function addAttachment() {      
+
+            var formData = new FormData();
+            formData.append('ObservationId', localized.observationId);
+            formData.append('FileName', inpAttachmentFile.value.substring(inpAttachmentFile.value.lastIndexOf('\\')+1));
+            formData.append('FileBytes', inpAttachmentFile.files[0]);
+            addAntiForgeryTokenToForm(formData);
+            
+
+        $.ajax({
+            url: '/Observation/AddAttachment',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: attachmentSaveSuccess,
+            error: handleAjaxError
+        });
+            
+            
+        }
+
+        function deleteAttachment(rowIdx) {
+            var dataItem = fgAttachments.control.rows[rowIdx].dataItem;
+            var formData = new FormData();
+            formData.append('attachmentId', dataItem.AttachmentId);
+            addAntiForgeryTokenToForm(formData);
+
+        $.ajax({
+            url: '/Observation/DeleteAttachment',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: afterDeleteAttachment(dataItem),
+            error: handleAjaxError
+        });
+        }
+
+        function downloadFile(attachmentId) {
+            var url = '/Observation/DownloadAttachmentFile';
+            var data = { 'attachmentId' : attachmentId };
+        ajaxDownloadFile(url, data);
+    }
+    
+    function addComment() {
+        var formData = new FormData();
+        formData.append('ObservationId', localized.observationId);
+        formData.append('Comment', inpComment.value);
+        addAntiForgeryTokenToForm(formData);
+
+        $.ajax({
+        url: '/Observation/AddComment',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: commentSaveSuccess,
+            error: handleAjaxError
+        });
+        
+    }
+
+    function editComment() {
+        var formData = new FormData();
+        formData.append('CommentId', hidCommentId.value);
+        formData.append('ObservationId', localized.observationId);
+        formData.append('Comment', inpComment.value);
+        addAntiForgeryTokenToForm(formData);
+
+        $.ajax({
+        url: '/Observation/EditComment',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: commentSaveSuccess,
+            error: handleAjaxError
+        })
+    }
+
+
+    function deleteComment(rowIdx) {
+        var dataItem = fgComments.control.rows[rowIdx].dataItem;
+        var formData = new FormData();
+        formData.append('commentId', dataItem.CommentId);
+        addAntiForgeryTokenToForm(formData);
+
+        $.ajax({
+        url: '/Observation/DeleteComment',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (result) {
+                fgComments.control.collectionView.remove(dataItem)
+
+                if (fgComments.control.rows.length == 0)
+                    showFlexGridNoDataMessage(fgComments.control, 'No notes available.')
+            },
+            error: function (result) {
+                alert(result.responseText);
+            }
+        });
+    }
+</script>
+@Scripts.Render("~/Scripts/observation.js")
+
+<table class="font-size-big">
+    <tr>
+        <td class="font-weight-bold text-align-right">@common.Aim:</td>
+        <td>@Model.Aim.Name</td>
+    </tr>
+    <tr>
+        <td class="font-weight-bold text-align-right">@common.Indicator:</td>
+        <td>
+            <div id="divIndicator"></div>
+            <script type="text/javascript">
+                //This is lame, but C1 doesn't implement formatItem on the server-side, so I had to implement client-side.
+                var itemsSource = [];
+                @foreach (var item in Model.AimsAndIndicators)
+                {
+                    if (item.Item1 == "Aim")
+                    {
+                        @:itemsSource.push({ 'Header': '<div class=\"color-white font-weight-bold\">@Html.Raw(Mvc.EscapeForJavaScript(item.Item3))</div>', 'CommandParameter': 'Aim' });
+                    }
+                    else
+                    {
+                        string cssClass = (Model.IndicatorId == item.Item2 ? "font-weight-bold font-style-italic" : "");
+                        string url = String.Format("/Observation/Record/{0}/{1}/{2:yyyy-MM-dd}", item.Item2, Model.SiteId, Model.BeginDate);
+                        string shortName = Mvc.GetShortText(item.Item3);
+                        @:itemsSource.push({ 'Header': '<a class=\"@cssClass\" href=\"@url\" title=\"@item.Item3\">@Html.Raw(Mvc.EscapeForJavaScript(shortName))</a>', 'CommandParameter': 'Indicator' });
+                    }
+                }
+                var divIndicator = new c1.mvc.input._MenuWrapper('#divIndicator');
+                divIndicator.initialize({
+                    "itemsSource": itemsSource,
+                    "displayMemberPath": "Header",
+                    "uniqueId": "divIndicator",
+                    "header": '@Html.Raw(Mvc.GetShortText(Model.Indicator.Name))',
+                    "formatItem": mnuIndicators_FormatItem,
+                    "dropDownCssClass": "border-dark-blue"
+                });
+            </script>
+        </td>
+    </tr>
+</table>
+<br />
+
+<section>
+    <div class="header">
+        <div class="float-left title">
+            @observation.EnterData
+        </div>
+        @if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+        {
+            <div class="float-right button">
+            <button id="btnSave" type="button" onclick="saveEntries()">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+            <a class="btn btn-primary" href="@Url.Action("View", new { indicatorId = Model.IndicatorId, siteId = Model.SiteId })">
+                @common.Cancel
+                <img src="~/Images/icons/16/close_delete.png" />
+            </a>
+            </div>
+        }       
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @if (Model.Indicator.DisaggregateByAge || Model.Indicator.DisaggregateBySex)
+        {
+            <div id="divDisaggregation" class="font-weight-bold">
+                @indicator.Disaggregation:
+                @if (Model.Indicator.DisaggregateByAge)
+                {
+                    <span id="spnDisaggregationByAge">
+                        &nbsp;&nbsp;
+                        @Html.CheckBoxFor(m => m.IsAgeDisaggregated, new { id = "disAggByAge", onclick = "return confirmRebindGrid(event);" })
+                        @Html.Label("disAggByAge", indicator.DisaggregateByAge, new { @class = "notForForm" })
+                    </span>
+                }
+                @if (Model.Indicator.DisaggregateBySex)
+                {
+                    <span id="spnDisaggregationBySex">
+                        &nbsp;&nbsp;
+                        @Html.CheckBoxFor(m => m.IsSexDisaggregated, new { id = "disAggBySex", onclick = "return confirmRebindGrid(event);" })
+                        @Html.Label("disAggBySex", indicator.DisaggregateBySex, new { @class = "notForForm" })
+                    </span>
+                }
+            </div>
+        }
+
+        @(Html.C1().FlexGrid()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.Entries.ToCollection())
+            .Columns(c =>
+            {
+                foreach (DataColumn column in Model.Entries.Columns)
+                {
+                    switch (column.ColumnName)
+                    {
+                        case "age_range_id":
+                        case "sex_code":
+                            c.Add(cb => cb.Binding(column.ColumnName).Visible(false));
+                            break;
+                        case "age_range_name":
+                            if (Model.Indicator.DisaggregateByAge)
+                                c.Add(cb => cb.Binding(column.ColumnName).Visible(false));
+                            break;
+                        case "sex_description":
+                            if (Model.Indicator.DisaggregateBySex)
+                                c.Add(cb => cb.Binding(column.ColumnName).Visible(false));
+                            break;
+                        case "type":
+                            c.Add(cb => cb.Align("Right").Binding(column.ColumnName).IsReadOnly(true).Width("*"));
+                            break;
+                        case "value":
+                            c.Add(cb => cb.Align(GetValueColumnAlign()).Binding(column.ColumnName).Format("N0"));
+                            break;
+                    }
+                }
+            })
+            .GroupBy(groupBys)
+            .HeadersVisibility(HeadersVisibility.None)
+            .Id("fgEntries")
+            .ItemFormatter("itemFormatter")
+            .OnClientBeginningEdit("fgEntries_BeginningEdit")
+            .OnClientCellEditEnding("fgEntries_CellEditEnding")
+            .OnClientCellEditEnded("fgEntries_CellEditEnded")
+            .OnClientSelectionChanging("fgEntries_SelectionChanging")
+            .SelectionMode(SelectionMode.Cell)
+            .Width("600px")
+        )
+
+        @if (Model.ObservationId.HasValue && (Model.UpdatedOn ?? Model.CreatedOn).HasValue)
+        {
+            <hr />
+            <div>
+                <b>@common.LastUpdated:</b>
+                @(Model.UpdatedBy ?? Model.CreatedBy)
+                @((Model.UpdatedOn ?? Model.CreatedOn).Value.ToString("d"))
+            </div>
+        }
+    </div>
+</section>
+
+@if (Model.ObservationId.HasValue)
+{
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.Changes @common.IfAny
+            </div>
+            @if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+            {
+                <div class="float-right button">
+                    <button type="button" onclick="showChangeDialog('add', null, afterAddChange);">
+                        @common.Add
+                        <img src="~/Images/icons/16/plus.png" />
+                    </button>
+                </div>
+            }
+            <div class="clear-floats"></div>
+        </div>
+        @if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+        {
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Changes)
+                .Columns(c =>
+                {
+                    c.Add(cb => cb.Binding("Description").Header(observation.Change).Name("Description").Width("*"));
+                    c.Add(cb => cb.Binding("StartDate").Header(observation.StartDate).Width("100"));
+                    c.Add(cb => cb.Binding("CreatedBy").Header(common.CreatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("CreatedOn").Header(common.CreatedOn).Width("100"));
+                    //c.Add(cb => cb.Align("Center").Binding("Approved").Header(common.Approved).Name("Approved").Width("100"));
+                    c.Add(cb => cb.Binding("UpdatedBy").Header(common.UpdatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("UpdatedOn").Header(common.UpdatedOn).Width("100"));
+                    c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("70");
+                    c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgChanges")
+                .IsReadOnly(true)
+                .ItemFormatter("fgChanges_ItemFormatter")
+                .OnClientLoadedRows("fgChanges_LoadedRows")
+                .SelectionMode(SelectionMode.None)
+                )
+            </div>
+
+        }
+        else
+        {
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Changes)
+                .Columns(c =>
+                {
+                    c.Add(cb => cb.Binding("Description").Header(observation.Change).Name("Description").Width("*"));
+                    c.Add(cb => cb.Binding("StartDate").Header(observation.StartDate).Width("100"));
+                    c.Add(cb => cb.Binding("CreatedBy").Header(common.CreatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("CreatedOn").Header(common.CreatedOn).Width("100"));
+                    //c.Add(cb => cb.Align("Center").Binding("Approved").Header(common.Approved).Name("Approved").Width("100"));
+                    c.Add(cb => cb.Binding("UpdatedBy").Header(common.UpdatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("UpdatedOn").Header(common.UpdatedOn).Width("100"));
+                    //c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("70");
+                    //c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgChanges")
+                .IsReadOnly(true)
+                .ItemFormatter("fgChanges_ItemFormatter")
+                .OnClientLoadedRows("fgChanges_LoadedRows")
+                .SelectionMode(SelectionMode.None)
+                )
+            </div>
+
+        }
+
+    </section>
+
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.Attachments @common.IfAny
+            </div>
+            @if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+            {   
+                <div class="float-right button">
+                    <button class="btn btn-primary" type="button" onclick="showAttachmentDialog(afterAddAttachment);">
+                        @common.Add
+                        <img src="~/Images/icons/16/plus.png" />
+                    </button>
+                </div>
+            }
+           
+            <div class="clear-floats"></div>
+        </div>
+        @if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+        {
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Attachments)
+                .Columns(c =>
+                {
+                    c.Add(cb => cb.Header(observation.FileName).Name("FileName").Width("2*"));
+                    c.Add(cb => cb.Align("Right").Header(observation.FileSize).Name("FileSize").Width("100"));
+                    c.Add(cb => cb.Binding("Active").Align("Center").DataType(DataType.String).Header(common.Approved).Name("Approved").Width("100"));
+                    c.Add(cb => cb.Binding("CreatedBy").Header(common.CreatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("CreatedOn").Header(common.CreatedOn).Width("100"));
+                    c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                    c.Add(cb => cb.Binding("AttachmentId").Visible(false));
+                })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgAttachments")
+                .IsReadOnly(true)
+                .ItemFormatter("fgAttachments_ItemFormatter")
+                .OnClientLoadedRows("fgAttachments_LoadedRows")
+                .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        }
+        else
+        {
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Attachments)
+                .Columns(c =>
+                {
+                    c.Add(cb => cb.Header(observation.FileName).Name("FileName").Width("2*"));
+                    c.Add(cb => cb.Align("Right").Header(observation.FileSize).Name("FileSize").Width("100"));
+                    c.Add(cb => cb.Align("Center").DataType(DataType.String).Header(common.Approved).Name("Approved").Width("100"));
+                    c.Add(cb => cb.Binding("CreatedBy").Header(common.CreatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("CreatedOn").Header(common.CreatedOn).Width("100"));
+                    //c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                    c.Add(cb => cb.Binding("AttachmentId").Visible(false));
+                })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgAttachments")
+                .IsReadOnly(true)
+                .ItemFormatter("fgAttachments_ItemFormatter")
+                .OnClientLoadedRows("fgAttachments_LoadedRows")
+                .SelectionMode(SelectionMode.None)
+                )
+            </div>
+
+        }
+
+    </section>
+
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.Comments @common.IfAny
+            </div>
+            @if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+            {
+                <div class="float-right button">
+                    <button type="button" onclick="showCommentDialog('add', null, afterAddComment);">
+                        @common.Add
+                        <img src="~/Images/icons/16/plus.png" />
+                    </button>
+                </div>
+            }
+            
+            <div class="clear-floats"></div>
+        </div>
+        @if (ViewBag.AccessRights == IID.BusinessLayer.Identity.UserSecurityAccess.Update)
+        {
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Comments)
+                .Columns(c =>
+                {
+                    c.Add(cb => cb.Binding("Comment").Header(observation.Comment).Name("Comment").Width("4*"));
+                    c.Add(cb => cb.Binding("CreatedBy").Header(common.CreatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("CreatedOn").Header(common.CreatedOn).Width("100"));
+                    c.Add(cb => cb.Binding("UpdatedBy").Header(common.UpdatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("UpdatedOn").Header(common.UpdatedOn).Width("100"));
+                    c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("70");
+                    c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                    c.Add(cb => cb.Binding("CommentId").Visible(false));
+                })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgComments")
+                .IsReadOnly(true)
+                .ItemFormatter("fgComments_ItemFormatter")
+                .OnClientLoadedRows("fgComments_LoadedRows")
+                .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        }
+        else
+        {
+
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Comments)
+                .Columns(c =>
+                {
+                    c.Add(cb => cb.Binding("Comment").Header(observation.Comment).Name("Comment").Width("4*"));
+                    c.Add(cb => cb.Binding("CreatedBy").Header(common.CreatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("CreatedOn").Header(common.CreatedOn).Width("100"));
+                    c.Add(cb => cb.Binding("UpdatedBy").Header(common.UpdatedBy).Width("150"));
+                    c.Add(cb => cb.Binding("UpdatedOn").Header(common.UpdatedOn).Width("100"));
+                    //c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("70");
+                    //c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                    c.Add(cb => cb.Binding("CommentId").Visible(false));
+                })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgComments")
+                .IsReadOnly(true)
+                .ItemFormatter("fgComments_ItemFormatter")
+                .OnClientLoadedRows("fgComments_LoadedRows")
+                .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        }
+
+    </section>
+
+    <section>
+        <div class="header">
+            <div class="float-left title">
+                @observation.IndicatorHistory
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.History)
+                .Columns(c =>
+                {
+                    c.Add().Binding("Type").Align("Center").Header("Update").Width("100");
+                    c.Add().Binding("Date").Align("Center").Header("Date").Width("100");
+                    c.Add().Binding("UserName").Align("Center").Header("User").Width("150");
+                    c.Add().Binding("Label").Align("Center").Header("Entry").Width("*");
+                    c.Add().Binding("Description").Align("Center").Header("Description").Width("3*");
+                })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgIndicatorHistory")
+                .IsReadOnly(true)
+                .SelectionMode(SelectionMode.None)
+            )
+        </div>
+    </section>
+
+    @Html.Partial("~/Views/Observation/Dialogs.cshtml")
+}

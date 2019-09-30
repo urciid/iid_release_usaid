@@ -1,0 +1,54 @@
+﻿#navigation {
+    height: 30px;
+    background-color: #1D405E;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    line-height: 32px;
+}
+
+#navigation * {
+    color: #FFFFFF !important;
+    font-weight: bold;
+}
+
+#navigation .menuItem {
+    display: inline-block;
+    margin: 0 10px 0 10px;
+}
+
+#navigation a:hover {
+    text-decoration: underline;
+}
+
+#navigation .wj-template,
+#navigation .wj-input-group,
+#navigation .wj-form-control,
+#navigation .wj-input-group-btn {
+    border: none !important;
+    cursor: pointer !important;
+    height: 26px !important;
+    line-height: normal;
+    padding: 0 !important;
+}
+#navigation .wj-dropdown {
+    background-color: #1D405E !important;
+    border: none !important;
+    line-height: normal;
+    margin-top: -3px;
+}
+
+#navigation .wj-btn {
+    border: none !important;
+    padding: 0 0 0 4px !important;
+}
+
+.navDropDown {
+    background-color: #F8F8F8 !important;
+    box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+}
+
+#navigation .connected * {
+    color: #33FF33 !important;
+}
+#navigation .disconnected * {
+    color: #FFCC66 !important;
+}

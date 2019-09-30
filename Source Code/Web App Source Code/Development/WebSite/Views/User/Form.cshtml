@@ -1,0 +1,101 @@
+﻿@using IID.BusinessLayer.Domain;
+@using IID.BusinessLayer.Helpers;
+@using IID.BusinessLayer.Identity;
+@using IID.WebSite.Models;
+
+@model User
+
+<table class="form-table width-100p">
+    <colgroup>
+        <col style="width: 33%;" />
+        <col style="width: 33%;" />
+        <col style="width: 34%;" />
+    </colgroup>
+    <tbody>
+        <tr>
+            <td>
+                <table class="width-100p">
+                    <colgroup>
+                        <col />
+                        <col style="width: 95%;" />
+                        <col />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.Email)</td>
+                            <td>@Html.TextBoxFor(m => m.Email, new { @class = "width-100p" })</td>
+                            <td>@Html.ValidationMessageFor(m => m.Email, "", new { @class = "error" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.FirstName)</td>
+                            <td>@Html.TextBoxFor(m => m.FirstName, new { @class = "width-100p" })</td>
+                            <td>@Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "error" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.LastName)</td>
+                            <td>@Html.TextBoxFor(m => m.LastName, new { @class = "width-100p" })</td>
+                            <td>@Html.ValidationMessageFor(m => m.LastName, "", new { @class = "error" })</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <colgroup>
+                        <col />
+                        <col style="width: 95%;" />
+                        <col />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.UserRoleFieldIds)</td>
+                            <td>
+                                @(Html.C1().MultiSelectFor(m => m.UserRoleFieldIds)
+                                    .Bind(SelectLists.GetFieldIdSelectListRequestUserRole(FieldIdParentTypes.UserRole, null, Identity.CurrentUser.Id))
+                                    .CssClass("width-100p")
+                                    .DisplayMemberPath("Text")
+                                    .IsRequired(true)
+                                    .SelectedValuePath("Value")
+                                )
+                            </td>
+                            <td>@Html.ValidationMessageFor(m => m.UserRoleFieldIds, "", new { @class = "error" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.Title)</td>
+                            <td>@Html.TextBoxFor(m => m.Title, new { @class = "width-100p" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.Phone)</td>
+                            <td>@Html.TextBoxFor(m => m.Phone, new { @class = "width-100p" })</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <table class="width-100p">
+                    <colgroup>
+                        <col />
+                        <col style="width: 95%;" />
+                    </colgroup>
+                    <tbody>
+                       <tr>
+                           @*<td>@Html.LabelForForm(m => m.SiteId)</td>
+                           <td>@Html.DropDownListFor(m => m.SiteId, Model.AllSites, new { @class = "width-300" })</td>*@
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.Active)</td>
+                            <td>@Html.EditorFor(m => m.Active).Disable(!Identity.CurrentUser.IsInRole(Role.SystemAdministrator))</td>
+                        </tr>
+                        @if (Model.UserId.HasValue)
+                        {
+                            <tr>
+                                <td>@Html.LabelForForm(m => m.LastLogin)</td>
+                                <td>@Html.DisplayFor(m => m.LastLogin)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>

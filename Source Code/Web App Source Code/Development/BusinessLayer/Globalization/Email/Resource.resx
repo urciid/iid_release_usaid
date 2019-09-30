@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ForgotPasswordBody" xml:space="preserve">
+    <value>Dear {0} {1}
+
+We received a password change request for your account.  
+If you made this request, &lt;a href="{2}" target="_blank"&gt;click here&lt;/a&gt; to start the reset process.
+
+If you did not request this change, please &lt;a href="{3}" target="_blank"&gt;contact the system administrator&lt;/a&gt; immediately.
+
+Thank you
+
+The Improvement Indicator Database Team
+{4}</value>
+  </data>
+  <data name="ForgotPasswordSubject" xml:space="preserve">
+    <value>IID Password Change Request</value>
+  </data>
+  <data name="NewRequestSubmittedBody" xml:space="preserve">
+    <value>Dear {0} {1}
+
+Your request has been submitted for approval.  You will be notified via email once your request is approved/denied.  If you have any questions, please &lt;a href="{2}" target="_blank"&gt;contact the USAID system administrator&lt;/a&gt;.
+
+Thank you
+
+The Improvement Indicator Database Team
+{3}</value>
+  </data>
+  <data name="NewRequestSubmittedSubject" xml:space="preserve">
+    <value>IID New Request Submitted for Approval</value>
+  </data>
+  <data name="PasswordChangedBody" xml:space="preserve">
+    <value>Dear {0} {1}
+
+Your password was recently updated.
+
+If you did not request this change, please &lt;a href="{2}" target="_blank"&gt;contact the system administrator&lt;/a&gt; immediately.
+
+Thank you
+
+The USAID Team
+{3}</value>
+  </data>
+  <data name="PasswordChangedSubject" xml:space="preserve">
+    <value>IID Password Change Confirmation</value>
+  </data>
+  <data name="RequestApprovalReminderBody" xml:space="preserve">
+    <value>This is a reminder that a request for {0}  is still pending your approval.  &lt;a href="{1}" target="_blank"&gt;Click here&lt;/a&gt; to view the request.
+
+Thank you
+
+The Improvement Indicator Database Team</value>
+  </data>
+  <data name="RequestApprovalReminderSubject" xml:space="preserve">
+    <value>IID Request Approval Required Reminder</value>
+  </data>
+  <data name="RequestApprovalRequiredBody" xml:space="preserve">
+    <value>A new request for {0} has been submitted that requires your approval.  &lt;a href="{1}" target="_blank"&gt;Click here&lt;/a&gt; to view the request.
+
+Thank you</value>
+  </data>
+  <data name="RequestApprovalRequiredSubject" xml:space="preserve">
+    <value>IID Request Approval Required</value>
+  </data>
+  <data name="RequestApprovedBody" xml:space="preserve">
+    <value>Dear {0} {1}
+
+Your request for {2} has been approved.
+
+Thank you
+
+The USAID Team
+{3}</value>
+  </data>
+  <data name="RequestApprovedSubject" xml:space="preserve">
+    <value>IID Request Approved</value>
+  </data>
+  <data name="RequestDeniedBody" xml:space="preserve">
+    <value>Dear {0} {1}
+
+Your request for {2} has been denied for the following reasons:
+&lt;blockquote&gt;{3}&lt;/blockquote&gt;
+
+Thank you
+
+The USAID Team
+{4}</value>
+  </data>
+  <data name="RequestDeniedSubject" xml:space="preserve">
+    <value>IID Request Denied</value>
+  </data>
+  <data name="WelcomeBody" xml:space="preserve">
+    <value>Dear {0} {1}
+
+Welcome to the USAID application.  Your account has been activated.  
+
+&lt;a href="{2}" target="_blank"&gt;Click here&lt;/a&gt; to change your password.
+
+If you have any questions, please &lt;a href="{3}" target="_blank"&gt;contact the system administrator&lt;/a&gt;.
+
+Thank you
+
+The USAID Team
+{4}</value>
+  </data>
+  <data name="WelcomeSubject" xml:space="preserve">
+    <value>Welcome to the Improvement Indicator Database (IID)</value>
+  </data>
+</root>

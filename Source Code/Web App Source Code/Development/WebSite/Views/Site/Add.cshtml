@@ -1,0 +1,287 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using IID.BusinessLayer.Helpers
+@using IID.BusinessLayer.Identity;
+@using IID.WebSite.Helpers
+@using IID.WebSite.Models
+
+@model Site
+
+@{
+    ViewBag.Title = "Add Site";
+}
+
+@*<script type="text/javascript">
+    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+</script>*@
+
+@using (Html.BeginForm("Add", "Site", FormMethod.Post))
+{
+    <script type="text/javascript">
+        var administrativeDivisions;
+        $(document).ready(function () {
+            loadCountryAdministrativeDivisions();
+            loadSiteTypes();
+        });
+
+        function loadCountryAdministrativeDivisions() {
+            var countryId = $('#lstCountry').val();
+            if (countryId > 0) {
+                var url = ('@(Settings.WebApiUrl)/Site/Countries?countryId=' + countryId);
+                $.getJSON(url, null, function (result) {
+                    var country = result[0];
+
+                    // Save the administrative divisions to a variable which will be reused when binding search results.
+                    administrativeDivisions = [];
+                    for (var i = 1; i <= 4; i++)
+                        administrativeDivisions[i] = country[('AdministrativeDivision' + i)];
+
+                    var ids = {
+                        1 : @(Model.AdministrativeDivisionId1 ?? -1),
+                        2 : @(Model.AdministrativeDivisionId2 ?? -1),
+                        3 : @(Model.AdministrativeDivisionId3 ?? -1),
+                        4 : @(Model.AdministrativeDivisionId4 ?? -1)
+                    };
+                    for (var i = 1; i <= 4; i++) {
+                        var divisionName = administrativeDivisions[i];
+
+                        var id = ('#trAdministrativeDivision' + i);
+                        var label = $(id + ' label');
+                        label.text(divisionName + ':');
+
+                        var btn = $('#btnAddDivision' + i);
+                        btn.text('@common.Add ' + divisionName);
+
+                        var tr = $(id);
+                        if (divisionName && divisionName != '')
+                            tr.show();
+                        else
+                            tr.hide();
+
+                        // Load administrative divisions.
+                        if (i == 1)
+                            loadAdministrativeDivisions(1, null, null, ids[i]);
+                        else
+                            loadAdministrativeDivisions(i, ids[i - 1], null, ids[i]);
+                    }
+                });
+            } else {
+                for (var i = 1; i <= 4; i++)
+                    $('#trAdministrativeDivision' + i).hide();
+            }
+        }
+
+        function loadAdministrativeDivisions(level, parentDivisionId, callback, selectedId) {
+            if (level == 1 || parentDivisionId != '') {
+                var id = ('lstAdministrativeDivisionId' + level);
+                var countryId = $('#lstCountry').val();
+                if (countryId) {
+                    var url = ('@(Settings.WebApiUrl)/Site/AdministrativeDivisions?countryId=' + countryId + '&parentDivisionId=' + parentDivisionId + '&languageId=@IidCulture.CurrentLanguageId');
+                    loadListBoxFromJson(id, url, 'Name', 'AdministrativeDivisionId', function () {
+                        var lst = $('#' + id);
+                        lst.prepend('<option value="" selected="selected"></option>');
+                        lst.val(selectedId);
+
+                        if (callback)
+                            callback();
+                    });
+
+                    var btnId = ('btnAddDivision' + level);
+                    if (level == 1 || parentDivisionId > 0) {
+                        var parentValueElement = $('#lstAdministrativeDivisionId' + level);
+                        var parentValue = parentValueElement ? parentValueElement.val() : null;
+                        enableButton(btnId, function(){ addAdministrativeDivision(level, parentDivisionId); });
+                    } else {
+                        disableButton(btnId);
+                    }
+
+                    for (var i = level + 1; i <= 4; i++) {
+                        var lst = $('#lstAdministrativeDivisionId' + i);
+                        lst.find('option').remove();
+                        disableButton('btnAddDivision' + i);
+                    }
+                } else {
+                    for (var i = level; i <= 4; i++) {
+                        var lst = $('#lstAdministrativeDivisionId' + i);
+                        lst.find('option').remove();
+                        disableButton('btnAddDivision' + i);
+                    }
+                }
+            }
+        }
+
+        function loadSiteTypes() {
+            var countryId = $('#lstCountry').val();
+            if (countryId) {
+                var url = ('@(Settings.WebApiUrl)/Site/SiteTypes?countryId=' + countryId + '&languageId=@IidCulture.CurrentLanguageId');
+                loadListBoxFromJson('lstSiteType', url, 'Value', 'FieldId', function() {
+                    addDropDownListEmptyOption($('#lstSiteType'));
+                });
+            }
+        }
+
+       function DisableSubmitButton(b)
+       {
+          b.disabled = true;
+          b.value = 'Saving';
+          b.form.submit();
+       }
+
+    </script>
+
+    <section class="max-width-max">
+        @Html.AntiForgeryToken()
+
+        <div class="header">
+            <div class="float-left title">
+                @common.Site
+            </div>
+            <div class="float-right button">
+                <a class="btn btn-primary" href="@Url.Action("Index", "Home")">
+                    @common.Cancel
+                    <img src="~/Images/icons/16/close_delete.png" />
+                </a>
+
+                    <button type="submit"  onclick="DisableSubmitButton(this);">
+                        @common.Save
+                        <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+
+                    </button>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            <table class="form-table width-100p">
+                <tbody>
+                    <tr>
+                        <td>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.SiteName)</td>
+                                        <td>@Html.EditorFor(m => m.SiteName, new { htmlAttributes = new { @class = "width-300" } })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.SiteName, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.CountryName)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.CountryId, Model.Countries,
+                                            new { @class = "width-300", id = "lstCountry", onchange = "loadCountryAdministrativeDivisions(); loadSiteTypes();" })
+                                        </td>
+                                        <td>@Html.ValidationMessageFor(m => m.CountryId, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.SiteTypeValue)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.SiteTypeFieldId, new SelectListItem[] { },
+                                            new { @class = "width-300", id = "lstSiteType" })
+                                        </td>
+                                        <td>@Html.ValidationMessageFor(m => m.SiteTypeFieldId, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr id="trAdministrativeDivision1">
+                                        <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType1)</label></td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AdministrativeDivisionId1, new SelectListItem[] { },
+                                                new { @class = "width-300", id = "lstAdministrativeDivisionId1", onchange = "loadAdministrativeDivisions(2, this.value)" })
+                                        </td>
+                                        <td>@Html.ValidationMessageFor(m => m.AdministrativeDivisionId1, "", new { @class = "error" })</td>
+                                        <td><button type="button" class="btn btn-primary blue" id="btnAddDivision1" /></td>
+                                    </tr>
+                                    <tr id="trAdministrativeDivision2">
+                                        <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType2)</label></td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AdministrativeDivisionId2, new SelectListItem[] { },
+                                                new { @class = "width-300", id = "lstAdministrativeDivisionId2", onchange = "loadAdministrativeDivisions(3, this.value)" })
+                                        </td>
+                                        <td>@Html.ValidationMessageFor(m => m.AdministrativeDivisionId2, "", new { @class = "error" })</td>
+                                        <td><button type="button" class="btn btn-primary blue" id="btnAddDivision2" /></td>
+                                    </tr>
+                                    <tr id="trAdministrativeDivision3">
+                                        <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType3)</label></td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AdministrativeDivisionId3, new SelectListItem[] { },
+                                                new { @class = "width-300", id = "lstAdministrativeDivisionId3", onchange = "loadAdministrativeDivisions(4, this.value)" })
+                                        </td>
+                                        <td></td>
+                                        <td><button type="button" class="btn btn-primary blue" id="btnAddDivision3" /></td>
+                                    </tr>
+                                    <tr id="trAdministrativeDivision4">
+                                        <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType4)</label></td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AdministrativeDivisionId4, new SelectListItem[] { },
+                                                new { @class = "width-300", id = "lstAdministrativeDivisionId4" })
+                                        </td>
+                                        <td></td>
+                                        <td><button type="button" class="btn btn-primary blue" id="btnAddDivision4" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Active)</td>
+                                        <td>@Html.EditorFor(m => m.Active).Disable(!Identity.CurrentUser.IsInRole(Role.SystemAdministrator))</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.FundingTypeValue, new { @class = "width-200" })</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.FundingTypeFieldId, Model.FundingTypes,
+                                                new { @class = "width-200", id = "lstFundingType" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Partner)</td>
+                                        <td>@Html.EditorFor(m => m.Partner, new { htmlAttributes = new { @class = "width-200" } })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Longitude)</td>
+                                        <td>@Html.EditorFor(m => m.Longitude, new { htmlAttributes = new { @class = "width-50" } })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Latitude)</td>
+                                        <td>@Html.EditorFor(m => m.Latitude, new { htmlAttributes = new { @class = "width-50" } })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.QIIndexScoreValue)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.QIIndexScoreFieldId, Model.QIIndexScores,
+                                            new { @class = "width-100", id = "lstQIIndexScore" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.PopulationDensityValue)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.PopulationDensityFieldId, Model.PopulationDensities,
+                                            new { @class = "width-100", id = "lstPopulationDensity" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.OtherKeyInformation)</td>
+                                        <td>
+                                            @Html.TextAreaFor(m => m.OtherKeyInformation,
+                                            new { @class = "height-100 width-400" })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+
+@Html.Partial("~/Views/Site/AddDivision.cshtml")
+
+
+<script>
+// Warning before leaving the page (back button, or outgoinglink)
+window.onbeforeunload = function() {
+   // return "Do you really want to leave application?";
+   //if we return nothing here (just calling return;) then there will be no pop-up question at all
+   return;
+};
+</script>

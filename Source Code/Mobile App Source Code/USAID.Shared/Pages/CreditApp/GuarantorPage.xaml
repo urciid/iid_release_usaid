@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:GuarantorPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.GuarantorPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="Personal Guarantor">
+	<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+		<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image Source="starbackground.png" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="15,0,15,0">
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<ScrollView>
+						<StackLayout VerticalOptions="CenterAndExpand" Padding="30,15,30,0" Spacing="14">
+							<Label StyleId="label1" TextColor="{StaticResource GAblue}" XAlign="Center" Text="Guarantor Information" FontSize="Large" />
+							<Entry Placeholder="first name" Text="{Binding FirstName}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="middle initial" Text="{Binding MiddleInitial}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="last name" Text="{Binding LastName}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="mailing address" Text="{Binding Address}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="city" Text="{Binding City}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Picker Title="state/province" x:Name="statePicker" SelectedIndexChanged="StatePickerValueChanged" HorizontalOptions="FillAndExpand" />
+							<Entry Placeholder="postal code" Text="{Binding Zip}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Label StyleId="label1" TextColor="Gray" FontSize="Small" XAlign="Start" Text="By submitting the personal information set forth above, you hereby certify that the applicant has given us (and our designee(s) and assignee(s)) permission to obtain any information it may request from any business or consumer reporting agency(ies) or other sources that provide credit reports, account history information, credit and employment history or similar information in connection with extending credit and/or reviewing/collecting the account." />
+							<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="0,13,0,16">
+								<Button Text="Submit" Clicked="OnNextButtonClicked" Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="FillAndExpand">
+								</Button>
+							</StackLayout>
+						</StackLayout>
+					</ScrollView>
+				</StackLayout>
+			</StackLayout>
+		</AbsoluteLayout>
+	</StackLayout>
+</local:GuarantorPageBase>

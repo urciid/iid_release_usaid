@@ -1,0 +1,54 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using IID.WebSite.Models
+
+@model FieldID
+
+@{
+    ViewBag.Title = "Add FieldID";
+    string openContent = (Model._FieldID == "***") ?
+        "<div id=\"addFieldIDDialog\" class=\"width-1000\"><div class=\"modal-header\">Add FieldID <button type=\"button\" tabindex=\"-1\" class=\"close wj-hide\">×</button></div>" :
+        "<section class=\"width-900\"><div class=\"header\"><div class=\"title\">Add FieldID</div></div>";
+    string closeContent = (Model._FieldID == "***") ? "</div>" : "</section>";
+}
+
+@Html.HiddenFor(m => m.ParentFieldID)
+
+<script type="text/javascript">
+    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+
+    var addFieldIDDialog;
+    function showAddFieldIDDialog() {
+        if (addFieldIDDialog == null)
+            addFieldIDDialog = wijmo.Control.getControl("#addFieldIDDialog");
+
+        // Reset input controls.
+        var controls = ["Value"];
+        for (var i in controls)
+            $('#' + controls[i]).val('');
+
+        // Show the modal.
+        addFieldIDDialog.show();
+    }
+</script>
+
+@Html.Raw(openContent)
+<div class="modal-body content">
+    @using (Html.BeginForm("Add", "FieldID", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.Partial("~/Views/FieldID/Form.cshtml", Model)
+        <div class="float-right">
+            <button type="submit">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+        </div>
+            <div class="clear-floats"></div>
+    }
+</div>
+@Html.Raw(closeContent)
+@if (Model._FieldID == "***")
+{
+    @(Html.C1().Popup("#addFieldIDDialog").Modal(true).HideTrigger(PopupTrigger.Click))
+}

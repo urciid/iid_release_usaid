@@ -1,0 +1,124 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.WebSite.Models
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using note = IID.BusinessLayer.Globalization.Note.Resource
+
+@model ListNotesViewModel
+
+@Html.Partial("~/Views/Note/Dialog.cshtml", new Note(Model.SiteId, Model.ActivityId))
+
+<section class="max-width-max">
+    <script type="text/javascript">
+        function fgNotes_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.NoteId) {
+                    switch (panel.columns[c].name) {
+                        case 'Subject':
+                            cell.innerHTML = (
+                                '<a class="cursor-pointer" href="#" onclick="showNoteDialog(\'edit\', ' +
+                                r.toString() + ', afterEditNote);">' + htmlEncode(dataItem.Subject) + '</a>');
+                            break;
+                        case 'Delete':
+                            cell.innerHTML = (
+                                '<img src="/Images/icons/16/delete_2.png" class="cursor-pointer" ' +
+                                    'onclick="confirmDeleteNote(' + r + ')" title="@common.Delete" />');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function fgNotes_LoadedRows(s, e) {
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Notes.ToLower() available.');
+        }
+
+        function afterAddNote(result) {
+            if (!fgNotes.control.rows[0].dataItem || !fgNotes.control.rows[0].dataItem.NoteId)
+                fgNotes.control.rows.removeAt(0);
+
+            var cv = fgNotes.control.collectionView;
+            var itm = cv.addNew();
+            itm.NoteId = result.NoteId;
+            itm.SiteId = result.SiteId;
+            itm.ActivityId = result.ActivityId;
+            itm.Subject = result.Subject;
+            itm.NoteText = result.NoteText;
+            itm.CreatedBy = result.CreatedBy;
+            itm.CreatedOn = result.CreatedOn;
+            cv.commitNew();
+        }
+
+        function afterEditNote(result, rowIdx) {
+            var cv = fgNotes.control.collectionView;
+            var itm = cv.items[rowIdx];
+            cv.editItem(itm)
+            itm.Subject = result.Subject;
+            itm.NoteText = result.NoteText;
+            itm.UpdatedBy = result.UpdatedBy;
+            itm.UpdatedOn = result.UpdatedOn;
+            cv.commitEdit();
+        }
+
+        function confirmDeleteNote(rowIdx) {
+            var dataItem = fgNotes.control.rows[rowIdx].dataItem;
+            if (confirm('Are you sure you want to delete the Note \'' + dataItem.Subject + '\'?')) {
+                var formData = new FormData();
+                formData.append('id', dataItem.NoteId);
+                addAntiForgeryTokenToForm(formData);
+
+                $.ajax({
+                    url: '/Note/Delete',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (result) {
+                        fgNotes.control.collectionView.remove(dataItem)
+                        fgNotes_LoadedRows(fgNotes.control);
+                    },
+                    error: function (result) {
+                        alert(result.responseText);
+                    }
+                });
+            }
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @common.Notes
+        </div>
+        <div class="float-right button">
+            <button type="button" onclick="showNoteDialog('add', null, afterAddNote);">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<Note>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.Notes)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("Subject").Header(note.Subject).Name("Subject").Width("4*"));
+                c.Add(cb => cb.Binding("CreatedBy").Header(common.CreatedBy).Width("*"));
+                c.Add(cb => cb.Binding("CreatedOn").Header(common.CreatedOn).Width("100"));
+                c.Add(cb => cb.Binding("UpdatedBy").Header(common.UpdatedBy).Width("*"));
+                c.Add(cb => cb.Binding("UpdatedOn").Header(common.UpdatedOn).Width("100"));
+                c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgNotes")
+            .IsReadOnly(true)
+            .ItemFormatter("fgNotes_ItemFormatter")
+            .OnClientLoadedRows("fgNotes_LoadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>

@@ -1,0 +1,236 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Helpers
+@using activity = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+@using IID.WebSite.Models
+
+@model ActivitySiteSearchCriteria
+<div id="addActivitySiteDialog" class="width-75p">
+    <div class="modal-header">
+        <span>@activity.AddSites</span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <section class="display-inline-block">
+            <script type="text/javascript">
+                var fgSites, administrativeDivisions;
+                var waves = @Html.Raw(Json.Encode(Model.Waves));
+
+                $(document).ready(function () {
+                    // Load countries.
+                    var url = '/UserAccess/GetActivityCountry?activityId=@Model.ActivityId';
+                    loadListBoxFromJson(
+                        'lstCountry', url, 'name', 'country_id', function () {
+                            // Select United States option.
+                            // NOTE: Since value is set by jQuery, onchange event must be triggered manually.
+                            selectOptionByValue('lstCountry', @Model.CountryId);
+                            loadCountryAdministrativeDivisions();
+                            loadSiteTypes();
+                        });
+
+                    fgSites = wijmo.Control.getControl('#fgSites');
+                });
+
+                function loadCountryAdministrativeDivisions() {
+                    var countryId = $('#lstCountry').val();
+                    var url = ('@(Settings.WebApiUrl)/Site/Countries?countryId=' + countryId + '&languageId=@IidCulture.CurrentLanguageId');
+                    $.getJSON(url, null, function (data) {
+                        var country = data[0];
+
+                        // Save the administrative divisions to a variable which will be reused when binding search results.
+                        administrativeDivisions = [];
+                        for (var i = 1; i <= 4; i++)
+                            administrativeDivisions[i] = country[('AdministrativeDivision' + i)];
+                    });
+                }
+
+                function loadSiteTypes() {
+                    var countryId = $('#lstCountry').val();
+                    var url = ('@(Settings.WebApiUrl)/Site/SiteTypes?countryId=' + countryId + '&languageId=@IidCulture.CurrentLanguageId');
+                    loadListBoxFromJson('lstSiteType', url, 'Value', 'FieldId', function () {
+                        $('#lstSiteType').prepend('<option value="" selected="selected">[All]</option>');
+                    });
+                }
+
+                function loadSiteResults() {
+                    var data = {
+                        ActivityId: @Model.ActivityId,
+                        CountryId: $('#lstCountry').val(),
+                        SiteTypeFieldId: $('#lstSiteType').val(),
+                        LanguageId: @IidCulture.CurrentLanguageId
+                    };
+                    addAntiForgeryTokenToJson(data);
+                    $.post('/Activity/GetActivityUnsassignedSites', data, loadSites, 'json');
+                }
+
+                function loadSites(result) {
+                    fgSites.itemsSource = result;
+                    fgSites.collectionView.pageSize = 10;
+                    pgrSites.control.collectionView = fgSites.collectionView;
+
+                    for (var i = 1; i <= 4; i++) {
+                        var divisionName = administrativeDivisions[i];
+                        var fgColumn = fgSites.getColumn(('AdministrativeDivision' + i));
+                        fgColumn.header = divisionName;
+                        fgColumn.visible = (divisionName && divisionName != '');
+                    }
+
+                    $('#secResults').show();
+                }
+
+                var dlg = null;
+                function showActivitySitesDialog() {
+                    if (dlg == null)
+                        dlg = wijmo.Control.getControl('#addActivitySiteDialog');
+                    dlg.show();
+                    loadSiteResults();
+                }
+            </script>
+
+            <div class="header">
+                <div class="float-left title">
+                    @common.Search
+                </div>
+                <div class="clear-floats"></div>
+            </div>
+            <div class="content">
+                <table class="form-table">
+                    <tbody>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.CountryName)</td>
+                            <td>
+                                @Html.DropDownListFor(m => m.CountryId, new SelectListItem[] { },
+                                new
+                                {
+                                    @class = "width-300",
+                                    id = "lstCountry",
+                                    onchange = "loadCountryAdministrativeDivisions(); loadSiteTypes();"
+                                })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.SiteTypeValue)</td>
+                            <td>
+                                @Html.DropDownListFor(m => m.SiteTypeFieldId, new SelectListItem[] { },
+                                    new { @class = "width-300", id = "lstSiteType" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button type="button" onclick="loadSiteResults();">
+                                    @common.Search
+                                    <img src="~/Images/icons/16/search_lense.png" />
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="display-none" id="secResults">
+            <script type="text/javascript">
+                function fgSites_ItemFormatter(panel, r, c, cell) {
+                    if (panel.cellType == wijmo.grid.CellType.Cell) {
+                        var grid = panel.grid;
+                        var dataItem = grid.rows[r].dataItem;
+                        if (dataItem && dataItem.SiteId) {
+                            switch (panel.columns[c].name) {
+                                case 'Assigned':
+                                    if (dataItem.Assigned)
+                                        cell.innerHTML = '@activity.Assigned';
+                                    else
+                                        cell.innerHTML = ('<a href="#" onclick="assignSite(' + r + ');">@activity.Assign</a>');
+                                    break;
+
+                                case 'SiteName':
+                                    cell.innerHTML = ('<a href="/Site/View/' + dataItem.SiteId + '" target="_blank">' + dataItem.SiteName + '</a>');
+                                    break;
+
+                                case 'Wave':
+                                    if (dataItem.Assigned) {
+                                        cell.innerHTML = dataItem.WaveValue;
+                                    } else {
+                                        var menu = ('<select id="site_' + dataItem.SiteId + '_wave">');
+                                        for (var i in waves)
+                                            menu += ('<option value="' + i + '">' + waves[i] + '</option>');
+                                        cell.innerHTML = menu;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                function fgSites_LoadedRows(s, e) {
+                    if (s.rows.length == 0)
+                        showFlexGridNoDataMessage(s, 'No @common.Sites.ToLower() available.');
+                }
+
+                function assignSite(idx) {
+                    var dataItem = fgSites.collectionView.items[idx];
+                    var data = {
+                        ActivityId: @Model.ActivityId,
+                        SiteId: dataItem.SiteId,
+                        WaveFieldId : $('#site_' + dataItem.SiteId + '_wave').val()
+                    };
+                    addAntiForgeryTokenToJson(data);
+
+                    var callback = function(result) {
+                        if (result.success) {
+                            var cv = fgSites.collectionView;
+                            var itm = cv.items[idx];
+                            if (itm != null) {
+                                cv.editItem(itm);
+                                itm.Assigned = true;
+                                itm.WaveFieldId = result.WaveFieldId;
+                                itm.WaveValue = result.WaveValue;
+                                cv.commitEdit();
+                            }
+                        } else {
+                            alert(result.responseText);
+                        }
+                    };
+                    $.post('/Activity/AssignSite', data, callback, 'json');
+                }
+            </script>
+
+            <div class="header">
+                <div class="float-left title">
+                    @common.Sites
+                </div>
+                <div class="clear-floats"></div>
+            </div>
+            <div class="content">
+                @(Html.C1().FlexGrid()
+                    .AllowSorting(true)
+                    .AutoGenerateColumns(false)
+                    .Columns(c =>
+                    {
+                        c.Add(cb => cb.Binding("SiteName").Header(common.Name).Name("SiteName").SortMemberPath("SiteName").Width("2*"));
+                        c.Add(cb => cb.Binding("AdministrativeDivisionName1").Name("AdministrativeDivision1").Width("*"));
+                        c.Add(cb => cb.Binding("AdministrativeDivisionName2").Name("AdministrativeDivision2").Width("*"));
+                        c.Add(cb => cb.Binding("AdministrativeDivisionName3").Name("AdministrativeDivision3").Width("*"));
+                        c.Add(cb => cb.Binding("AdministrativeDivisionName4").Name("AdministrativeDivision4").Width("*"));
+                        c.Add(cb => cb.Binding("SiteTypeValue").Align("Center").Header(site.Type).Width("90"));
+                        c.Add(cb => cb.Binding("QIIndexScore").Align("Center").Header(site.QIIndexScore).Width("100"));
+                        c.Add(cb => cb.Binding("WaveValue").Align("Center").Header(activity.Wave).Name("Wave").Width("90"));
+                        c.Add(cb => cb.Binding("Assigned").Align("Center").Header(" ").Name("Assigned").Width("60"));
+                    })
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgSites")
+                    .IsReadOnly(true)
+                    .ItemFormatter("fgSites_ItemFormatter")
+                    .OnClientLoadedRows("fgSites_LoadedRows")
+                    .SelectionMode(SelectionMode.None)
+                )
+
+
+                @(Html.C1().Pager().Owner("fgSites").Id("pgrSites"))
+            </div>
+        </section>
+    </div>
+</div>
+@(Html.C1().Popup("#addActivitySiteDialog").Modal(true).HideTrigger(PopupTrigger.Click))

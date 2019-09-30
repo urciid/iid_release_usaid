@@ -1,0 +1,204 @@
+﻿@using C1.Web.Mvc.Grid;
+@using IID.BusinessLayer.Domain;
+@using IID.BusinessLayer.Helpers;
+@using common = IID.BusinessLayer.Globalization.Common.Resource;
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource;
+@using IID.WebSite.Models
+
+@model CoachReport
+@{
+    ViewBag.Title = (observation.CoachReport + ": " + Model.SiteName);
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml", ProjectBreadcrumbs.ForCoachReport(Model.ActivityId, Model.SiteId))
+}
+
+<style type="text/css">
+    .site {
+        margin: 0 10px 20px 10px;
+        width: 352px;
+        align-self: flex-end;
+    }
+
+    .wj-flexchart {
+        border: none !important;
+        padding: 4px !important;
+    }
+
+    @@media print {
+        .sites {
+            display: block;
+            margin: auto;
+            width: 748px
+        }
+
+        .site {
+            display: inline-block;
+            align-self: flex-end;
+        }
+
+        #changes div[wj-part="root"] {
+            overflow: visible !important;
+        }
+        .indicatorColumn {
+            width: 360px !important;
+        }
+        .changeColumn {
+            left: 440px !important;
+            width: 360px !important;
+        }
+        .createdByColumn {
+            left: 800px !important;
+        }
+    }
+</style>
+
+<script type="text/javascript">
+    var localized = {
+        changes: '@observation.Changes'
+    };
+
+    var indicatorFrequencies = {
+        @Html.Raw(String.Join(",\n", Model.Indicators.Select(i => $"'{i.IndicatorId}': '{i.DataCollectionFrequencyId}'")))
+    };
+</script>
+<script src="~/Scripts/coachreport.js" type="text/javascript"></script>
+
+@if (Model.Indicators == null || Model.Indicators.Count == 0)
+{
+    <b>This site is not assigned to any activities.</b>
+}
+else
+{
+    <div class="text-align-center">
+        <h4>
+            @observation.CoachReport for
+            @Model.SiteName<br />
+            @Model.ActivityName<br />
+            @DateTime.Today.ToString("d")
+        </h4>
+        <br />
+    </div>
+
+    <div class="sites flexbox" style="align-items: center; flex-flow: row wrap; justify-content: center;">
+        @for (int i = 0; i < Model.Indicators.Count; i++)
+        {
+            var indicator = Model.Indicators.ElementAt(i);
+            <div class="site border-gray border-top-rounded avoidPageBreak">
+                <div style="background-color: #E0E0E0; border-bottom: 1px solid #999999; padding: 4px;">
+                    <table>
+                        <tr>
+                            <td style="font-weight: bold; text-align: right; vertical-align: top;">@common.Aim:</td>
+                            <td>@indicator.AimName</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; text-align: right; vertical-align: top;">@common.Indicator:</td>
+                            <td>
+                                @Html.ActionLink(indicator.IndicatorName, "View", "Indicator",
+                                    new { id = indicator.IndicatorId }, new { title = indicator.IndicatorDefinition })
+
+                                <a href="@Url.Action("View", "Observation", new { indicatorId = indicator.IndicatorId, siteId = indicator.SiteId })" class="dontPrint">
+                                    <img src="~/Images/icons/16/spreadsheet.png" title="@observation.ViewData" />
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    @{
+                        string yAxisFormat = String.Empty;
+                        double? yMax = 1.0D, yMin = 0.0D;
+                        double xMajorUnit = (indicator.Observations.Count == 1 ? 1 : 30);
+                        bool interpolateNulls = true;   // for now all dots connect
+
+                        // Round each max up to the nearest 1, 10, 100, etc.
+                        // Value chart
+                        if (indicator.Observations?.Any(o => o.Value.HasValue) ?? false)
+                        {
+                            var maxValue = indicator.Observations.Where(o => o.Value.HasValue).Max(o => o.Value.Value);
+                            var power10 = Math.Floor(Math.Log10(maxValue));
+                            var factor = Math.Pow(10, power10);
+                            yMax = (Math.Floor(maxValue / factor) * factor) + factor;
+                        }
+
+                        switch (indicator.IndicatorType)
+                        {
+                            case IndicatorType.Percentage:
+                                yAxisFormat = "p0";
+                                yMax = 1.0D;
+                                break;
+
+                            case IndicatorType.Average:
+                            case IndicatorType.Ratio:
+                                yAxisFormat = "n1";
+                                break;
+
+                            case IndicatorType.Count:
+                                yAxisFormat = "n0";
+                                break;
+                        }
+
+                        switch (indicator.DataCollectionFrequencyId)
+                        {
+                            case "frqdai":
+                                interpolateNulls = true;
+                                break;
+                        }
+                    }
+                    @(Html.C1().FlexChart()
+                        .ChartType(C1.Web.Mvc.Chart.ChartType.LineSymbols)
+                        .Height(300)
+                        .Id("chtIndicator" + indicator.IndicatorId.ToString())
+                        .AxisY(x =>
+                        {
+                            x.Format(yAxisFormat).Max(yMax).Min(yMin);
+                            if (yMax == 1.0D && indicator.IndicatorType != IndicatorType.Percentage)
+                            {
+                                x.MajorUnit(1.0D);
+                            }
+                        })
+                        .InterpolateNulls(interpolateNulls)
+                        .OnClientRendering("chtIndicatorRendering")
+                        .Series(s =>
+                        {
+                            s.Add().Bind(indicator.Observations).Binding("Value")
+                                .Style(st => st.Stroke("#002060").StrokeWidth(4));
+                        })
+                        .Width(350)
+                        .ItemFormatter("itemFormatter")
+                        .Tooltip(tt => tt.Content("<b>{Date:MMM d}</b>:<br />{y}<br>{ChangeDescriptions}"))
+                    )
+                </div>
+            </div>
+        }
+    </div>
+
+    <section class="avoidPageBreak" style="margin: 0 10px 10px 10px;">
+        <div class="header">
+            <div class="title">
+                @observation.Changes
+            </div>
+        </div>
+        <div class="content">
+            @(Html.C1().FlexGrid()
+                .AllowSorting(true)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Changes)
+                .Columns(c =>
+                {
+                            c.Add(cb => cb.Binding("Date").Header(@observation.StartDate).Width("80"));
+                            c.Add(cb => cb.Binding("IndicatorName").CssClass("indicatorColumn").Header(@common.Indicator).Width("*"));
+                            c.Add(cb => cb.Binding("Change").CssClass("changeColumn").Header(@observation.Change).Width("*"));
+                            c.Add(cb => cb.Binding("CreatedBy").CssClass("createdByColumn").Header(@common.CreatedBy).Width("150"));
+                        })
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("changes")
+                .IsReadOnly(true)
+                .ItemFormatter("fgChanges_ItemFormatter")
+                .OnClientLoadedRows("fgChanges_LoadedRows")
+                .SelectionMode(SelectionMode.None)
+            )
+        </div>
+    </section>
+}

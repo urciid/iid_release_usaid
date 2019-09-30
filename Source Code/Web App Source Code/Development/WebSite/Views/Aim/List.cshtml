@@ -1,0 +1,364 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Identity
+@using IID.WebSite.Models
+@using aim = IID.BusinessLayer.Globalization.Aim.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+
+@model AimCollection
+
+<section class="max-width-max">
+    <script type="text/javascript">
+        var localized = {
+            hasAdminRights: @(Identity.CurrentUser.IsInRole(Role.SystemAdministrator, Role.ActivityLeader, Role.CountryDirector).ToString().ToLower()),
+            aim: '@common.Aim'
+        };
+
+        var editAimRowIdx;
+        function editAimDialog(rowIdx) {
+            editAimRowIdx = rowIdx;
+
+            var itm = fgAims.control.rows[rowIdx].dataItem;
+            showAimDialog('edit', itm.AimId, itm.Name, itm.Active, afterAimEdit);
+        }
+
+        function aimHasIndicators(row) {
+            return row.dataItem && row.dataItem.Indicators && row.dataItem.Indicators.length > 0;
+        }
+
+        function fgAims_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var row = grid.rows[r];
+                var dataItem = row.dataItem;
+                if (dataItem && dataItem.AimId) {
+                    grid.rows[r].height = 32;
+                    switch (panel.columns[c].name) {
+                        case 'Name':
+                            cell.innerHTML = '';
+                            if (localized.hasAdminRights) {
+                                // Sort buttons.
+                                cell.innerHTML = (
+                                    '<div class="arrowUpDown">' +
+                                        (r === 0 ?
+                                            '<div class="background-white disabled"></div>' :
+                                            ('<div class="cursor-pointer" onclick="sortEntity(\'Aim\', ' + dataItem.AimId + ', \'SortUp\', \'' + grid.hostElement.id + '\');" title="Sort Up"></div>')
+                                        ) +
+                                        (dataItem.AimId === grid.itemsSource.items[grid.itemsSource.items.length - 1].AimId ?
+                                            '<div class="background-white disabled"></div>' :
+                                            ('<div class="cursor-pointer" onclick="sortEntity(\'Aim\', ' + dataItem.AimId + ', \'SortDown\', \'' + grid.hostElement.id + '\');" title="Sort Down"></div>')
+                                        ) +
+                                    '</div>');
+                            }
+                            cell.innerHTML += dataItem.Name;
+                            break;
+
+                        case 'Edit':
+                            if (localized.hasAdminRights) {
+                                cell.innerHTML = ('<a class="editIcon" href="javascript:editAimDialog(' + r + ');" title="@common.Edit"></a>');
+                            }
+                            break;
+
+                        case 'Delete':
+                            
+                            if (localized.hasAdminRights) {
+                                var hasIndicators = aimHasIndicators(row);
+                                var cssClass = dataItem.Active === false ? 'disabled' : '';
+                                var onclick = dataItem.Active === false ? '' : ((hasIndicators ? 'disableAim' : 'deleteAim') + '(' + r + ');');
+                                cell.innerHTML += (
+                                    '<a class="deleteIcon ' + cssClass + '" href="javascript:' +
+                                        onclick + '" title="@common.Delete"></a>');
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        function fgAims_LoadedRows(s, e) {
+            var hasIndicators = false, hasActiveIndicators = false;
+            for (var i = 0; i < s.rows.length; i++) {
+                if (s.rows[i].dataItem && s.rows[i].dataItem.Indicators) {
+                    for (var j = 0; j < s.rows[i].dataItem.Indicators.length; j++) {
+                        hasIndicators = true;
+
+                        if (s.rows[i].dataItem.Indicators[j].Active) {
+                            hasActiveIndicators = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (s.rows.length == 0) {
+                showFlexGridNoDataMessage(s, 'No @common.Aims.ToLower() available.', { Indicators: new Array() });
+                disableButton('add-indicator');
+            } else {
+                enableButton('add-indicator');
+            }
+
+            if (hasActiveIndicators) {
+                enableButton('rankByImprovement');
+                enableButton('chart');
+            } else {
+                disableButton('rankByImprovement');
+                disableButton('chart');
+            }
+
+            if (hasIndicators)
+                setTimeout(function () { expandFlexGridDetailRows(s); }, 500);
+        }
+
+        function afterAimAdd(result) {
+            if (!fgAims.control.rows[0].dataItem || !fgAims.control.rows[0].dataItem.AimId)
+                fgAims.control.rows.removeAt(0);
+
+            var cv = fgAims.control.collectionView;
+            var itm = cv.addNew();
+            itm.AimId = result.AimId;
+            itm.Name = result.Name;
+            itm.Active = result.Active;
+            itm.Status = result.Status;
+            itm.Indicators = new Array();
+            cv.commitNew();
+
+            fgAims_LoadedRows(fgAims.control);
+            ButtonRemoveDisabled('aim-dialog-save');
+        }
+
+        function afterAimEdit(result) {
+            var itm = fgAims.control.rows[editAimRowIdx].dataItem;
+            var cv = fgAims.control.collectionView;
+            cv.editItem(itm)
+            itm.Name = result.Name;
+            itm.Active = result.Active;
+            itm.Status = result.Status;
+            cv.commitEdit();
+        }
+
+        function deleteAim(rowIdx) {
+            if (confirm('Are you sure you want to delete this ' + localized.aim + '?')) {
+                var itm = fgAims.control.rows[rowIdx].dataItem;
+
+                var formData = new FormData();
+                formData.append('id', itm.AimId);
+                addAntiForgeryTokenToForm(formData);
+
+                $.ajax({
+                    url: '/Aim/Delete',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function(result) {
+                        if (result.success) {
+                            var cv = fgAims.control.collectionView;
+                            cv.remove(itm);
+                        } else {
+                            deleteDisableError(result);
+                        }
+                    },
+                    error: deleteDisableError
+                });
+            }
+        }
+
+        function disableAim(rowIdx) {
+            if (confirm('Are you sure you want to deactivate this ' + localized.aim + '?')) {
+                var itm = fgAims.control.rows[rowIdx].dataItem;
+
+                var formData = new FormData();
+                formData.append('id', itm.AimId);
+                addAntiForgeryTokenToForm(formData);
+
+                $.ajax({
+                    url: '/Aim/Disable',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function(result) {
+                        if (result.success) {
+                            var cv = fgAims.control.collectionView;
+                            cv.editItem(itm)
+                            itm.Active = result.Active;
+                            itm.Status = result.Status;
+                            cv.commitEdit();
+                        } else {
+                            deleteDisableError(result);
+                        }
+                    },
+                    error: deleteDisableError
+                });
+            }
+        }
+
+        function deleteDisableError(result) {
+            alert('Error!\r\n' + result.responseText);
+        }
+
+        function fgIndicators_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.IndicatorId) {
+                    switch (panel.columns[c].binding) {
+                        case 'Name':
+                            cell.innerHTML = (
+                                (localized.hasAdminRights ? (
+                                    '<div class="arrowUpDown">' +
+                                        (r === 0 ?
+                                            '<div class="background-white disabled"></div>' :
+                                            ('<div class="cursor-pointer" onclick="sortEntity(\'Indicator\', ' + dataItem.IndicatorId + ', \'SortUp\', \'' + grid.hostElement.id + '\');" title="Sort Up"></div>')
+                                        ) +
+                                        (r === grid.rows.length - 1 ?
+                                            '<div class="background-white disabled"></div>' :
+                                            ('<div class="cursor-pointer" onclick="sortEntity(\'Indicator\', ' + dataItem.IndicatorId + ', \'SortDown\', \'' + grid.hostElement.id + '\');" title="Sort Down"></div>')
+                                        ) +
+                                    '</div>') :
+                                    '') +
+                                '<a href="/Indicator/View/' + dataItem.IndicatorId + '">' + dataItem.Name + '</a>&nbsp;');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function sortEntity(type, id, action, gridId) {
+            var formData = new FormData();
+            formData.append('id', id);
+            addAntiForgeryTokenToForm(formData);
+
+            $.ajax({
+                url: '/' + type + '/' + action,
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (result) {
+                    if (result[type + '1'].Id && result[type + '2'].Id) {
+                        // Get an array of all items and assign new sort values to the two affected items.
+                        var grid = wijmo.Control.getControl('#' + gridId);
+                        var items = [];
+                        for (var i = 0; i < grid.itemsSource.items.length; i++) {
+                            var itm = grid.itemsSource.items[i];
+                            if (itm[type + 'Id'] === result[type + '1'].Id) {
+                                itm.Sort = result[type + '1'].Sort;
+                            } else if (itm[type + 'Id'] === result[type + '2'].Id) {
+                                itm.Sort = result[type + '2'].Sort;
+                            }
+                            items.push(itm);
+                        }
+
+                        // Sort the array.
+                        items.sort(function(a, b) {
+                            return ((a.Sort < b.Sort) ? -1 : ((a.Sort > b.Sort) ? 1 : 0));
+                        });
+
+                        // Assign a new datasource.
+                        grid.itemsSource =
+                            new c1.mvc.collections.CallbackCollectionView({ "items": items });;
+                    }
+                },
+                error: function (result) {
+                    alert(result.responseText);
+                }
+            });
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @aim.AimsAndIndicators
+        </div>
+        <div class="float-right button">
+        @if ((Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.ActivityLeader))
+            || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.CountryDirector))
+            || (Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.SystemAdministrator)))
+        {
+            <button type="button" onclick="showAimDialog('add', null, null, null, afterAimAdd);">
+                @aim.AddAim
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+            <a class="btn btn-primary" href="@Url.Action("Add", "Indicator", new { activityId = Model.ActivityId })" id="add-indicator">
+                @indicator.AddIndicator <img src="/Images/icons/16/plus.png" />
+            </a>
+        }
+        @if (!Identity.CurrentUser.IsInRole(IID.BusinessLayer.Identity.Role.SiteManager))
+        {            
+            <a class="btn btn-primary" href="@Url.Action("RankByImprovement", "Activity", new { id = Model.ActivityId })" id="rankByImprovement">
+                @common.Rank
+                <img src="~/Images/icons/16/line-chart.png" />
+            </a>
+        }
+            <a class="btn btn-primary" href="@Url.Action("Activity", "Chart", new { id = Model.ActivityId })" id="chart">
+                @common.Chart
+                <img src="~/Images/icons/16/line-chart.png" />
+            </a>
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <script id="indicator" type="text/html">
+            @(Html.C1().FlexGrid()
+                .AutoGenerateColumns(false)
+                .Columns(c =>
+                {
+                    c.Add(cb => cb.Binding("Name").Header(common.Indicator).Name("Name").Width("*"));
+                    c.Add(cb => cb.Binding("DataCollectionFrequencyValue").Align("Center").Header(indicator.DataCollectionFrequency).Width("190"));
+                    c.Add(cb => cb.Binding("DisaggregationText").Align("Center").Header(indicator.Disaggregation).Width("120"));
+                    c.Add(cb => cb.Binding("Status").Align("Center").Header(common.Status).Width("120"));
+                    c.Add(cb => cb.Binding("Sort").Visible(false));
+                })
+                .CssClass("margin-top-4")
+                .HeadersVisibility(HeadersVisibility.Column)
+                .IsReadOnly(true)
+                .ItemFormatter("fgIndicators_ItemFormatter")
+                .OrderBy("Sort")
+                .SelectionMode(SelectionMode.None)
+                .TemplateBind("ItemsSource", "Indicators")
+                .ToTemplate()
+            )
+        </script>
+
+        @Html.Partial("~/Views/Aim/Dialog.cshtml", new Aim() { ActivityId = Model.ActivityId })
+
+        @(Html.C1().FlexGrid()
+            .AutoGenerateColumns(false)
+            .Bind(Model.Aims.Select(e => new
+            {
+                e.AimId,
+                e.ActivityId,
+                e.Name,
+                e.Active,
+                e.Status,
+                e.Sort,
+                Indicators = e.Indicators.Select(i => new
+                {
+                    i.IndicatorId,
+                    i.Name,
+                    i.DataCollectionFrequencyValue,
+                    i.DisaggregationText,
+                    i.Active,
+                    i.Status,
+                    i.Sort
+                }).OrderBy(i => i.Sort)
+            }))
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("Name").Header(common.Aim).Name("Name").Width("*"));
+                c.Add(cb => cb.Binding("Status").Align("Center").Header(common.Status).Width("120"));
+                c.Add().Align("Center").Header(common.Edit).Name("Edit").Width("70");
+                c.Add().Align("Center").Header(common.Delete).Name("Delete").Width("70");
+                c.Add(cb => cb.Binding("Sort").Visible(false));
+            })
+            .Id("fgAims")
+            .IsReadOnly(true)
+            .ItemFormatter("fgAims_ItemFormatter")
+            .OnClientLoadedRows("fgAims_LoadedRows")
+            .OrderBy("Sort")
+            .SelectionMode(SelectionMode.None)
+            .ShowDetailRow(d => d.DetailRowTemplateId("indicator").RowHasDetail("aimHasIndicators").DetailVisibilityMode(DetailVisibilityMode.ExpandMulti))
+        )
+    </div>
+</section>

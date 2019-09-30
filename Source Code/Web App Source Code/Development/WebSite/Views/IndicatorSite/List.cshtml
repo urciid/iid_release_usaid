@@ -1,0 +1,78 @@
+﻿@using C1.Web.Mvc.Grid
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using activitySite = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+@using IID.WebSite.Models
+
+@model ActivitySiteCollection
+
+<section class="max-width-max">
+    <script type="text/javascript">
+        function fgIndicatorSites_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.SiteId) {
+                    switch (panel.columns[c].name) {
+                        case 'Name':
+                            cell.innerHTML = (
+                                '<a href="/Site/View/' + dataItem.SiteId + '">' + dataItem.SiteName + '</a>');
+                            break;
+
+                        case 'ViewData':
+                            cell.innerHTML = (
+                                '<a class="dataIcon" href="/Observation/View/@(Model.IndicatorId)/' +
+                                dataItem.SiteId + '"></a>');
+                            break;
+
+                        case 'CoachReport':
+                            cell.innerHTML = (
+                                '<a class="coachReportIcon" href="/Site/CoachReport/@Model.ActivityId/' +
+                                dataItem.SiteId + '"></a>');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function fgIndicatorSites_LoadedRows(s, e) {
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Sites.ToLower() available.');
+            s.columnHeaders.rows[0].wordWrap = true;
+            s.autoSizeRow(0, true);
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @common.Sites
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model.Sites)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("SiteName").Header(common.Name).Name("Name").Width("3*"));
+                c.Add(cb => cb.Binding("SiteTypeValue").Align("Center").Header(site.Type).Width("2*"));
+                c.Add().Header(common.Coach).Binding("CoachUserName").Width("2*");
+                c.Add(cb => cb.Binding("SupportStartDate").Align("Center").Header(activitySite.SupportStartDate).Width("140"));
+                c.Add(cb => cb.Binding("SupportEndDate").Align("Center").Header(activitySite.SupportEndDate).Width("140"));
+                c.Add(cb => cb.Binding("WaveValue").Align("Center").Header(activitySite.Wave).Width("80"));
+                c.Add().Align("Center").Header(observation.ViewData).Name("ViewData").Width("80");
+                c.Add().Align("Center").Header(observation.CoachReport).Name("CoachReport").Width("80");
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgIndicatorSites")
+            .IsReadOnly(true)
+            .ItemFormatter("fgIndicatorSites_ItemFormatter")
+            .OnClientLoadedRows("fgIndicatorSites_LoadedRows")
+            .SelectionMode(SelectionMode.None)
+            .ShowSort(true)
+        )
+    </div>
+</section>

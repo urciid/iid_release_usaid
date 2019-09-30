@@ -1,0 +1,59 @@
+﻿@using C1.Web.Mvc.Grid
+@using activity = IID.BusinessLayer.Globalization.Activity.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using IID.WebSite.Models
+
+@model ICollection<Activity>
+
+<section class="max-width-max">
+    <script type="text/javascript">
+        function fgActivities_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.ActivityId) {
+                    switch (panel.columns[c].name) {
+                        case 'Name':
+                            cell.innerHTML = (
+                                '<a href="/Activity/View/' + dataItem.ActivityId + '">' +
+                                dataItem.Name + '</a>');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function fgActivities_LoadedRows(s, e) {
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Activities.ToLower() available.');
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @common.Activities
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Bind(Model)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("Name").Header(common.Name).Name("Name").Width("3*"));
+                c.Add(cb => cb.Binding("TechnicalAreaValue").Header(activity.TechnicalArea).Width("2*"));
+                c.Add(cb => cb.Binding("Country.Name").Header(common.Country).Width("*"));
+                c.Add(cb => cb.Binding("StartDate").Header(activity.StartDate).Width("90"));
+                c.Add(cb => cb.Binding("EndDate").Header(activity.EndDate).Width("90"));
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgActivities")
+            .IsReadOnly(true)
+            .ItemFormatter("fgActivities_ItemFormatter")
+            .OnClientLoadedRows("fgActivities_LoadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>

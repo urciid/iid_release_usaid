@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- For honeycomb and up -->
+<resources>
+
+<!--    <style name="myTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/myTheme.ActionBar</item>
+        <item name="android:actionMenuTextColor">@color/actionBarText</item>
+    </style>
+
+    <style name="myTheme.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/actionbarbground</item>
+        <item name="android:titleTextStyle">@style/myTheme.ActionBar.Text</item>
+    </style>
+
+    <style name="myTheme.ActionBar.Text" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/actionBarText</item>
+    </style>-->
+
+  <style name="MyTheme.Base" parent="Theme.AppCompat.Light">
+  </style>
+
+  <style name="MyTheme" parent="MyTheme.Base">
+  </style>
+
+  <style name="MyTheme.Splash" parent ="Theme.AppCompat.Light">
+    <item name="android:windowBackground">@drawable/LaunchScreen</item>
+    <item name="android:windowNoTitle">true</item>  
+  </style>
+
+	<style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+	    <item name="android:fontFamily">fonts/SegoeUI</item>
+	</style>
+
+	<style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+	    <item name="android:fontFamily">fonts/SegoeUI</item>
+	</style>
+
+
+    <!-- Theme used for the app -->
+    <style name="GreatAmericaTheme" parent="@android:style/Theme.Holo.Light">
+	    <item name="android:colorPrimary">@color/darkBlue</item>
+		<item name="android:colorAccent">@color/GAgold</item>
+        <item name="android:backgroundSplit">@color/lightBlue</item>
+        <item name="android:statusBarColor">@color/GAblue</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
+		<item name="android:actionMenuTextColor">@color/white</item>
+		<item name="android:actionBarTabTextStyle">@style/ActionBarTabText</item>
+        <item name="android:windowContentTransitions">true</item>
+		<item name="android:windowAllowEnterTransitionOverlap">true</item>
+		<item name="android:windowAllowReturnTransitionOverlap">true</item>
+		<item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+		<item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+    </style>
+
+    <style name="ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>
+		<item name="android:actionBarTabTextStyle">@style/TabTextColor</item>
+		<item name="android:background">@color/GAblue</item>
+		<item name="android:backgroundStacked">@color/darkBlue</item>
+    </style>
+
+    <style name="ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+	<style name="ActionBarTabText" parent="@android:style/Widget.Holo.ActionBar.TabText">
+    	<item name="android:textColor">@color/white</item>
+	</style>
+
+	<style name="TabTextColor" parent="Theme.AppCompat.Light">
+	    <item name="android:textColor">@color/textPrimary</item>
+	</style>
+</resources>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ce671e8b9f44490a9afd41ea93bc5a04" Name="Diagram1" ZoomLevel="64">
+        <EntityTypeShape EntityType="IID.t_activity" Width="1.5" PointX="7.5" PointY="28.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_administrative_division" Width="1.5" PointX="21" PointY="29.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_aim" Width="1.5" PointX="9.75" PointY="29.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_announcement" Width="1.5" PointX="3" PointY="29.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_country" Width="1.5" PointX="5.25" PointY="28.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_date" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_fieldid" Width="1.5" PointX="21" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_indicator" Width="1.5" PointX="18" PointY="27.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_indicator_age_range" Width="1.5" PointX="20.25" PointY="38.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_language" Width="1.5" PointX="0.75" PointY="30.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_note" Width="1.5" PointX="12.75" PointY="29.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_observation" Width="1.5" PointX="23.5" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_observation_attachment" Width="1.5" PointX="28.75" PointY="29.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_observation_change" Width="1.5" PointX="28.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_observation_comment" Width="1.5" PointX="28.75" PointY="33.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_organization" Width="1.5" PointX="18" PointY="38.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_page_control_translation" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_project" Width="1.5" PointX="20.25" PointY="34" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_site" Width="1.5" PointX="26.25" PointY="31.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_translation" Width="1.5" PointX="23" PointY="34.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_user" Width="1.5" PointX="15.75" PointY="24" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_user_access" Width="1.5" PointX="9.75" PointY="24" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_user_favorite_chart" Width="1.5" PointX="18" PointY="46" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_user_role" Width="1.5" PointX="18" PointY="49" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.t_user_status" Width="1.5" PointX="13.5" PointY="26.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.v_site" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="IID.v_administrative_division" Width="1.5" PointX="9.25" PointY="4.375" IsExpanded="true" />
+        <AssociationConnector Association="IID.FK_t_activity_country_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_activity_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_activity_funder_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_activity_primary_manager_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_activity_project_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_activity_technical_area_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_activity_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_aim_activity_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_note_activity_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_access_activity_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_administrative_division_country_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_administrative_division_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_administrative_division_parent_administrative_division_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_administrative_division_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_site_administrative_division_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_access_administrative_division_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_aim_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_aim_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_aim_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_announcement_country_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_announcement_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_announcement_language_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_announcement_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_country_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_country_parent_site_type_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_country_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_site_country_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_access_country_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_fieldid_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_fieldid_parent_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_fieldid_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_data_collection_frequency_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_group_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_indicator_type_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_rate_per_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_sampling_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_site_rural_urban_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_site_site_type_fieldid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_age_range_indicator_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_indicator_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_translation_language_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_note_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_note_site_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_note_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_attachment_observation_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_change_observation_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_comment_observation_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_attachment_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_attachment_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_change_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_change_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_comment_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_observation_comment_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_organization_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_organization_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_project_organization_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_organization_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_project_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_project_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_site_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_site_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_access_site_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_site_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_translation_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_translation_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_access_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_access_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_access_user_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_favorite_chart_user_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_role_createdby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_role_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_role_user_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_updatedby_userid" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.FK_t_user_user_status_id" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.t_activity_additional_manager" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.t_activity_technical_area_subtype" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.t_announcement_country" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.t_user_favorite_activity" ManuallyRouted="false" />
+        <AssociationConnector Association="IID.t_user_favorite_site" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="IID.t_observation_entry" Width="1.5" PointX="31.75" PointY="35.125" />
+        <AssociationConnector Association="IID.FK_t_observation_indicator_id" />
+        <AssociationConnector Association="IID.FK_t_observation_entry_indicator_age_range_id" />
+        <AssociationConnector Association="IID.FK_t_observation_entry_observation_id" />
+        <AssociationConnector Association="IID.FK_t_observation_site_id" />
+        <AssociationConnector Association="IID.FK_t_observation_entry_createdby_userid" />
+        <AssociationConnector Association="IID.FK_t_observation_entry_updatedby_userid" />
+        <EntityTypeShape EntityType="IID.t_sex" Width="1.5" PointX="3.375" PointY="3.75" />
+        <EntityTypeShape EntityType="IID.t_activity_site" Width="1.5" PointX="31.5" PointY="27" />
+        <AssociationConnector Association="IID.FK_t_activity_site_activity_id" />
+        <AssociationConnector Association="IID.FK_t_activity_site_site_id" />
+        <AssociationConnector Association="IID.FK_t_activity_site_wave_fieldid" />
+        <AssociationConnector Association="IID.FK_t_activity_site_coach_user_id" />
+        <EntityTypeShape EntityType="IID.t_observation_entry_change_history" Width="1.5" PointX="5.375" PointY="0.75" />
+        <AssociationConnector Association="IID.FK_t_observation_entry_change_history_change_user_id" />
+        <AssociationConnector Association="IID.FK_t_observation_entry_change_history_observation_id" />
+        <AssociationConnector Association="IID.FK_t_observation_entry_change_history_observation_entry_id" />
+        <EntityTypeShape EntityType="IID.v_user" Width="1.5" PointX="5.375" PointY="4.75" />
+        <EntityTypeShape EntityType="IID.v_user_access" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="IID.t_color" Width="1.5" PointX="9.375" PointY="0.75" />
+        <EntityTypeShape EntityType="IID.t_chart_acceptable_number_runs" Width="1.5" PointX="3.375" PointY="10.75" />
+        <EntityTypeShape EntityType="IID.v_observation_date_period" Width="1.5" PointX="5.375" PointY="10.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

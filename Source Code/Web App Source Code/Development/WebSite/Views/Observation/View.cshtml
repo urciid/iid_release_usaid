@@ -1,0 +1,113 @@
+﻿@using System.Data;
+@using C1.Web.Mvc.Grid;
+@using IID.BusinessLayer.Domain;
+@using common = IID.BusinessLayer.Globalization.Common.Resource;
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource;
+@using IID.BusinessLayer.Helpers;
+@using IID.WebSite.Helpers;
+@using IID.WebSite.Models;
+
+@model IndicatorSiteObservations
+@{
+    ViewBag.Title = "Observations";
+
+    var groupBys = new List<string>()
+    {
+        Model.DisaggregateByAge ? "age_range_name" : null,
+        Model.DisaggregateBySex ? "sex_description" : null
+    }.Where(s => s != null).ToArray();
+}
+
+@functions {
+    public string GetValueColumnAlign()
+    {
+        switch (Model.IndicatorType)
+        {
+            case IndicatorType.Count:
+            case IndicatorType.YesNo:
+                return "Center";
+            default:
+                return "Right";
+        }
+    }
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml",
+        ProjectBreadcrumbs.ForObservationView(Model.IndicatorId, Model.SiteId))
+}
+
+<script type="text/javascript">
+    var localized = {
+        dateFormat: '@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+        indicatorId: @Model.IndicatorId,
+        siteId: @Model.SiteId,
+        viewData: '@observation.EnterData',
+        ageRange: '@observation.AgeRange',
+        sex: '@observation.Sex',
+        total: '@observation.Total',
+        numeratorDefinition: '@Mvc.EscapeForJavaScript(Model.NumeratorDefinition)',
+        numeratorName: '@Mvc.EscapeForJavaScript(Model.NumeratorName)',
+        denominatorDefinition: '@Mvc.EscapeForJavaScript(Model.DenominatorDefinition)',
+        denominatorName: '@Mvc.EscapeForJavaScript(Model.DenominatorName)',
+        indicatorDefinition: '@Mvc.EscapeForJavaScript(Model.IndicatorDefinition)',
+        indicatorName: '@Mvc.EscapeForJavaScript(Model.IndicatorName)',
+        indicatorType: '@Model.IndicatorTypeFieldId',
+        yes: '@common.Yes',
+        no: '@common.No'
+    };
+
+    window.onresize = function() { setGridToFillViewport('fgObservations'); };
+    $(document).ready(function() { setGridToFillViewport('fgObservations'); });
+</script>
+@Scripts.Render("~/Scripts/observation.js")
+
+<table class="height-100p width-100p" style="table-layout: fixed;">
+    <tr>
+        <td class="height-100p width-300 vertical-align-top">
+            @Html.Partial("~/Views/Activity/EntityTree.cshtml", new ActivityTree(
+               Model.ActivityId, Model.IndicatorId, Model.SiteId, Mode.Observation))
+        </td>
+        <td class="width-50">
+        </td>
+        <td class="vertical-align-top">
+            @(Html.C1().FlexGrid()
+                .AllowSorting(false)
+                .AutoGenerateColumns(false)
+                .Bind(Model.Observations.ToCollection())
+                .Columns(c =>
+                {
+                    foreach (DataColumn column in Model.Observations.Columns)
+                    {
+                        switch (column.ColumnName)
+                        {
+                            case "age_range_id":
+                            case "sex_code":
+                                continue;
+                            case "age_range_name":
+                            case "sex_description":
+                                c.Add(cb => cb.Binding(column.ColumnName).Visible(false));
+                                break;
+                            case "type":
+                                c.Add(cb => cb.Binding(column.ColumnName).MinWidth(400).Width("*"));
+                                break;
+                            default:
+
+                                c.Add(cb => cb.Binding(column.ColumnName).MinWidth(105).Width("*"));
+                                break;
+                        }
+                    }
+                })
+                .CssClass("border-top-rounded")
+                .FrozenColumns(3)
+                .GroupBy(groupBys)
+                .HeadersVisibility(HeadersVisibility.Column)
+                .Id("fgObservations")
+                .IsReadOnly(true)
+                .ItemFormatter("itemFormatter")
+                .OnClientLoadedRows("loadedRows")
+                .SelectionMode(SelectionMode.None)
+            )
+        </td>
+    </tr>
+</table>

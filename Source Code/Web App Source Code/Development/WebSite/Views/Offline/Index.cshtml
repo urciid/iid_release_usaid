@@ -1,0 +1,39 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@{
+    ViewBag.Title = "Loading Offline content";
+}
+<script type="text/javascript">
+    var offlinePagesLoaded = 0;
+    function onIframeLoad() {
+        offlinePagesLoaded += 1;
+
+        // Check if all pages have loaded.
+        if (offlinePagesLoaded === 10)
+            window.location.href = '/Offline/Home';
+    }
+</script>
+
+<h4>Offline Content Loading...</h4>
+<hr />
+<i>
+    Please wait while your content is saved for @common.NetworkMode_Disconnected.ToLower() use.
+    This process may take up to 1 minute to complete. You will be redirected to the landing
+    screen when all the content is ready.
+</i>
+<br />
+<br />
+
+<div class="max-width-max text-align-center">
+    <img src="~/Images/preloader.gif" alt="Preloader" title="Loading..." />
+</div>
+
+<iframe class="display-none" src="/Offline/OfflineSync" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/Home" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/Activity" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/Indicator" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/Site" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/ObservationView" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/ObservationRecord" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/Redirect" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/CoachReport" onload="onIframeLoad();"></iframe>
+<iframe class="display-none" src="/Offline/OnlineSync#sync=no" onload="onIframeLoad();"></iframe>

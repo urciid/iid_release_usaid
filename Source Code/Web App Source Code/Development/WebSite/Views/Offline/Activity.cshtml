@@ -1,0 +1,240 @@
+﻿@using activity = IID.BusinessLayer.Globalization.Activity.Resource
+@using aim = IID.BusinessLayer.Globalization.Aim.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using site = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@using IID.WebSite.Helpers
+@{
+    ViewBag.Title = "Activity (Offline)";
+}
+
+@section contentHeader{
+    <div id="contentHeader" class="breadcrumbs">
+        <b>@common.Activity:</b>
+        <span id="breadCrumbActivity"></span>
+    </div>
+}
+
+<script type="text/javascript">
+    var localized = {
+        dateFormat: '@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+        sites: '@common.Sites',
+        delete: '@common.Delete',
+        notes: '@common.Notes',
+        name: '@common.Name',
+        type: '@common.Type',
+        coach: '@common.Coach',
+        supportStartDate: '@site.SupportStartDate',
+        SupportEndDate: '@site.SupportEndDate',
+        wave: '@site.Wave',
+        coachReport: '@Html.Raw(Mvc.EscapeForJavaScript(observation.CoachReport))'
+    };
+
+    $(document).ready(function () {
+        var activityId = parseInt(getUrlFragmentValue('activityId'));
+        if (!isNaN(activityId)) {
+            setBreadcrumbs('Activity', activityId);
+            loadActivity(activityId);
+        }
+    });
+</script>
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">
+            @common.Activity
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <table class="form-table">
+            <colgroup>
+                <col style="width:  30%;" />
+                <col style="width: 50px;" />
+                <col style="width:  70%;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td><label>@common.Project:</label></td>
+                                    <td><span id="spnProjectName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@common.Name:</label></td>
+                                    <td><span id="spnActivityName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@common.Country:</label></td>
+                                    <td><span id="spnCountryName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@activity.Funder:</label></td>
+                                    <td><span id="spnFunderValue"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@activity.StartDate:</label></td>
+                                    <td><span id="spnStartDate"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@activity.EndDate:</label></td>
+                                    <td><span id="spnEndDate"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@common.Status:</label></td>
+                                    <td>@common.ActiveStatus</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td></td>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td><label>@activity.PrimaryManager:</label></td>
+                                    <td><span id="spnPrimaryManagerName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@activity.AdditionalManagers:</label></td>
+                                    <td><span id="spnAdditionalManagerNames"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@activity.TechnicalArea:</label></td>
+                                    <td><span id="spnTechnicalAreaValue"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@activity.TechnicalAreaSubtypes:</label></td>
+                                    <td><span id="spnTechnicalAreaSubtypeValues"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@activity.OtherKeyInformation:</label></td>
+                                    <td><span id="spnOtherKeyInformation"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="max-width-max">
+    <script id="indicator" type="text/html">
+        <div class="margin-top-4" id="{{uid}}__Indicators">
+        </div>
+        <script type="text/javascript">
+            var ccvIndicators = new c1.mvc.collections.CallbackCollectionView({
+                "items":[],
+                "uniqueId":"ccvIndicators"
+            });
+            c1._registerService('ccvIndicators',ccvIndicators);
+            var {{uid}}__Indicators = new c1.mvc.grid._FlexGridWrapper('#{{uid}}__Indicators');
+            {{uid}}__Indicators.initialize({
+                "columns":[
+                    {"width":"*", "header":"Name", "name":"Name", "binding":"Name"},
+                    {"width":190, "header":"Data Collection Frequency", "name":"DataCollectionFrequency", "binding":"DataCollectionFrequencyFieldId", "align":"Center"},
+                    {"width":120, "header":"Disaggregation", "binding":"DisaggregationText", "align":"Center"},
+                    {"width":120, "header":"Status", "binding":"Status", "align":"Center"}
+                ],
+                "autoGenerateColumns":false,
+                "itemsSource":c1._registerService('ccvIndicators'),
+                "itemFormatter":fgIndicators_ItemFormatter,
+                "templateBindings":{"itemsSource":"Indicators"},
+                "uniqueId":"{{uid}}__Indicators",
+                "selectionMode":0,
+                "isReadOnly":true,
+                "headersVisibility":1
+            },
+            $data);
+        <\/script>
+    </script>
+
+    <script type="text/javascript">
+        function hasIndicators(row) {
+            return row.dataItem && row.dataItem.Indicators && row.dataItem.Indicators.length > 0;
+        }
+
+        function fgAims_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.AimId)
+                    grid.rows[r].height = 32;
+            }
+        }
+
+        function fgAims_LoadedRows(s, e) {
+            var hasIndicators = false;
+            if (s.rows.length > 0) {
+                for (var i = 0; i < s.rows.length; i++) {
+                    if (s.rows[i].dataItem.Indicators && s.rows[i].dataItem.Indicators.length > 0 != null) {
+                        hasIndicators = true;
+                        break;
+                    }
+                }
+            }
+
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Aims.ToLower() available.', { Indicators: new Array() });
+
+            if (hasIndicators)
+                setTimeout(function () { expandFlexGridDetailRows(s); }, 500);
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @aim.AimsAndIndicators
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <div id="fgAims"></div>
+    </div>
+</section>
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">
+            @common.Sites
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <div id="fgActivitySites"></div>
+    </div>
+</section>
+
+@*
+NOT READY YET
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">
+            @common.Notes
+        </div>
+        <div class="float-right button">
+            <button type="button" onclick="showNoteDialog('add', null, afterAddNote);">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </button>
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <div id="fgNotes"></div>
+    </div>
+</section>
+*@

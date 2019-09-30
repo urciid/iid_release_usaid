@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:CustomerInfoPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.CustomerInfoPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="Lessee Information">
+	<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+		<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image Source="starbackground.png" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="15,0,15,0">
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<ScrollView>
+						<StackLayout VerticalOptions="CenterAndExpand" Padding="30,30,30,0" Spacing="14">
+							<StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+								<Label Text="Business Card" FontSize="13" TextColor="{StaticResource GAblue}" XAlign="Center" />
+								<Image Source="photocamera.png" WidthRequest="30" HeightRequest="30">
+									<Image.GestureRecognizers>
+										<TapGestureRecognizer Tapped="CameraButtonClicked"/>
+									</Image.GestureRecognizers>
+								</Image>
+								<Label Text="{Binding PhotoFileName}" FontSize="13" IsVisible="{Binding PhotoAttached}" TextColor="{StaticResource GAblue}" />
+								<Button Text="Remove File" Clicked="OnRemoveButtonClicked" IsVisible="{Binding PhotoAttached}" TextColor="{StaticResource GAblue}" />
+							</StackLayout>
+							<Label StyleId="label1" Text="or" FontSize="Large" XAlign="Center" />
+							<Entry Placeholder="company name" Text="{Binding CompanyName}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="DBA" Text="{Binding DBA}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="mailing address" Text="{Binding MailingAddress}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="city" Text="{Binding City}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Picker Title="state/province" x:Name="statePicker" SelectedIndexChanged="StatePickerValueChanged" IsEnabled="{Binding FieldsEnabled}" />
+							<Entry Placeholder="postal code" Text="{Binding PostalCode}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Style="{StaticResource EntryBlackText}" />
+							<Entry Placeholder="local phone number" Text="{Binding PhoneNumber}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Keyboard="Telephone" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="contact name" Text="{Binding ContactName}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="contact phone" Text="{Binding ContactPhone}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Keyboard="Telephone" Style="{StaticResource EntryBlackText}" />
+							<Entry Placeholder="contact email" Text="{Binding ContactEmail}" IsEnabled="{Binding FieldsEnabled}" FontSize="Medium" Keyboard="Email" Style="{StaticResource EntryBlackText}"/>
+							<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="0,13,0,16">
+								<Button Text="Next" Clicked="OnNextButtonClicked" Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="FillAndExpand"/>
+							</StackLayout>
+						</StackLayout>
+					</ScrollView>
+				</StackLayout>
+			</StackLayout>
+		</AbsoluteLayout>
+	</StackLayout>
+</local:CustomerInfoPageBase>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ActivityDetailPageBase xmlns="http://xamarin.com/schemas/2014/forms" BackgroundColor="{StaticResource grayLight}" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.ActivityDetailPage" xmlns:local="clr-namespace:USAID.Pages;assembly=USAID" Title="{Binding PageTitle}">
+	<!--<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Save" Icon="edit.png" Command="{Binding TestCommand}" />
+	</ContentPage.ToolbarItems>-->
+<TableView BackgroundColor="White" Intent="Form" HorizontalOptions="FillAndExpand">
+	<TableRoot>
+		<TableSection Title="{Binding ActivityInformationLabel}">
+			<TextCell Text="{Binding Activity.Organization}" Detail="{Binding OrganizationLabel}" />
+			<TextCell Text="{Binding Activity.Project}" Detail="{Binding ProjectLabel}" />
+			<TextCell Text="{Binding Activity.Activity}" Detail="{Binding ActivityNameLabel}" />
+			<TextCell Text="{Binding Activity.Country}" Detail="{Binding CountryLabel}" />
+			<TextCell Text="{Binding Activity.ActivityManager}" Detail="{Binding ActivityManagerLabel}" />
+		</TableSection>
+		<!--<TableSection Title="{Binding OtherKeyInformationLabel}">
+			<TextCell Text="{Binding Site.OtherKeyInformation}" />
+		</TableSection> -->
+	</TableRoot>
+</TableView>
+</local:ActivityDetailPageBase>
+

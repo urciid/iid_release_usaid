@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "FileNotFound";
+    string path = Request.QueryString["aspxerrorpath"];
+    if (path == null)
+    {
+        string queryString = Request.Url.ToString();
+        var regEx = new System.Text.RegularExpressions.Regex("404;https?://[^/]+(.+)");
+        var matches = regEx.Split(queryString);
+        if (matches.Length >= 2)
+        {
+            path = matches[1];
+        }
+    }
+}
+
+<h4>File Not Found</h4>
+<hr />
+
+<p>We couldn't find the page you requested: <i>@path</i></p>
+
+<p>
+    <a href="javascript:window.history.back();">Return to previous page</a><br />
+</p>

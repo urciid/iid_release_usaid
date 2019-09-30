@@ -1,0 +1,703 @@
+﻿* { 
+    font-family: Arial, sans-serif serif;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+}
+
+html, body {
+    height: 100%;
+    min-width: 1000px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 9pt;
+}
+
+a, a:visited {
+    color: #003366;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #597790;
+    margin: 10px 0 10px 0;
+}
+
+input[type=checkbox],
+input[type=email],
+input[type=password],
+input[type=text],
+select,
+textarea {
+    border: 1px solid #CCCCCC;
+    color: #666666 !important;
+    padding: 2px;
+}
+
+input[type=button],
+input[type=reset],
+input[type=submit],
+button[type=button]:not(.wj-btn-default):not(.close),
+button[type=submit] {
+    background-color: #F0F0F0;
+    border: 1px solid #D0D0D0;
+    border-radius: 4px !important;
+    color: #003366;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 2px 6px 2px 6px;
+    line-height: 18px;
+}
+
+input[type=button].blue,
+input[type=reset].blue,
+input[type=submit].blue,
+button[type=button].blue,
+button[type=submit].blue {
+    background-color: #597790 !important;
+    color: #F0F0F0 !important;
+}
+
+button[type=button]:not(.wj-btn-default):not(.close) *,
+button[type=submit] * {
+  vertical-align: top;
+}
+
+button[type=button]:not(.wj-btn-default):not(.close) *,
+button[type=submit] * {
+    color: #003366;
+    font-weight: bold;
+}
+
+button[type=button]:not(.wj-btn-default):not(.close) *,
+button[type=submit] * {
+    text-decoration: none;
+}
+
+label, .tdLabel {
+    color: #666666;
+    font-weight: bold;
+    text-align: right;
+    white-space: nowrap;
+}
+
+label.notForForm {
+    font-weight: normal;
+}
+
+table.form-table td > label:not(.notForForm) {
+    display: inline-block;
+    text-align: right;
+    width: 100%;
+}
+table.form-table td {
+    vertical-align: top;
+}
+
+#banner {
+    height: 100px;
+    width: 576px;
+}
+
+#account {
+    padding: 25px 25px 25px 25px;
+}
+#account form {
+    display: inline;
+}
+#account > div {
+    border-radius: 0;
+    margin-left: -1px;
+}
+.account-button-left {
+    border-bottom-left-radius: 4px !important;
+    border-top-left-radius: 4px !important;
+}
+.account-button {
+    box-sizing: border-box;
+    border: 1px solid #CCCCCC;
+    height: 46px;
+    line-height: 42px;
+    display: inline-block;
+}
+.account-button img {
+    vertical-align: middle;
+    margin-bottom: 0px;
+    padding: 0 8px 0 8px;
+}
+#mnuOptions {
+    margin-left: -2px !important;
+}
+.account-button-right {
+    border-bottom-right-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+}
+
+#contentHeader {
+    border-bottom: 1px solid #003366;
+    box-shadow: -12px 4px 8px rgba(0,0,0,0.3);
+    height: 30px;
+    line-height: 32px;
+    padding-left: 10px;
+    width: 100%;
+    z-index: 2;
+}
+
+#contentOuter {
+    position: fixed;
+    top: 130px;
+    bottom: 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+#contentInner {
+    height: 100%;
+    overflow-y: auto;
+    padding: 20px 10px 10px 10px;
+}
+
+body > footer {
+    background-color: #E0E0E0;
+    border-top: 1px solid #999999;
+    position: absolute;
+    bottom: 0;
+    height: 20px;
+    overflow: hidden;
+    padding-left: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+.clear-floats {
+  clear: both;
+  height: 0;
+}
+
+ul.list-inline {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+ul.list-inline > li {
+    display: inline-block;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.text-align-left {
+    text-align: left !important;
+}
+.text-align-center {
+    text-align: center !important;
+}
+.text-align-right {
+    text-align: right !important;
+}
+.text-align-justify {
+    text-align: justify !important;
+}
+
+.float-left {
+    float: left;
+}
+.float-right {
+    float: right;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.flexbox {
+  display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;      /* TWEENER - IE 10 */
+  display: -webkit-flex;     /* NEW - Chrome */
+  display: flex;             /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+.flex-1 {
+    flex: 1;
+}
+
+.flex-2 {
+    flex: 2;
+}
+
+.flex-3 {
+    flex: 3;
+}
+
+.flex-4 {
+    flex: 4;
+}
+
+.flex-5 {
+    flex: 5;
+}
+.flex-v {
+    flex-direction: column;
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.no-wrap {
+    white-space: nowrap;
+}
+
+.list-style-type-none {
+    list-style-type: none;
+}
+
+.height-0 {
+    height: 0px;
+}
+.height-25 {
+    height: 25px;
+}
+.height-50 {
+    height: 50px;
+}
+.height-75 {
+    height: 75px;
+}
+.height-100 {
+    height: 100px;
+}
+.height-200 {
+    height: 200px;
+}
+.height-300 {
+    height: 300px;
+}
+.height-400 {
+    height: 400px;
+}
+.height-500 {
+    height: 500px;
+}
+.height-10p {
+    height: 10%;
+}
+.height-25p {
+    height: 25%;
+}
+.height-50p {
+    height: 50%;
+}
+.height-75p {
+    height: 75%;
+}
+.height-90p {
+    height: 90%;
+}
+.height-100p {
+    height: 100%;
+}
+
+.width-0 {
+    width: 0px;
+}
+.width-25 {
+    width: 25px;
+}
+.width-50 {
+    width: 50px;
+}
+.width-75 {
+    width: 75px;
+}
+.width-100 {
+    width: 100px;
+}
+.width-125 {
+    width: 125px;
+}
+.width-150 {
+    width: 150px;
+}
+.width-200 {
+    width: 200px;
+}
+.width-300 {
+    width: 300px;
+}
+.width-400 {
+    width: 400px;
+}
+.width-500 {
+    width: 500px;
+}
+.width-600 {
+    width: 600px;
+}
+.width-700 {
+    width: 700px;
+}
+.width-800 {
+    width: 800px;
+}
+.width-900 {
+    width: 900px;
+}
+.width-1000 {
+    width: 1000px;
+}
+.width-10p {
+    width: 10%;
+}
+.width-25p {
+    width: 25%;
+}
+.width-50p {
+    width: 50%;
+}
+.width-75p {
+    width: 75%;
+}
+.width-90p {
+    width: 90%;
+}
+.width-100p {
+    width: 100%;
+}
+
+table.form-table > thead > tr > th,
+table.form-table > tbody > tr > th,
+table.form-table > tbody > tr > th,
+table.form-table > tfoot > tr > td,
+table.form-table td {
+    padding: 2px;
+}
+
+.mnuLanguageDropDown {
+    width: 300px;
+}
+
+.label-and-input {
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+}
+
+.max-width-300 {
+    max-width: 300px;
+}
+/* For a 1280px screen (leaving room for margin and scrollbar). I don't see any reason to stretch more on bigger displays. */
+.max-width-max {
+    max-width: 1240px;
+}
+
+.iid-list li {
+    color: #597790;
+    margin: 4px 0 4px -10px;
+}
+
+.margin-0 {
+    margin: 0 !important;
+}
+
+.margin-4 {
+    margin: 4px;
+}
+
+.margin-top-4 {
+    margin-top: 4px;
+}
+
+.margin-bottom-4 {
+    margin-bottom: 4px;
+}
+
+.padding-0 {
+    padding: 0 !important;
+}
+.padding-4 {
+    padding: 4px;
+}
+
+section {
+    border: 1px solid #597790;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin-bottom: 20px;
+}
+section>div.header {
+    background-color: #597790;
+    border-bottom: 1px solid #CCCCCC;
+    min-height: 33px;
+}
+section>div.header>div.title {
+    color: #FFFFFF;
+    font-size: 10pt;
+    font-weight: bold;
+    line-height: 22px;
+    padding-top: 6px;
+    padding-left: 10px;
+}
+section>div.header div.button {
+    margin-bottom: -4px; /* This allows multi-line header content to wrap under the button cleanly. */
+    padding: 4px 4px 0 0;
+}
+section>div.content {
+    background-color: #F5F5F5;
+    padding: 4px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+.cursor-cell {
+    cursor: cell;
+}
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+
+.vertical-align-top {
+    vertical-align: top;
+}
+vertical-align-middle {
+    vertical-align: middle;
+}
+vertical-align-bottom {
+    vertical-align: bottom;
+}
+
+.color-blue, .color-blue:visited, .color-blue:hover {
+    color: #003366 !important;
+}
+.color-dark-blue {
+    color: #1D405E;
+}
+.color-gray, .color-gray:visited, .color-gray:hover {
+    color: #666666 !important;
+}
+.color-white, .color-white:visited, .white-gray:hover {
+    color: #FFFFFF !important;
+}
+.color-red {
+    color: #C00C03;
+}
+.color-green {
+    color: #609030;
+}
+
+.background-white { 
+    background-color: #FFFFFF;
+}
+
+.background-black { 
+    background-color: #000000;
+}
+
+.border-light-gray {
+    border: 1px solid #CCCCCC;
+}
+.border-gray {
+    border: 1px solid #999999;
+}
+.border-dark-gray {
+    border: 1px solid #666666;
+}
+.border-dark-blue {
+    border: 1px solid #597790 !important;
+}
+
+.font-size-big {
+    font-size: 10pt;
+}
+
+.padding-right-10 {
+    padding-right: 10px;
+}
+
+.display-none {
+    display: none;
+}
+.display-inline-block {
+    display: inline-block;
+}
+
+.invisible {
+    visibility: hidden;
+}
+.visible {
+    visibility: visible;
+}
+
+.font-weight-bold {
+    font-weight: bold;
+}
+.font-weight-bold * {
+    font-weight: bold;
+}
+
+.background-color-blue {
+    background-color: #597790 !important;
+}
+.background-color-blue-2 {
+    background-color: #8EAEC8 !important;
+}
+.background-color-blue-3 {
+    background-color: #9EB4C8 !important;
+}
+.background-color-blue-4 {
+    background-color: #C5D2DE !important;
+}
+.background-color-light-gray {
+    background-color: #F0F0F0 !important;
+}
+.background-color-white {
+    background-color: #FFFFFF !important;
+}
+
+div.rule {
+    height: 1px;
+    width: 100%;
+    color: #003366;
+    padding: 0;
+    margin: 0;
+}
+
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.border-top-rounded {
+    border-top-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+}
+
+.border-bottom-none {
+    border-bottom-style: none;
+}
+
+.error {
+    color: #C00C03;
+    font-size: 9pt;
+    display: inline-block;
+    padding-bottom: 10px;
+    white-space: nowrap;
+}
+
+.text-wrap-none {
+    text-wrap: none;
+}
+
+.editIcon {
+    background: #FFFFFF url(/Images/icons/16/pencil_edit.png) no-repeat center center;
+}
+
+.deleteIcon {
+    background: #FFFFFF url(/Images/icons/16/delete_2.png) no-repeat center center;
+}
+
+.dataIcon {
+    background: #FFFFFF url(/Images/icons/16/spreadsheet.png) no-repeat center center;
+}
+.exportIcon {
+    background: #FFFFFF url(/Images/icons/16/arrow_down.png) no-repeat center center;
+}
+.chartIcon {
+    background: #FFFFFF url(/Images/icons/16/line-chart.png) no-repeat center center;
+}
+.coachReportIcon {
+    background: #FFFFFF url(/Images/icons/16/clipboard.png) no-repeat center center;
+}
+.rankIcon {
+    background: #FFFFFF url(/Images/icons/16/rank.png) no-repeat center center;
+}
+.editIcon,
+.deleteIcon,
+.dataIcon,
+.exportIcon,
+.chartIcon,
+.coachReportIcon,
+.rankIcon {
+    display: inline-block;
+    height: 20px;
+    width: 20px;
+}
+a.editIcon:hover,
+a.deleteIcon:hover,
+a.dataIcon:hover,
+a.exportIcon:hover,
+a.chartIcon:hover,
+a.coachReportIcon:hover,
+a.rankReportIcon:hover {
+    text-decoration: none;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+.font-style-italic {
+    font-style: italic;
+}
+
+.arrowUpDown {
+    background: transparent url(/Images/icons/16/arrow_up_down.png) no-repeat center center;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+}
+.arrowUpDown div {
+    height: 8px;
+    width: 16px;
+}
+
+@page {
+    margin: 10mm;
+}
+
+@media print {
+    body {
+        margin: 0;
+    }
+
+    header, footer, #contentHeader {
+        display: none;
+    }
+
+    #contentOuter {
+        position: absolute;
+        top: 0px;
+        left: 0;
+    }
+
+    #contentInner {
+        overflow: visible;
+        padding: 0;
+    }
+
+    .dontPrint {
+        display: none;
+    }
+
+    .avoidPageBreak {
+        page-break-inside: avoid;
+    }
+
+    .pageBreakAfter {
+        page-break-after: always;
+    }
+}

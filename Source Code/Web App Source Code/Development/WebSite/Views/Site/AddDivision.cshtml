@@ -1,0 +1,121 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+
+<script type="text/javascript">
+    var addDivisionModal;
+    function addAdministrativeDivision(level, parentId) {
+        if (addDivisionModal == null)
+            addDivisionModal = wijmo.Control.getControl("#addDivisionModal");
+        addDivisionModal.show();
+
+        var type = administrativeDivisions[level];
+
+        $('#spnAddDivisionModalTitle').text('@common.Add ' + type);
+        $('#tdAddDivisionCountryName').text(getDropdownSelectedText('lstCountry'));
+
+        for (var i = 1; i < 4; i++) {
+            var tr = $('#tdAddDivisionParent' + i);
+            if (i < level) {
+                $('#tdAddDivisionParentType' + i).html('<b>' + administrativeDivisions[i] + '</b>:');
+                $('#tdAddDivisionParentName' + i).text(getDropdownSelectedText('lstAdministrativeDivisionId' + i));
+                tr.show();
+            } else {
+                tr.hide();
+            }
+        }
+
+        $('#tdAddDivisionType').html('<b>' + type + ':</b>');
+        $('#hdnAddDivisionLevel').val(level);
+        $('#hdnAddDivisionParentId').val(parentId);
+        $('#txtAddDivisionName').val('');
+    }
+
+    function saveAdministrativeDivision() {
+        var formData = new FormData();
+        formData.append('countryId', $('#lstCountry').val());
+        formData.append('parentAdministrativeDivisionId', $('#hdnAddDivisionParentId').val());
+        formData.append('name', $('#txtAddDivisionName').val());
+        addAntiForgeryTokenToForm(formData);
+
+        $.ajax({
+            url: '/Site/AddAdministrativeDivision',
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: saveAdministrativeDivisionResponse,
+            error: saveAdministrativeDivisionResponse
+        });
+    }
+
+    function saveAdministrativeDivisionResponse(result) {
+        if (result.success) {
+            var level = $('#hdnAddDivisionLevel').val();
+            var parentId = $('#hdnAddDivisionParentId').val();
+            loadAdministrativeDivisions(level, parentId, function () {
+                var name = $('#txtAddDivisionName').val();
+                var ddlId = ('lstAdministrativeDivisionId' + level);
+                selectOptionByText(ddlId, name);
+
+                var childLevel = Number(level) + 1;
+                if (administrativeDivisions[childLevel]) {
+                    // Load the next level. There shouldn't be any children, but we do want to properly set the menu and button.
+                    var id = $('#lstAdministrativeDivisionId' + level).val();
+                    loadAdministrativeDivisions(childLevel, id);
+                }
+
+                addDivisionModal.hide();
+            });
+        } else {
+            alert(result.responseText);
+            addDivisionModal.hide();
+        }
+    }
+</script>
+<div id="addDivisionModal" class="width-400">
+    <div class="modal-header">
+        <span id="spnAddDivisionModalTitle"></span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <table class="form-table width-100p">
+            <colgroup>
+                <col />
+                <col style="width: 90%;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td class="text-align-right"><b>@common.Country:</b></td>
+                    <td id="tdAddDivisionCountryName"></td>
+                </tr>
+                <tr id="tdAddDivisionParent1">
+                    <td id="tdAddDivisionParentType1" class="text-align-right"></td>
+                    <td id="tdAddDivisionParentName1"></td>
+                </tr>
+                <tr id="tdAddDivisionParent2">
+                    <td id="tdAddDivisionParentType2" class="text-align-right"></td>
+                    <td id="tdAddDivisionParentName2"></td>
+                </tr>
+                <tr id="tdAddDivisionParent3">
+                    <td id="tdAddDivisionParentType3" class="text-align-right"></td>
+                    <td id="tdAddDivisionParentName3"></td>
+                </tr>
+                <tr>
+                    <td id="tdAddDivisionType" class="text-align-right"></td>
+                    <td id="tdAddDivisionName">
+                        <input type="hidden" id="hdnAddDivisionLevel" />
+                        <input type="hidden" id="hdnAddDivisionParentId" />
+                        <input type="text" class="width-100p" id="txtAddDivisionName" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="saveAdministrativeDivision();">
+            @common.Save
+            <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+        </button>
+    </div>
+</div>
+
+@(Html.C1().Popup("#addDivisionModal").Modal(true).HideTrigger(PopupTrigger.Click))

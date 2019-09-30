@@ -1,0 +1,53 @@
+﻿@{
+    // NOTE: Used Response.Write because otherwise I was getting a mysterious carriage return at 
+    // the beginning of the response. CACHE MANIFEST must be the first line of the response.
+    Layout = null;
+    Response.Write("CACHE MANIFEST\r\n");
+    Response.Write("# version 1\r\n");
+    Response.Write("# last edited 2017-06-03 13:30 CDT\r\n");
+    Response.Write($"# user: {Identity.CurrentUser.UserName}");
+    Response.Write($"# culture: {IidCulture.CurrentLanguage}");
+    Response.Write("\r\n");
+
+    Response.Write("CACHE:\r\n");
+    // Page(s) we want to include in cache.
+    Response.Write(String.Join("\r\n", new string[] {
+        "/Offline/Home",
+        "/Offline/Activity",
+        "/Offline/Indicator",
+        "/Offline/ObservationView",
+        "/Offline/ObservationRecord",
+        "/Offline/Redirect",
+        "/Offline/Site",
+        "/Offline/CoachReport",
+        "/Offline/OnlineSync"
+    }));
+    Response.Write("\r\n");
+    // Other resources we need to cache.
+    Response.Write(String.Join("\r\n", GetDirectoryListing("/Content", "/Images", "/Scripts")));
+    Response.Write("\r\n");
+    Response.Write("\r\n");
+
+    Response.Write("NETWORK:\r\n");
+    Response.Write("/Home/OnlineSync\r\n");
+    Response.Write("*\r\n");
+
+    Response.Write("FALLBACK:\r\n");
+    Response.Write("/ /Offline/Home\r\n");
+    Response.Write("*\r\n");
+}
+@functions {
+    public static IEnumerable<string> GetDirectoryListing(params string[] urls)
+    {
+        List<string> list = new List<string>();
+
+        foreach (string url in urls)
+        {
+            string filePath = HttpContext.Current.Server.MapPath(url);
+            list.AddRange(Directory.EnumerateFiles(filePath).Select(x => (url + "/" + Path.GetFileName(x))));
+            list.AddRange(GetDirectoryListing(Directory.EnumerateDirectories(filePath).Select(x => (url + "/" + Path.GetFileName(x))).ToArray()));
+        }
+
+        return list;
+    }
+}

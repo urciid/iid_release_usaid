@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:LoginPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.LoginPage" 
+		xmlns:local="clr-namespace:USAID.Pages;assembly=USAID"
+		xmlns:custom="clr-namespace:GA.Shared.CustomRenderers;assembly=USAID">
+<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+	<ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+	<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+		<StackLayout Orientation="Vertical" VerticalOptions="Start" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="5,25,5,0">
+					<StackLayout Padding="0,0,0,0">
+				<Image Source="Logo.png">
+				</Image>
+			</StackLayout>
+			<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand" BackgroundColor="Transparent">
+				<StackLayout VerticalOptions="CenterAndExpand" Padding="5,0,5,0" Spacing="6">
+					<StackLayout Padding="0,0,0,10">
+						<Label StyleId="label1" Text="{Binding WelcomeLabel}" TextColor="{StaticResource GAblue}" FontSize="14" XAlign="Center" />
+					</StackLayout>
+					<StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Padding="0,5,0,0">
+						<Entry Placeholder="{Binding EmailHintText}" Text="{Binding Email}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+						<Entry Placeholder="{Binding PasswordHintText}" IsPassword="true" Text="{Binding Password}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+						<Button Text="{Binding LoginButtonText}" HorizontalOptions="FillAndExpand" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding LoginCommand}" />
+						<Label Text="{Binding CreateProfileLabel}" FontSize="Small" TextColor="Black" XAlign="Center" />
+						<Button Text="{Binding CreateProfileEmailAddress}" Clicked="LoginHelpButton_Clicked" TextColor="{StaticResource GAblue}" BackgroundColor="Transparent" />
+						<Button Text="{Binding ForgotPasswordLabel}" Clicked="LoginHelpButton_Clicked" TextColor="{StaticResource GAblue}" BackgroundColor="Transparent" />
+					</StackLayout>
+				</StackLayout>
+			</StackLayout>
+		</StackLayout>
+	</AbsoluteLayout>
+	</ScrollView>
+</StackLayout>
+</local:LoginPageBase>

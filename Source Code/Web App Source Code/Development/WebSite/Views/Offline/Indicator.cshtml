@@ -1,0 +1,246 @@
+﻿@using aim = IID.BusinessLayer.Globalization.Aim.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using site = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@{
+    ViewBag.Title = "Indicator (Offline)";
+}
+
+@section contentHeader{
+    <div id="contentHeader" class="breadcrumbs">
+        <b>@common.Activity:</b>
+        <a id="breadCrumbActivity"></a>
+
+        <span class="separator">&#187;</span>
+        <b>@common.Indicator:</b>
+        <div id="breadCrumbIndicator"></div>
+    </div>
+}
+
+@Scripts.Render("~/Scripts/indicator.js")
+
+<script type="text/javascript">
+    var localized = {
+        dateFormat: '@IidCulture.CurrentCulture.DateTimeFormat.ShortDatePattern.ToLower()',
+        sites: '@common.Sites',
+        yes: '@common.Yes',
+        no: '@common.No',
+        indicators: '@common.Indicators',
+        name: '@common.Name',
+        type: '@common.Type',
+        coach: '@common.Coach',
+        supportStartDate: '@site.SupportStartDate',
+        SupportEndDate: '@site.SupportEndDate',
+        wave: '@site.Wave',
+        coachReport: '@Html.Raw(Mvc.EscapeForJavaScript(observation.CoachReport))'
+    };
+
+    var indicatorId;
+    $(document).ready(function () {
+        indicatorId = parseInt(getUrlFragmentValue('indicatorId'));
+        if (!isNaN(indicatorId)) {
+            setBreadcrumbs('Indicator', indicatorId);
+            loadIndicator(indicatorId);
+        }
+    });
+</script>
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">
+            @common.Indicator
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <table class="form-table width-100p">
+            <colgroup>
+                <col style="width: 40%;" />
+                <col style="width:  5%;" />
+                <col style="width: 55%;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td><label>@common.Aim:</label></td>
+                                    <td><span id="spnAimName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@common.Name:</label></td>
+                                    <td><span id="spnName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@common.Type:</label></td>
+                                    <td><span id="spnTypeValue"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.Group:</label></td>
+                                    <td><span id="spnGroupValue"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.Definition:</label></td>
+                                    <td><span id="spnDefinition"></span></td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyNumeratorDenominator">
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="padding-0" colspan="2">
+                                        <label class="text-align-left">@indicator.Numerator</label>
+                                        <hr style="margin: 2px 4px 2px 0;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label>@common.Name:</label></td>
+                                    <td><span id="spnNumeratorName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.Definition:</label></td>
+                                    <td><span id="spnNumeratorDefinition"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.Source:</label></td>
+                                    <td><span id="spnNumeratorSource"></span></td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td class="padding-0" colspan="2">
+                                        <label class="text-align-left">@indicator.Denominator</label>
+                                        <hr style="margin: 2px 4px 2px 0;" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label>@common.Name:</label></td>
+                                    <td><span id="spnDenominatorName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.Definition:</label></td>
+                                    <td><span id="spnDenominatorDefinition"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.Source:</label></td>
+                                    <td><span id="spnDenominatorSource"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td></td>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody id="tbdyCollection">
+                                <tr>
+                                    <td><label>@indicator.DataCollectionFrequency:</label></td>
+                                    <td><span id="spnDataCollectionFrequencyValue"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.Sampling:</label></td>
+                                    <td><span id="spnSamplingValue"></span></td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyChangeVariable">
+                                <tr>
+                                    <td><label>@indicator.ChangeVariable:</label></td>
+                                    <td><span id="spnChangeVariable"></span></td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyDisaggregation">
+                                <tr>
+                                    <td colspan="2">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.DisaggregateBySex:</label></td>
+                                    <td><span id="spnDisaggregateBySex"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.DisaggregateByAge:</label></td>
+                                    <td><span id="spnDisaggregateByAge"></span></td>
+                                </tr>
+                                <tr id="trAgeRanges">
+                                    <td><label>@indicator.AgeRanges:</label></td>
+                                    <td><span id="spnAgeRanges"></span></td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyTarget">
+                                <tr>
+                                    <td colspan="2">
+                                        &nbsp;
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.TargetPerformance:</label></td>
+                                    <td><span id="spnTargetPerformance"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.ThresholdGoodPerformance:</label></td>
+                                    <td><span id="spnThresholdGoodPerformance"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.ThresholdPoorPerformance:</label></td>
+                                    <td><span id="spnThresholdPoorPerformance"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><label>@indicator.IncreaseIsGood:</label></td>
+                                    <td><span id="spnIncreaseIsGoodText"></span></td>
+                                </tr>
+                            </tbody>
+                            <tbody id="tbdyRatio">
+                                <tr>
+                                    <td><label>@indicator.RatePer:</label></td>
+                                    <td><span id="spnRatePerValue"></span></td>
+                                </tr>
+                            </tbody>
+                            <tbody>
+                                <tr>
+                                    <td><label>@common.Status:</label></td>
+                                    <td>@common.ActiveStatus</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">
+            @common.Sites
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <div id="fgIndicatorSites"></div>
+    </div>
+</section>
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">
+            @aim.OtherIndicators
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <div id="fgOtherIndicators"></div>
+    </div>
+</section>

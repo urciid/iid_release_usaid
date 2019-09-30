@@ -1,0 +1,230 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Helpers
+@using IID.BusinessLayer.Models
+@using activity = IID.BusinessLayer.Globalization.Activity.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+
+@model ActivitySearchCriteria
+@{
+    ViewBag.Title = "Activity Search";
+}
+
+<section class="display-inline-block">
+    <script type="text/javascript">
+        var webApiSearchPath = '@(Settings.WebApiUrl)/Activity/Search';
+        var lstCountries, lstTechnicalAreas, lstTechnicalAreaSubtypes, lstActivityStatus, fgActivities;
+        $(document).ready(function () {
+            lstCountries = wijmo.Control.getControl('#lstCountries');
+            lstTechnicalAreas = wijmo.Control.getControl('#lstTechnicalAreas');
+            lstTechnicalAreaSubtypes = wijmo.Control.getControl('#lstTechnicalAreaSubtypes');
+            lstActivityStatus = wijmo.Control.getControl('#lstActivityStatus');
+            fgActivities = wijmo.Control.getControl('#fgActivities');
+
+            lstCountries.placeholder = '[All]';
+            lstTechnicalAreas.placeholder = '[All]';
+            lstTechnicalAreaSubtypes.placeholder = '[All]';
+
+            // Get default items for technical areas / technical area subtypes.
+            loadTechnicalAreas();
+            loadTechnicalAreaSubtypes();
+        });
+
+        function getSelectedCountryIds() {
+            var countryIds = [];
+            for (var i in lstCountries.checkedItems)
+                countryIds.push(lstCountries.checkedItems[i].Value);
+            return countryIds;
+        }
+
+        function getSelectedTechnicalAreaFieldIds() {
+            var technicalAreas = [];
+            for (var i in lstTechnicalAreas.checkedItems)
+                technicalAreas.push(lstTechnicalAreas.checkedItems[i].fieldid);
+            return technicalAreas;
+        }
+
+        function getSelectedTechnicalAreaSubtypeFieldIds() {
+            var technicalAreaSubTypes = [];
+            for (var i in lstTechnicalAreaSubtypes.checkedItems)
+                technicalAreaSubTypes.push(lstTechnicalAreaSubtypes.checkedItems[i].fieldid);
+            return technicalAreaSubTypes;
+        }
+
+        function getActivityStatus() {
+            return lstActivityStatus.selectedValue;
+        }
+
+        function loadTechnicalAreas() {
+            var data = {
+                CountryIds: getSelectedCountryIds(),
+                UserId: @(Identity.CurrentUser.Id),
+                LanguageId: @(IidCulture.CurrentLanguageId)
+            };
+            $.post((webApiSearchPath + 'TechnicalAreas'), data, bindTechnicalAreaResults, 'json');
+        }
+
+        function loadTechnicalAreaSubtypes() {
+            var data = {
+                CountryIds: getSelectedCountryIds(),
+                TechnicalAreaFieldIds: getSelectedTechnicalAreaFieldIds(),
+                UserId: @(Identity.CurrentUser.Id),
+                LanguageId: @(IidCulture.CurrentLanguageId)
+            };
+            $.post((webApiSearchPath + 'TechnicalAreaSubtypes'), data, bindTechnicalAreaSubtypeResults, 'json');
+        }
+
+        function loadActivities() {
+            var data = {
+                CountryIds: getSelectedCountryIds(),
+                TechnicalAreaFieldIds: getSelectedTechnicalAreaFieldIds(),
+                TechnicalAreaSubtypeFieldIds: getSelectedTechnicalAreaSubtypeFieldIds(),
+                Status: getActivityStatus(),
+                UserId: @(Identity.CurrentUser.Id),
+                LanguageId: @(IidCulture.CurrentLanguageId)
+            };
+            $.post(webApiSearchPath, data, bindActivityResults, 'json');
+        }
+
+        function bindTechnicalAreaResults(result) {
+            lstTechnicalAreas.itemsSource = result;
+            loadTechnicalAreaSubtypes();
+        }
+
+        function bindTechnicalAreaSubtypeResults(result) {
+            lstTechnicalAreaSubtypes.itemsSource = result;
+        }
+
+        function bindActivityResults(result) {
+            $('#secResults').show();
+            fgActivities.itemsSource = result;
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @activity.ActivitySearch
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <table class="form-table">
+            <tbody>
+                <tr>
+                    <td>@Html.LabelForForm(m => m.CountryIds)</td>
+                    <td>
+                        @(Html.C1().MultiSelectFor(m => m.CountryIds)
+                            .Bind(Model.Countries)
+                            .CssClass("width-300")
+                            .DisplayMemberPath("Text")
+                            .Id("lstCountries")
+                            .OnClientCheckedItemsChanged("loadTechnicalAreas")
+                            .SelectedValuePath("Value")
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelForForm(m => m.TechnicalAreaFieldIds)</td>
+                    <td>
+                        @(Html.C1().MultiSelectFor(m => m.TechnicalAreaFieldIds)
+                            .CssClass("width-300")
+                            .DisplayMemberPath("value")
+                            .Id("lstTechnicalAreas")
+                            .OnClientCheckedItemsChanged("loadTechnicalAreaSubtypes")
+                            .SelectedValuePath("fieldid")
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelForForm(m => m.TechnicalAreaSubtypeFieldIds)</td>
+                    <td>
+                        @(Html.C1().MultiSelectFor(m => m.TechnicalAreaSubtypeFieldIds)
+                            .CssClass("width-300")
+                            .DisplayMemberPath("value")
+                            .Id("lstTechnicalAreaSubtypes")
+                            .SelectedValuePath("fieldid")
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelForForm(m => m.Status)</td>
+                    <td>
+                        @(Html.C1().ComboBoxFor(m => m.Status)
+                            .Bind(Model.Statuses)
+                            .DisplayMemberPath("Text")
+                            .Id("lstActivityStatus")
+                            .SelectedValuePath("Value")
+                        )
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button onclick="loadActivities();" type="button">
+                            Search
+                            <img src="~/Images/icons/16/search_lense.png" />
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="display-none max-width-max" id="secResults">
+    <script type="text/javascript">
+        function fgActivities_ItemFormatter(panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var grid = panel.grid;
+                var dataItem = grid.rows[r].dataItem;
+                if (dataItem && dataItem.ActivityId) {
+                    switch (panel.columns[c].name) {
+                        case 'ActivityName':
+                            cell.innerHTML = (
+                                '<a href="/Activity/View/' + dataItem.ActivityId + '">' + dataItem.ActivityName + '</a>');
+                            break;
+                    }
+                }
+            }
+        }
+
+        function fgActivities_LoadedRows(s, e) {
+            if (s.rows.length == 0)
+                showFlexGridNoDataMessage(s, 'No @common.Activities.ToLower() available.');
+        }
+    </script>
+
+    <div class="header">
+        <div class="float-left title">
+            @common.Results
+        </div>
+        <div class="float-right button">
+            <a class="btn btn-primary" href="@Url.Action("Add")">
+                @common.Add
+                <img src="~/Images/icons/16/plus.png" />
+            </a>
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<ActivitySearchResult>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("ActivityName").Header(common.Name).Name("ActivityName").SortMemberPath("ActivityName").Width("2*"));
+                c.Add(cb => cb.Binding("CountryName").Header(common.Country).Width("*"));
+                c.Add(cb => cb.Binding("ProjectName").Header(common.Project).Width("*"));
+                c.Add(cb => cb.Binding("TechnicalAreaValue").Header(activity.TechnicalArea).Width("*"));
+                c.Add(cb => cb.Binding("TechnicalAreaSubTypeValues").Header(activity.TechnicalAreaSubtypes).Width("*"));
+                c.Add(cb => cb.Binding("StartDate").Align("Right").DataType(DataType.Date).Header(activity.StartDate).Width("90"));
+                c.Add(cb => cb.Binding("EndDate").Align("Right").DataType(DataType.Date).Header(activity.EndDate).Width("90"));
+            })
+            .HeadersVisibility(HeadersVisibility.Column)
+            .Id("fgActivities")
+            .IsReadOnly(true)
+            .ItemFormatter("fgActivities_ItemFormatter")
+            .OnClientLoadedRows("fgActivities_LoadedRows")
+            .SelectionMode(SelectionMode.None)
+        )
+    </div>
+</section>

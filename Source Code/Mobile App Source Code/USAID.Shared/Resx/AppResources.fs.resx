@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddButton" xml:space="preserve">
+    <value>Add</value>
+    <comment>machine translation</comment>
+  </data>
+  <data name="ApplicationHeading" xml:space="preserve">
+    <value>LionTodo</value>
+  </data>
+  <data name="ApplicationTitle" xml:space="preserve">
+    <value>LionTodo</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DoneLabel" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NotesLabel" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SpeakButton" xml:space="preserve">
+    <value>Speak</value>
+  </data>
+
+
+  <!-- 
+    Start Login Page 
+	-->
+	<data name="LoginPageTitle" xml:space="preserve">
+    	<value>Login</value>
+		<comment>LoginTitlek</comment>
+  	</data>
+	<data name="WelcomeLabel" xml:space="preserve">
+		<value>Welcome</value>
+		<comment>Welcome Label</comment>
+	</data>
+	<data name="EmailHint" xml:space="preserve">
+		<value>correo electrónico</value>
+		<comment>wording in email textbox</comment>
+	</data>
+	<data name="PassowrdHint" xml:space="preserve">
+		<value>password</value>
+		<comment>wording in password box</comment>
+	</data>
+	<data name="LoginButtonText" xml:space="preserve">
+    	<value>Iniciar sesión</value>
+		<comment>Login button text</comment>
+  	</data>
+	<data name="ToCreatePofileLabel" xml:space="preserve">
+    	<value>To create a profile, please contact:</value>
+		<comment>to create profile contact</comment>
+  	</data>
+	<data name="ForgotPasswordLink" xml:space="preserve">
+    	<value>Forgot Password</value>
+		<comment>Forgot Password Link</comment>
+  	</data>
+	<!-- 
+    End Login Page 
+	-->
+
+	<!-- 
+    Start Landing Page 
+	-->
+	<data name="LandingPageTitle" xml:space="preserve">
+    	<value>Home</value>
+		<comment>Home Title</comment>
+  	</data>
+	<data name="DownloadText" xml:space="preserve">
+    	<value>Be sure to download site information before leaving for site-fr.</value>
+		<comment>text on landing page stating to download information before leaving</comment>
+  	</data>
+	<data name="LastInformationText" xml:space="preserve">
+    	<value>Last information download-fr {0}</value>
+		<comment>text saying last download date</comment>
+  	</data>
+	<data name="DownloadButtonText" xml:space="preserve">
+    	<value>Download-fr</value>
+		<comment>Download button text</comment>
+  	</data>
+	<!-- 
+    End Landing Page 
+	-->
+
+	<!-- 
+    Start Sites Page 
+	-->
+	<data name="SitesPageTitle" xml:space="preserve">
+    	<value>Sites</value>
+		<comment>Site Title</comment>
+  	</data>
+	<data name="NoSitesText" xml:space="preserve">
+    	<value>No Sites Available</value>
+		<comment>Displays when no Sites in list</comment>
+  	</data>
+	<!-- 
+    End Sites Page 
+	-->
+
+	<!-- 
+    Start Site Page 
+	-->
+	<data name="SitePageTitle" xml:space="preserve">
+    	<value>Site</value>
+		<comment>Site Title</comment>
+  	</data>
+	<data name="SiteNameLabel" xml:space="preserve">
+    	<value>Site Name</value>
+  	</data>
+	<data name="CountryNameLabel" xml:space="preserve">
+    	<value>Country Name</value>
+  	</data>
+	<data name="SiteTypeLabel" xml:space="preserve">
+    	<value>Site Type</value>
+  	</data>
+	<data name="RegionLabel" xml:space="preserve">
+    	<value>Region</value>
+  	</data>
+	<data name="DistrictLabel" xml:space="preserve">
+    	<value>District</value>
+  	</data>
+	<data name="SubDistrictLabel" xml:space="preserve">
+    	<value>Sub District</value>
+  	</data>
+	<data name="CityTownVillageLabel" xml:space="preserve">
+    	<value>City/Town/Village</value>
+  	</data>
+	<data name="PartnerLabel" xml:space="preserve">
+    	<value>Partner</value>
+  	</data>
+	<data name="FundingTypeLabel" xml:space="preserve">
+    	<value>Funding Type</value>
+  	</data>
+	<data name="LongitudeLabel" xml:space="preserve">
+    	<value>Longitude</value>
+  	</data>
+	<data name="LattitudeLabel" xml:space="preserve">
+    	<value>Lattitude</value>
+  	</data>
+	<data name="QIIndexScoreLabel" xml:space="preserve">
+    	<value>QI Index Score</value>
+  	</data>
+	<data name="RuralUrbanLabel" xml:space="preserve">
+    	<value>Rural/Urban</value>
+  	</data>
+	<data name="OtherKeyInformationLabel" xml:space="preserve">
+    	<value>Other Key Information</value>
+  	</data>
+	<!-- 
+    End Sites Page 
+	-->
+
+	<!-- 
+    Start About Us Page 
+	-->
+	<data name="AboutUsPageTitle" xml:space="preserve">
+    	<value>About Us</value>
+		<comment>About Us Title</comment>
+  	</data>
+	<data name="AboutUsDetailText" xml:space="preserve">
+    	<value>This is the About Us Page</value>
+		<comment>Content for About Us page</comment>
+  	</data>
+	<data name="VersionLabel" xml:space="preserve">
+    	<value>Version</value>
+		<comment>Version Label Test</comment>
+  	</data>
+	<!-- 
+    End AboutUs Page 
+	-->
+
+	<!-- 
+    Start Activity Detail Page 
+	-->
+	<data name="ActivityDetailPageTitle" xml:space="preserve">
+    	<value>Activity Detail</value>
+		<comment></comment>
+  	</data>
+	<data name="IndicatorsPageTitle" xml:space="preserve">
+    	<value>Indicators</value>
+		<comment></comment>
+  	</data>
+	<data name="ActivityInformationLabel" xml:space="preserve">
+    	<value>Activity Information</value>
+		<comment>Activity Information Label</comment>
+  	</data>
+	<data name="OrganizationLabel" xml:space="preserve">
+    	<value>Organization</value>
+		<comment></comment>
+  	</data>
+	<data name="ProjectLabel" xml:space="preserve">
+    	<value>Project</value>
+		<comment></comment>
+  	</data>
+	<data name="ActivityNameLabel" xml:space="preserve">
+    	<value>Activity Name</value>
+		<comment></comment>
+  	</data>
+	<data name="CountryLabel" xml:space="preserve">
+    	<value>Country</value>
+		<comment></comment>
+  	</data>
+	<data name="ActivityManagerLabel" xml:space="preserve">
+    	<value>Activity Manager</value>
+		<comment></comment>
+  	</data>
+	<!-- 
+    End Activity Detail Page 
+	-->
+</root>

@@ -1,0 +1,37 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@{
+    ViewBag.Title = "Synchronizing content online";
+}
+
+<h4>Synchronizing content online...</h4>
+<hr />
+<div id="syncMessage">
+    @*<i>
+        Please wait while your @common.NetworkMode_Disconnected.ToLower() data is saved to the USAID database.
+        This process may take up to 1 minute to complete. You will be redirected to the landign page once all
+        the data has been saved.
+    </i>*@
+    <i>
+        Please wait while your @common.NetworkMode_Disconnected.ToLower() data is saved to the Improvement Indicator Database. 
+        This process may take up to 1 minute to complete.  You will be redirected to the landing page once all 
+        the data has been saved.
+    </i>
+    <br />
+    <br />
+
+    <div class="max-width-max text-align-center">
+        <img src="~/Images/preloader.gif" alt="Preloader" title="Loading..." />
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if (navigator.onLine && getUrlFragmentValue('sync') == 'yes') {
+            syncChanges();
+        } else {
+            var div = $('#syncMessage');
+            div.empty();
+            div.append('<i>Your browser does not appear to be online. Please try again when you have an Internet connection.</i>');
+        }
+    });
+</script>

@@ -1,0 +1,155 @@
+﻿@using activity = IID.BusinessLayer.Globalization.ActivitySite.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+@using IID.BusinessLayer.Domain;
+@using IID.BusinessLayer.Helpers;
+
+<script type="text/javascript">
+    var dlgEditActivitySite, spnActSiteTitle, hdnActSiteActivityId, 
+        hdnActSiteSiteId, editActSiteStartDate, editActSiteEndDate, lstActSiteWave;
+    $(document).ready(function () {
+        dlgEditActivitySite = wijmo.Control.getControl($('#dlgEditActivitySite'));
+        spnActSiteTitle = $('#spnActSiteTitle');
+        hdnActSiteActivityId = $('#hdnActSiteActivityId');
+        hdnActSiteSiteId = $('#hdnActSiteSiteId');
+        inpActSiteStartDate = wijmo.Control.getControl($('#inpActSiteStartDate'));
+        inpActSiteEndDate = wijmo.Control.getControl($('#inpActSiteEndDate'));
+        lstActSiteWave = $('#lstActSiteWave');
+        lstActSiteCoach = $('#lstActSiteCoach');
+    });
+
+    function showEditActivitySiteDialog(activitySite) {
+        spnActSiteTitle.text(activitySite.SiteName);
+        hdnActSiteActivityId.val(activitySite.ActivityId);
+        hdnActSiteSiteId.val(activitySite.SiteId);
+        inpActSiteStartDate.value = activitySite.SupportStartDate;
+        inpActSiteEndDate.value = activitySite.SupportEndDate;
+        lstActSiteWave.val(activitySite.WaveFieldId);
+        lstActSiteCoach.val(activitySite.CoachUserId);
+        dlgEditActivitySite.show();
+    }
+
+    function updateActivitySite() {
+        var startDate = inpActSiteStartDate.value;
+        var endDate = inpActSiteEndDate.value;
+        var coachValue = $('#lstActSiteCoach :selected').text();
+        var waveValue = $('#lstActSiteWave :selected').text();
+        if (coachValue) {
+        }
+        else {
+            coachValue = '';
+        }
+        if (waveValue) {
+        }
+        else {
+            waveValue = '';
+        }
+
+        var data = {
+            activityId: hdnActSiteActivityId.val(),
+            siteId: hdnActSiteSiteId.val(),
+            supportStartDate: startDate == null ? null : startDate.toISOString(),
+            supportEndDate: endDate == null ? null : endDate.toISOString(),
+            waveFieldId: lstActSiteWave.val(),
+            wave: waveValue.toString(),
+            coachUserId: lstActSiteCoach.val(),
+            coach: coachValue.toString()
+        };
+
+        addAntiForgeryTokenToJson(data);
+
+        $.post('/Activity/UpdateActivitySite', data, updateActivitySiteCallback, 'json');
+    }
+
+    function updateActivitySiteCallback(result) {
+        if (result.success) {
+            var itm;
+            for (var i in fgActivitySites.control.rows) {
+                var j = fgActivitySites.control.rows[i].dataItem;
+                if (j.ActivityId == result.ActivityId && j.SiteId == result.SiteId) {
+                    itm = j;
+                    break;
+                }
+            }
+
+            var cv = fgActivitySites.control.collectionView;
+            cv.editItem(itm);
+            if (result.SupportStartDate) {
+                itm.SupportStartDate = result.SupportStartDate;
+            }
+            if (result.SupportEndDate) {
+                itm.SupportEndDate = result.SupportEndDate;
+            }
+            itm.WaveFieldId = result.WaveFieldId;
+            if (result.WaveValue) {
+                itm.WaveValue = result.WaveValue;
+            }
+            itm.CoachUserId = result.CoachUserId;
+            if (result.CoachUserName) {
+                itm.CoachUserName = result.CoachUserName;
+            }
+            cv.commitEdit();
+
+            dlgEditActivitySite.hide();
+        } else {
+            alert(result.responseText);
+        }
+    }</script>
+
+<div id="dlgEditActivitySite" class="width-300">
+    <div class="modal-header">
+        <span id="spnActSiteTitle"></span>
+        <button type="button" tabindex="-1" class="close wj-hide">×</button>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" id="hdnActSiteActivityId" />
+        <input type="hidden" id="hdnActSiteSiteId" />
+
+        <table class="form-table">
+            <tr>
+                <td class="tdLabel">@activity.SupportStartDate:</td>
+                <td>
+                    @(Html.C1().InputDate()
+                        .Id("inpActSiteStartDate")
+                        .IsRequired(false)
+                        .Width(100)
+                    )
+                </td>
+            </tr>
+            <tr>
+                <td class="tdLabel">@activity.SupportEndDate:</td>
+                <td>
+                    @(Html.C1().InputDate()
+                        .Id("inpActSiteEndDate")
+                        .IsRequired(false)
+                        .Width(100)
+                    )
+                </td>
+            </tr>
+            <tr>
+                <td class="tdLabel">@activity.Wave:</td>
+                <td>
+                    @Html.DropDownList("lstWave",
+                        SelectLists.GetFieldIdSelectList(FieldIdParentTypes.Wave, null),
+                        new { @class = "width-100", id = "lstActSiteWave" })
+                </td>
+            </tr>
+            <tr>
+                <td class="tdLabel">@common.Coach:</td>
+                <td>
+
+                    @Html.DropDownList("lstCoach",
+                        SelectLists.GetUsers(new int[] { 2, 3 }),
+                        new { @class = "width-150", id = "lstActSiteCoach" })
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" onclick="updateActivitySite();">
+            @common.Save
+            <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+        </button>
+    </div>
+</div>
+@(Html.C1().Popup("#dlgEditActivitySite").Modal(true).HideTrigger(PopupTrigger.Click))

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:LandingPageBase xmlns="http://xamarin.com/schemas/2014/forms" BackgroundColor="White"  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.LandingPage" xmlns:local="clr-namespace:USAID.Pages;assembly=USAID" Title="{Binding PageTitle}">
+<StackLayout>
+	<StackLayout Orientation="Horizontal" VerticalOptions="Start" Padding="15,15,15,0" >
+		<!-- top controls -->
+		<Image Source="Logo.png" WidthRequest="300" />
+	</StackLayout>
+
+	<StackLayout VerticalOptions="CenterAndExpand" Padding="15,0,15,0" >
+	<!-- middle controls -->
+		<Label StyleId="lblDownload" Text="{Binding DownloadText}" TextColor="Black" FontSize="Small" XAlign="Center" />
+		<Label StyleId="lblLastInformation" Text="{Binding LastInformationText}" TextColor="Black" FontSize="Small" XAlign="Center" />
+		<Label StyleId="lblLastInformationDate" Text="{Binding LastInformationTextDate}" TextColor="Black" FontSize="Small" XAlign="Center" />
+	</StackLayout>
+
+	<StackLayout Orientation="Horizontal" VerticalOptions="End" Padding="10,0,10,10">
+		<!-- bottom controls -->
+		<Button Text="{Binding DownloadButtonText}" HorizontalOptions="FillAndExpand" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding DownloadCommand}" />
+	</StackLayout>
+</StackLayout>
+</local:LandingPageBase>

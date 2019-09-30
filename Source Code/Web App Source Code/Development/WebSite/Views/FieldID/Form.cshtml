@@ -1,0 +1,40 @@
+﻿@using IID.BusinessLayer.Domain;
+@using IID.BusinessLayer.Helpers;
+@using IID.BusinessLayer.Identity;
+@using IID.WebSite.Models;
+
+@model FieldID
+
+@Html.HiddenFor(m => m.ParentFieldID)
+<table class="form-table width-100p">
+    <colgroup>
+        <col />
+        <col  />
+        <col  />
+    </colgroup>
+    <tbody>
+        <tr>
+            <td>
+                <table class="width-100p">
+                    <colgroup>
+                        <col />
+                        <col style="width: 95%;" />
+                        <col />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.Value)</td>
+                            <td>@Html.TextBoxFor(m => m.Value, new { @class = "width-100p", rows = 1 })</td>
+                            <td>@Html.ValidationMessageFor(m => m.Value, "", new { @class = "error" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelForForm(m => m.Active) </td>
+                            <td>@Html.EditorFor(m => m.Active).Disable(!Identity.CurrentUser.IsInRole(Role.SystemAdministrator))</td>
+                            <td>@Html.ValidationMessageFor(m => m.Active, "", new { @class = "error" })</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>

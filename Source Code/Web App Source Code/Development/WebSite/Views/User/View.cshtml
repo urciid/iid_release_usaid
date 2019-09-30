@@ -1,0 +1,101 @@
+﻿@using IID.BusinessLayer.Identity
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using home = IID.BusinessLayer.Globalization.Home.Resource
+@using IID.WebSite.Models
+
+@model User
+
+@{
+    ViewBag.Title = ("User: " + Model.FullName);
+}
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">@Model.FullName</div>
+        <div class="float-right button">
+            <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.UserId })">
+                @common.Edit
+                <img src="~/Images/icons/16/pencil_edit.png" />
+            </a>
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <table class="form-table width-100p">
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 95%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Email)</td>
+                                    <td>@Html.DisplayFor(m => m.Email)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.FirstName)</td>
+                                    <td>@Html.DisplayFor(m => m.FirstName)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.LastName)</td>
+                                    <td>@Html.DisplayFor(m => m.LastName)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table>
+                            <colgroup>
+                                <col />
+                                <col style="width: 95%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.UserRoleFieldIds)</td>
+                                    <td>
+                                        @Html.Raw(String.Join(", ", Model.UserRoleValues))
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Title)</td>
+                                    <td>@Html.DisplayFor(m => m.Title)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Phone)</td>
+                                    <td>@Html.DisplayFor(m => m.Phone)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 95%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    @*<td>@Html.LabelForForm(m => m.SiteId)</td>
+                                    <td>@Html.DisplayFor(m => m.SiteName)</td>*@
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Active)</td>
+                                    <td>@Html.DisplayFor(m => m.Active)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.LastLogin)</td>
+                                    <td>@Html.DisplayFor(m => m.LastLogin)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@Html.Partial("~/Views/User/Assign.cshtml", Model)

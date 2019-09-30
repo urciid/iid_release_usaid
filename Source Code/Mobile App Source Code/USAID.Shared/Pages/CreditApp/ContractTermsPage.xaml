@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:ContractTermsPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.ContractTermsPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="Contract Terms">
+	<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+		<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image Source="starbackground.png" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="15,0,15,0">
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<ScrollView>
+						<StackLayout VerticalOptions="CenterAndExpand" Padding="30,0,30,0" Spacing="14">
+							<Entry Placeholder="equipment description" Text="{Binding EquipmentDescription}" FontSize="Medium" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="total amount" Text="{Binding TotalAmount}" FontSize="Medium" Keyboard="Numeric" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="total financed amount" Text="{Binding TotalFinancedAmount}" FontSize="Medium" Keyboard="Numeric" Style="{StaticResource EntryBlackText}"/>
+							<Entry Placeholder="maintenance fee amount" x:Name="passThruField" Text="{Binding MaintenanceFeeAmount}" FontSize="Medium" Keyboard="Numeric" Style="{StaticResource EntryBlackText}"/>
+							<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" Spacing="20">
+								<Picker Title="term" x:Name="termPicker" SelectedIndexChanged="TermPickerValueChanged" HorizontalOptions="FillAndExpand"/>
+								<Picker Title="purchase option" x:Name="purchaseOptionPicker" SelectedIndexChanged="PurchaseOptionPickerValueChanged" HorizontalOptions="FillAndExpand"/>
+							</StackLayout>
+							<StackLayout Padding="0,0,0,0">
+								<Label StyleId="label1" Text="Comments:" TextColor="#999999" FontSize="Small" />
+								<StackLayout BackgroundColor="White">
+									<StackLayout BackgroundColor="#d9d9d9" Padding="1">
+									<Editor Text="{Binding Comments}" FontSize="Medium" BackgroundColor="White" TextColor="Black" Style="{StaticResource EditorBlackText}" HeightRequest="100"/>
+									</StackLayout>
+								</StackLayout>
+							</StackLayout>
+							<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="0,13,0,10">
+								<Button Text="Next" Clicked="OnNextButtonClicked" x:Name="nextButton" Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="FillAndExpand">
+								</Button>
+							</StackLayout>
+						</StackLayout>
+					</ScrollView>
+				</StackLayout>
+			</StackLayout>
+		</AbsoluteLayout>
+	</StackLayout>
+</local:ContractTermsPageBase>

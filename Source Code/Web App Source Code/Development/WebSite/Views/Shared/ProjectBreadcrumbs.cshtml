@@ -1,0 +1,133 @@
+﻿@using activity = IID.BusinessLayer.Globalization.Activity.Resource
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+@using IID.WebSite.Models
+
+@model ProjectBreadcrumbs
+
+<div id="contentHeader" class="breadcrumbs">
+    @if (Model.ActivityId.HasValue)
+    {
+        <div class="item">
+            <b>@common.Activity:</b>
+            @Html.ActionLink(Mvc.GetShortText(Model.ActivityName), "View", "Activity",
+                 new { id = Model.ActivityId }, new { title = Model.ActivityName })
+        </div>
+    }
+
+    @if (Model.SelectedIndicatorId.HasValue)
+    {
+        <div class="item">
+            <span class="separator">&#187;</span><b>@common.Indicator:</b>
+            @if (Model.Indicators.Count == 1)
+            {
+                string name = Model.Indicators.ElementAt(0).Name;
+                @Html.ActionLink(Mvc.GetShortText(name), "View", "Indicator",
+                    new { id = Model.SelectedIndicatorId }, new { title = name })
+            }
+            else
+            {
+                @(Html.C1().Menu()
+                    .Header(Mvc.GetShortText(Model.SelectedIndicatorName))
+                    .MenuItems(items =>
+                    {
+                        foreach (var g in Model.Indicators.GroupBy(i => i.AimId))
+                        {
+                            items.Add(i => i.Header($"<b>{g.First().Aim.Name}</b>"));
+                            foreach (var indicator in g.OrderBy(h => h.Sort))
+                            {
+                                string id = indicator.IndicatorId.ToString(), name = indicator.Name;
+                                string cssClass = (Model.SelectedIndicatorId == indicator.IndicatorId ? "font-weight-bold font-style-italic" : "");
+                                string url = Url.Action("View", "Indicator", new { id = Model.SelectedIndicatorId });
+                                string html = String.Format("<a class=\"{0}\" href=\"{1}\" title=\"{2}\" style=\"padding-left: 10px;\">{2}</a>", cssClass, url, name);
+                                items.Add(i => i.Header(html));
+                            }
+                        }
+                    })
+                )
+            }
+        </div>
+    }
+
+    @if (Model.SelectedSiteId.HasValue)
+    {
+        if (Model.Type == ProjectBreadcrumbsType.Site)
+        {
+            <div class="item">
+                <b>@common.Site:</b>
+                @Html.ActionLink(Mvc.GetShortText(Model.SelectedSiteName), "View", "Site",
+                 new { id = Model.SelectedSiteId }, new { title = Model.SelectedSiteName })
+            </div>
+        }
+        else
+        {
+            <div class="item">
+                <span class="separator">&#187;</span>
+                <b>@common.Site:</b>
+            </div>
+            <div class="item">
+                @(Html.C1().Menu()
+                    .Header(Mvc.GetShortText(Model.SelectedSiteName))
+                    .MenuItems(items =>
+                    {
+                        foreach (var site in Model.Sites)
+                        {
+                            string id = site.Key.ToString(), name = site.Value, shortName = Mvc.GetShortText(name), url = null;
+                            string cssClass = (Model.SelectedSiteId == site.Key ? "font-weight-bold font-style-italic" : "");
+                            switch (Model.Type)
+                            {
+                                case ProjectBreadcrumbsType.ObservationView:
+                                case ProjectBreadcrumbsType.ObservationRecord:
+                                    url = Url.Action("View", "Observation", new { indicatorId = Model.SelectedIndicatorId, siteId = id });
+                                    break;
+
+                                case ProjectBreadcrumbsType.CoachReport:
+                                    url = Url.Action("CoachReport", "Site", new { activityId = Model.ActivityId, siteId = id });
+                                    break;
+                            }
+                            string html = String.Format("<a class=\"{0}\" href=\"{1}\" title=\"{2}\">{3}</a>", cssClass, url, name, shortName);
+                            items.Add(i => i.Header(html));
+                        }
+                    })
+                )
+            </div>
+        }
+    }
+
+    @switch (Model.Type)
+    {
+        case ProjectBreadcrumbsType.ObservationRecord:
+            <div class="item">
+                <span class="separator">&#187;</span>
+                <b>
+                    @Model.ObservationBeginDate.Value.ToString("d")
+                    @if (Model.ObservationBeginDate != Model.ObservationEndDate)
+                    {
+                        @:&#126; @Model.ObservationEndDate.Value.ToString("d")
+                    }
+                </b>
+            </div>
+            break;
+
+        case ProjectBreadcrumbsType.RankByImprovement:
+            <div class="item">
+                <span class="separator">&#187;</span>
+                <b>@activity.RankByImprovement</b>
+            </div>
+            break;
+
+        case ProjectBreadcrumbsType.CoachReport:
+            <div class="item">
+                <span class="separator">&#187;</span>
+                <b>@observation.CoachReport</b>
+            </div>
+            break;
+
+        case ProjectBreadcrumbsType.Chart:
+            <div class="item">
+                <span class="separator">&#187;</span>
+                <b>@common.Chart</b>
+            </div>
+            break;
+    }
+</div>

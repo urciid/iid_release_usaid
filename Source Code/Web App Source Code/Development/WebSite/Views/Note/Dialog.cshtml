@@ -1,0 +1,145 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using note = IID.BusinessLayer.Globalization.Note.Resource
+
+@model IID.WebSite.Models.Note
+
+<script type="text/javascript">
+    var dlgNote, hidNoteMode, hidNoteRowIdx, hidNoteId, hidNoteSiteId, hidNoteActivityId,
+        inpNoteSubject, inpNoteText, spnNoteDialogTitle, btnNoteDialogSave, fncNoteDialogAfterSave;
+
+    function showNoteDialog(mode, rowIdx, fncAfterSave) {
+        if (!dlgNote) {
+            dlgNote = wijmo.Control.getControl("#note-dialog");
+            hidNoteMode = $('#noteMode')[0];
+            hidNoteRowIdx = $('#noteRowIdx')[0];
+            hidNoteId = $('#noteId')[0];
+            hidNoteSiteId = $('#noteSiteId')[0];
+            hidNoteActivityId = $('#noteActivityId')[0];
+            inpNoteSubject = $('#noteSubject')[0];
+            inpNoteText = $('#noteText')[0];
+            spnNoteDialogTitle = $('#note-dialog-title')[0];
+            btnNoteDialogSave = $('#note-dialog-save')[0];
+        }
+        fncNoteDialogAfterSave = fncAfterSave;
+
+        hidNoteMode.value = mode;
+        if (mode == 'edit') {
+            var dataItem = fgNotes.control.rows[rowIdx].dataItem;
+            hidNoteRowIdx.value = rowIdx;
+            hidNoteId.value = dataItem.NoteId;
+            hidNoteSiteId.value = dataItem.SiteId;
+            hidNoteActivityId.value = dataItem.ActivityId;
+            inpNoteSubject.value = dataItem.Subject;
+            inpNoteText.value = dataItem.NoteText;
+            spnNoteDialogTitle.innerText = '@note.EditNote';
+            btnNoteDialogSave.onclick = editNote;
+        } else {
+            hidNoteRowIdx.value = '';
+            hidNoteId.value = '';
+            hidNoteSiteId.value = '@Model.SiteId';
+            hidNoteActivityId.value = '@Model.ActivityId';
+            inpNoteSubject.value = '';
+            inpNoteText.value = '';
+            spnNoteDialogTitle.innerText = '@note.AddNote';
+            btnNoteDialogSave.onclick = addNote;
+        }
+
+        dlgNote.show();
+    }
+
+    function validateNoteForm() {
+        return $('#noteSubject').valid() && $('#noteText').valid();
+    }
+
+    function addNote() {
+        if (validateNoteForm()) {
+            var formData = new FormData();
+            formData.append('SiteId', hidNoteSiteId.value);
+            formData.append('ActivityId', hidNoteActivityId.value);
+            formData.append('Subject', inpNoteSubject.value);
+            formData.append('NoteText', inpNoteText.value);
+            addAntiForgeryTokenToForm(formData);
+
+            $.ajax({
+                url: '/Note/Add',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: noteSaveSuccess,
+                error: noteSaveError
+            });
+        }
+    }
+
+    function editNote() {
+        if (validateNoteForm()) {
+            var formData = new FormData();
+            formData.append('NoteId', hidNoteId.value);
+            formData.append('SiteId', hidNoteSiteId.value);
+            formData.append('ActivityId', hidNoteActivityId.value);
+            formData.append('Subject', inpNoteSubject.value);
+            formData.append('NoteText', inpNoteText.value);
+            addAntiForgeryTokenToForm(formData);
+
+            $.ajax({
+                url: '/Note/Edit',
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: noteSaveSuccess,
+                error: noteSaveError
+            });
+        }
+    }
+
+    function noteSaveSuccess(result) {
+        btnNoteDialogSave.off('click');
+        dlgNote.hide();
+
+        fncNoteDialogAfterSave(result, hidNoteRowIdx.value);
+    }
+
+    function noteSaveError(result) {
+        alert(result.responseText);
+    }
+</script>
+
+<div id="note-dialog" class="width-75p">
+    @using (Html.BeginForm())
+    {
+        <div class="modal-header">
+            <span id="note-dialog-title"></span>
+            <button type="button" tabindex="-1" class="close wj-hide">×</button>
+        </div>
+        <div class="modal-body">
+            @Html.Hidden("noteMode", null, new { id = "noteMode" })
+            @Html.Hidden("noteRowIdx", null, new { id = "noteRowIdx" })
+            @Html.HiddenFor(m => m.NoteId, new { id = "noteId" })
+            @Html.HiddenFor(m => m.SiteId, new { id = "noteSiteId" })
+            @Html.HiddenFor(m => m.ActivityId, new { id = "noteActivityId" })
+
+            <div class="flexbox label-and-input">
+                @Html.LabelForForm(m => m.Subject)&nbsp;
+                @Html.TextBoxFor(m => m.Subject, new { @class = "flex-1", id = "noteSubject" })
+                @Html.ValidationMessageFor(m => m.Subject, "", new { @class = "error" })
+            </div>
+
+            <hr />
+
+            <div class="flexbox">
+                @Html.TextAreaFor(m => m.NoteText, new { @class = "height-400 flex-1", id = "noteText" })
+                @Html.ValidationMessageFor(m => m.NoteText, "", new { @class = "error" })
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="note-dialog-save">
+                @common.Save
+                <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+            </button>
+        </div>
+    }
+</div>
+@(Html.C1().Popup("#note-dialog").Modal(true).HideTrigger(PopupTrigger.Click))

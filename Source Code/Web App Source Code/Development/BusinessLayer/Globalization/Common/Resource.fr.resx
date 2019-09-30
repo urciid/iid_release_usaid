@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Activities" xml:space="preserve">
+    <value>Activités</value>
+  </data>
+  <data name="Activity" xml:space="preserve">
+    <value>Activité</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="AddFavorite" xml:space="preserve">
+    <value>Ajouter aux favoris</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="AdministrativeDivision" xml:space="preserve">
+    <value>Région</value>
+  </data>
+  <data name="AdministrativeDivisions" xml:space="preserve">
+    <value>Régions</value>
+  </data>
+  <data name="Aim" xml:space="preserve">
+    <value>But</value>
+  </data>
+  <data name="Aims" xml:space="preserve">
+    <value>Buts</value>
+  </data>
+  <data name="AllSites" xml:space="preserve">
+    <value>Tous les sites</value>
+  </data>
+  <data name="Approved" xml:space="preserve">
+    <value>Approuvé</value>
+  </data>
+  <data name="At" xml:space="preserve">
+    <value>à</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="ChangeLanguage" xml:space="preserve">
+    <value>Changer de langue</value>
+  </data>
+  <data name="Chart" xml:space="preserve">
+    <value>Graphique</value>
+  </data>
+  <data name="ChartOptions" xml:space="preserve">
+    <value>Options de graphique</value>
+  </data>
+  <data name="Charts" xml:space="preserve">
+    <value>Graphiques</value>
+  </data>
+  <data name="Coach" xml:space="preserve">
+    <value>Coach</value>
+  </data>
+  <data name="Coaches" xml:space="preserve">
+    <value>Coachs</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Couleur </value>
+  </data>
+  <data name="ConnectionMode_Connected" xml:space="preserve">
+    <value>Connecté</value>
+  </data>
+  <data name="ConnectionMode_Disconnected" xml:space="preserve">
+    <value>Déconnecté</value>
+  </data>
+  <data name="ContactAdministrator" xml:space="preserve">
+    <value>Contacter administrateur</value>
+  </data>
+  <data name="Copyright" xml:space="preserve">
+    <value>USAID</value>
+  </data>
+  <data name="CopyrightText1" xml:space="preserve">
+    <value>USAID Tout droit réservé</value>
+  </data>
+  <data name="CopyrightText2" xml:space="preserve">
+    <value>La base de données de indicateurs d'amélioration est rendue possible par le soutien généreux du peuple américain à travers l'Agence Américaine pour le Developpement International et son Bureau pour la Santé Globale, Bureau des Systèmes de Santè. L'information fournie sur ce web n'est pas l'information officielle du Gouvernement Américain et ne represente pas les points de vue ou position de l'USAID ou des Etas Unis. La base de données des indicateurs d'amélioration est développées par le projet USAID d'Application de la science pour renforcer et améliorer les systèmes (ASSIST), géré par USAID., LLC sous l'agrément de la Cooperative numéro AID-OAA-A-12-00101.</value>
+  </data>
+  <data name="Countries" xml:space="preserve">
+    <value>Des pays</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Pays</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Créé</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>Créé par</value>
+  </data>
+  <data name="CreatedOn" xml:space="preserve">
+    <value>Créé sur</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Effacer</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Détails</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Editer (Transcrire)</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exporter</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Echoué</value>
+  </data>
+  <data name="Favorite" xml:space="preserve">
+    <value>Favoris</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Page de debut ou page d'Accueil</value>
+  </data>
+  <data name="IfAny" xml:space="preserve">
+    <value>Si aucun</value>
+  </data>
+  <data name="InactiveStatus" xml:space="preserve">
+    <value>Inactif</value>
+  </data>
+  <data name="Indicator" xml:space="preserve">
+    <value>Indicateur</value>
+  </data>
+  <data name="Indicators" xml:space="preserve">
+    <value>Indicateurs</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Dernière mise à jour</value>
+  </data>
+  <data name="LastUpdatedBy" xml:space="preserve">
+    <value>Dernière mise à jour par</value>
+  </data>
+  <data name="LastUpdatedOn" xml:space="preserve">
+    <value>Mis à jour le</value>
+  </data>
+  <data name="Line" xml:space="preserve">
+    <value>Ligne</value>
+  </data>
+  <data name="MoveDown" xml:space="preserve">
+    <value>Descendre</value>
+  </data>
+  <data name="MoveUp" xml:space="preserve">
+    <value>Déplacer vers le haut</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="NetworkMode_Connected" xml:space="preserve">
+    <value>Connecté</value>
+  </data>
+  <data name="NetworkMode_Disconnected" xml:space="preserve">
+    <value>Déconnecté</value>
+  </data>
+  <data name="NetworkMode_Reconnect" xml:space="preserve">
+    <value>Reconnecter</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Remarque</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Remarques</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="Observation" xml:space="preserve">
+    <value>Observations</value>
+  </data>
+  <data name="PendingStatus" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="Project" xml:space="preserve">
+    <value>Projet</value>
+  </data>
+  <data name="Projects" xml:space="preserve">
+    <value>Des projets</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Rang</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Région</value>
+  </data>
+  <data name="RemoveFavorite" xml:space="preserve">
+    <value>Enlever des favoris</value>
+  </data>
+  <data name="Requests" xml:space="preserve">
+    <value>Demandes</value>
+  </data>
+  <data name="Results" xml:space="preserve">
+    <value>Résultats</value>
+  </data>
+  <data name="RuleNotEnoughPoints" xml:space="preserve">
+    <value>Pas assez de points de données pour appliquer les règles de diagramme en courbe</value>
+  </data>
+  <data name="RuleRuns" xml:space="preserve">
+    <value>Trop peu ou plusieurs courbes</value>
+  </data>
+  <data name="RuleShift" xml:space="preserve">
+    <value>Points consécutifs au dessus ou en bas de la médiane</value>
+  </data>
+  <data name="RulesTriggered" xml:space="preserve">
+    <value>Règle (s) déclanchée</value>
+  </data>
+  <data name="RuleTrend" xml:space="preserve">
+    <value>Points consécutifs montant ou descendant</value>
+  </data>
+  <data name="RunChartRules" xml:space="preserve">
+    <value>Règles du diagramme en courbe</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Sauvé</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Chercher</value>
+  </data>
+  <data name="Site" xml:space="preserve">
+    <value>Site</value>
+  </data>
+  <data name="Sites" xml:space="preserve">
+    <value>Des sites</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="Successful" xml:space="preserve">
+    <value>Réussit</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="UpdatedBy" xml:space="preserve">
+    <value>Mis à jour par</value>
+  </data>
+  <data name="UpdatedOn" xml:space="preserve">
+    <value>Mis à jour le</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="ExportForResearch" xml:space="preserve">
+    <value>Exporter pour la recherche</value>
+  </data>
+  <data name="ActiveStatus" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+</root>

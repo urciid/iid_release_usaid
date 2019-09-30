@@ -1,0 +1,74 @@
+﻿@using C1.Web.Mvc.Grid
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using IID.WebSite.Models;
+
+@model RequestModel
+@{
+    ViewBag.Title = ("Manage Requests");
+}
+
+@Scripts.Render("~/Scripts/request.js")
+
+@using (Html.BeginForm("Admin", "Request", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div>
+        <section class="float-left width-800">
+            <div class="header">
+                <div class="float-left title">
+                    Manage Requests
+                </div>
+                <div class="clear-floats"></div>
+            </div>
+            <div class="content">
+                @(Html.C1().FlexGrid<Request>()
+                    .AllowSorting(false)
+                    .AutoGenerateColumns(false)
+                    .Bind(Model.Requests)
+                    .Columns(c =>
+                    {
+                        c.Add(cb => cb.Binding("Name").Header(common.Name).Name("Name").Width("3*"));
+                        c.Add(cb => cb.Binding("LastUpdatedBy").Header(common.LastUpdatedBy).Width("2*"));
+                        c.Add(cb => cb.Binding("UpdatedOn").Align("Right").CssClass("padding-right-10").Header(common.LastUpdatedOn).Width("*"));
+                        c.Add(cb => cb.Binding("Status").Align("Center").Header("Status").Width("*"));
+                        c.Add().Align("Center").Header("Actions").Name("Actions").Width("*");
+                    })
+                    .GroupBy("Type")
+                    .HeadersVisibility(HeadersVisibility.Column)
+                    .Id("fgRequests")
+                    .IsReadOnly(true)
+                    .ItemFormatter("fgRequests_ItemFormatter")
+                    .OnClientLoadedRows("fgRequests_LoadedRows")
+                    .SelectionMode(SelectionMode.None)
+                )
+            </div>
+        </section>
+
+        <div class="float-left width-25">&nbsp;</div>
+
+        <section class="float-left">
+            <div class="header">
+                <div class="float-left title">
+                    Statuses
+                </div>
+                <div class="clear-floats"></div>
+            </div>
+            <div class="content">
+                <input type="checkbox" @(Model.Pending ? "checked=\"checked\"" : "") id="flagsPending" name="flags" value="@RequestActiveFlags.Pending.ToString()" />
+                <label for="flagsPending">Pending</label><br />
+
+                <input type="checkbox" @(Model.Approved ? "checked=\"checked\"" : "") id="flagsApproved" name="flags" value="@RequestActiveFlags.Approved.ToString()" />
+                <label for="flagsApproved">Approved (Updated Last 30 Days)</label><br />
+
+                <input type="checkbox" @(Model.Denied ? "checked=\"checked\"" : "") id="flagsDenied" name="flags" value="@RequestActiveFlags.Denied.ToString()" />
+                <label for="flagsDenied">Denied (Updated Last 30 Days)</label><br />
+
+                <button type="submit">
+                    Refresh
+                </button>
+            </div>
+        </section>
+
+        <div class="clear-floats"></div>
+    </div>
+}

@@ -1,0 +1,168 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using IID.BusinessLayer.Identity;
+@using IID.WebSite.Helpers
+@using IID.WebSite.Models
+
+@model Activity
+
+@{
+    ViewBag.Title = "Add Activity";
+}
+
+<script type="text/javascript">
+//    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+    
+    function DisableSubmitButton(b) {
+        b.disabled = true;
+        b.value = 'Saving';
+        b.form.submit();
+    }
+</script>
+
+@using (Html.BeginForm("Add", "Activity", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <section class="max-width-max">
+        <div class="header">
+            <div class="float-left title">
+                @common.Activity
+            </div>
+            <div class="float-right button">
+                <a class="btn btn-primary" onclick="submit();" href="@Url.Action("Index", "Home")">
+                    @common.Cancel
+                    <img src="~/Images/icons/16/close_delete.png" />
+                </a>
+                <button type="submit" onclick="DisableSubmitButton(this);" >
+                    @common.Save
+                    <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+                </button>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            <table class="form-table width-100p">
+                <colgroup>
+                    <col style="width: 40%;" />
+                    <col style="width: 60%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td>
+                            <table class="width-100p">
+                                <colgroup>
+                                    <col />
+                                    <col style="width: 95%;" />
+                                    <col />
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.ProjectId)</td>
+                                        <td>@Html.DropDownListFor(m => m.ProjectId, Model.Projects, new { @class = "width-100p" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.ProjectId, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Name)</td>
+                                        <td>@Html.TextBoxFor(m => m.Name, new { @class = "width-100p" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.Name, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.CountryId)</td>
+                                        <td>@Html.DropDownListFor(m => m.CountryId, Model.CountriesList, new { @class = "width-100p" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.CountryId, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.FunderValue)</td>
+                                        <td>@Html.DropDownListFor(m => m.FunderFieldId, Model.Funders, String.Empty, new { @class = "width-100p" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.StartDate)</td>
+                                        <td>
+                                            @(Html.C1().InputDate()
+                                                .IsRequired(false)
+                                                .Name("StartDate")
+                                                .Value(Model.StartDate)
+                                                .Width(100)
+                                            )
+                                        </td>
+                                    @*</tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.EndDate)</td>
+                                        <td>
+                                            @(Html.C1().InputDate()
+                                                .IsRequired(false)
+                                                .Name("EndDate")
+                                                .Value(Model.EndDate)
+                                                .Width(100)
+                                            )
+                                        </td>
+                                    </tr>*@
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Active)</td>
+                                        <td>@Html.EditorFor(m => m.Active).Disable(!Identity.CurrentUser.IsInRole(Role.SystemAdministrator))</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="width-100p">
+                                <colgroup>
+                                    <col />
+                                    <col style="width: 95%;" />
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.PrimaryManagerName)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.PrimaryManagerUserId, Model.Users, String.Empty, new { @class = "width-300" })
+                                            <div class="display-inline-block">
+                                                @Html.ValidationMessageFor(m => m.PrimaryManagerUserId, "", new { @class = "error" })
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.AdditionalManagerNames)</td>
+                                        <td>
+                                            @(Html.C1().MultiSelectFor(m => m.AdditionalManagerUserIds)
+                                                .Bind(Model.Users)
+                                                .CssClass("width-300")
+                                                .DisplayMemberPath("Text")
+                                                .IsRequired(false)
+                                                .SelectedValuePath("Value")
+                                            )
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.TechnicalAreaValue)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.TechnicalAreaFieldId, Model.TechnicalAreas, String.Empty, new { @class = "width-300" })
+                                            <div class="display-inline-block">
+                                                @Html.ValidationMessageFor(m => m.TechnicalAreaFieldId, "", new { @class = "error" })
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.TechnicalAreaSubtypeValues)</td>
+                                        <td>
+                                            @(Html.C1().MultiSelectFor(m => m.TechnicalAreaSubtypeFieldIds)
+                                                .Bind(Model.TechnicalAreaSubtypes)
+                                                .CssClass("width-100p")
+                                                .DisplayMemberPath("Text")
+                                                .IsRequired(false)
+                                                .SelectedValuePath("Value")
+                                            )
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.OtherKeyInformation)</td>
+                                        <td>@Html.TextAreaFor(m => m.OtherKeyInformation, new { @class = "height-100 width-100p" })</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+}

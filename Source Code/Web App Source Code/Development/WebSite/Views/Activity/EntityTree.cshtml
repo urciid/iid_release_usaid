@@ -1,0 +1,97 @@
+﻿@using IID.WebSite.Models
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using aim = IID.BusinessLayer.Globalization.Aim.Resource
+@using observation = IID.BusinessLayer.Globalization.Observation.Resource
+
+@model ActivityTree
+
+@{ 
+    int activityId = Model.Activity.ActivityId.Value;
+}
+
+<section class="height-100p width-300 flexbox flex-v margin-0">
+    <div class="header">
+        <div class="float-right button">
+            <a class="btn btn-primary" href="@Url.Action("DataExport", "Activity", new { id = activityId })">
+                @common.Export <img src="~/Images/icons/16/arrow_down.png" />
+            </a>
+        </div>
+        <div class="title">
+            @Model.Activity.Name
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="aimsIndicators font-weight-bold padding-4">
+        @aim.AimsAndIndicators
+    </div>
+    <div class="flex-2" style="height: 0px; overflow: scroll;">
+        <div class="treeview">
+            @foreach (var aim in Model.Activity.Aims.Where(a => a.Active == true))
+            {
+                if (aim.Indicators != null && aim.Indicators.Count > 0)
+                {
+                    <div class="flexbox item background-color-blue-2">
+                        <div class="folder"></div>
+                        <b class="flex-2 color-white">@aim.Name</b>
+                    </div>
+                    foreach (var indicator in aim.Indicators.Where(i => i.Active == true))
+                    {
+                        int indicatorId = indicator.IndicatorId.Value;
+                        string indicatorName = indicator.Name;
+
+                        <div class="flexbox item" style="padding-left: 20px;">
+                            <div class="document"></div>
+                            @{
+                                string url1 = null, url2 = null, cssClass2 = null, title2 = null;
+                                switch (Model.Mode)
+                                {
+                                    case Mode.RankByImprovement:
+                                        url1 = Url.Action("RankByImprovement", "Activity", new { activityId = activityId, indicatorId = indicatorId });
+                                        break;
+
+                                    case Mode.Observation:
+                                        url1 = Url.Action("View", "Observation", new { indicatorId = indicatorId, siteId = Model.SiteId });
+                                        url2 = Url.Action("Observation", "Chart", new { indicatorId = indicatorId, siteId = Model.SiteId });
+                                        cssClass2 = "chartIcon";
+                                        title2 = common.Chart;
+                                        break;
+
+                                    case Mode.Chart:
+                                        if (Model.SiteId.HasValue)
+                                        {
+                                            url1 = Url.Action("Observation", "Chart", new { indicatorId = indicatorId, siteId = Model.SiteId });
+                                        }
+                                        else
+                                        {
+                                            url1 = Url.Action("Indicator", "Chart", new { id = indicatorId });
+                                        }
+                                        if (Model.SiteId.HasValue)
+                                        {
+                                            url2 = Url.Action("View", "Observation", new { indicatorId = indicatorId, siteId = Model.SiteId });
+                                            cssClass2 = "dataIcon";
+                                            title2 = observation.ViewData;
+                                        }
+                                        break;
+                                }
+
+                                if (indicatorId == Model.SelectedIndicatorId)
+                                {
+                                    <i class="flex-2 color-dark-blue font-weight-bold">@indicatorName</i>
+                                }
+                                else
+                                {
+                                    <a class="flex-2 color-gray" href="@url1">@indicatorName</a>
+                                }
+
+                                if (url2 != null)
+                                {
+                                    <a class="@cssClass2" href="@url2" title="@title2"></a>
+                                }
+                            }
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+</section>

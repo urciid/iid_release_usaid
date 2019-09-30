@@ -1,0 +1,57 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using IID.WebSite.Models
+
+@model User
+
+@{
+    ViewBag.Title = "Add User";
+    string openContent = (Model.UserId == -1) ?
+        "<div id=\"addUserDialog\" class=\"width-1000\"><div class=\"modal-header\">Add User <button type=\"button\" tabindex=\"-1\" class=\"close wj-hide\">×</button></div>" :
+        "<section class=\"width-900\"><div class=\"header\"><div class=\"title\">Add User</div></div>";
+    string closeContent = (Model.UserId == -1) ? "</div>" : "</section>";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+
+    var addUserDialog;
+    function showAddUserDialog() {
+        if (addUserDialog == null)
+            addUserDialog = wijmo.Control.getControl("#addUserDialog");
+
+        // Reset input controls.
+        var controls = ["Email", "FirstName", "LastName", "UserRoleValue", "Title", "Phone"];
+        for (var i in controls)
+            $('#' + controls[i]).val('');
+
+        // Show the modal.
+        addUserDialog.show();
+    }
+</script>
+
+@Html.Raw(openContent)
+    <div class="modal-body content">
+        @using (Html.BeginForm("Add", "User", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Partial("~/Views/User/Form.cshtml", Model)
+            <div>
+                <div class="float-left">
+                    @Html.ValidationSummary(true, "", new { @class = "error list-style-type-none" })
+                </div>
+                <div class="float-right">
+                    <button type="submit">
+                        @common.Save
+                        <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+                    </button>
+                </div>
+                <div class="clear-floats"></div>
+            </div>
+        }
+    </div>
+@Html.Raw(closeContent)
+@if (Model.UserId == -1)
+{
+    @(Html.C1().Popup("#addUserDialog").Modal(true).HideTrigger(PopupTrigger.Click))
+}

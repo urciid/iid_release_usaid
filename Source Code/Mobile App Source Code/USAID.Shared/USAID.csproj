@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{2F2E4E9C-0B98-47CA-83CF-CEFF9E0BE719}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>USAID</RootNamespace>
+    <AssemblyName>USAID</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile49</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Email.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="Interfaces\IHUDProvider.cs" />
+    <Compile Include="Interfaces\IDeviceSettings.cs" />
+    <Compile Include="Interfaces\IEmailService.cs" />
+    <Compile Include="Interfaces\IPhoneCallService.cs" />
+    <Compile Include="Interfaces\IUserInfoService.cs" />
+    <Compile Include="Interfaces\IAuthenticationService.cs" />
+    <Compile Include="Services\AuthenticationService.cs" />
+    <Compile Include="Services\InsightsService.cs" />
+    <Compile Include="ViewModels\Base\BaseViewModel.cs" />
+    <Compile Include="Models\UserInfoModel.cs" />
+    <Compile Include="Custom\MenuCell.cs" />
+    <Compile Include="Common\Utils.cs" />
+    <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\Keys.cs" />
+    <Compile Include="Custom\USAIDMenuItem.cs" />
+    <Compile Include="Interfaces\IToastNotifier.cs" />
+    <Compile Include="Interfaces\IGALogger.cs" />
+    <Compile Include="Services\WebServiceClientBase.cs" />
+    <Compile Include="Managers\AuthenticationManager.cs" />
+    <Compile Include="Interfaces\IAuthenticationManager.cs" />
+    <Compile Include="Interfaces\ISQLite.cs" />
+    <Compile Include="Pages\Base\ViewPage.cs" />
+    <Compile Include="ApplicationObjects\AppContainer.cs" />
+    <Compile Include="ApplicationObjects\AppSetup.cs" />
+    <Compile Include="ViewModels\Base\IViewModel.cs" />
+    <Compile Include="Utilities\SimpleCommand.cs" />
+    <Compile Include="Pages\LandingPage.xaml.cs">
+      <DependentUpon>LandingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ILocalNotificationService.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
+    <Compile Include="Pages\HelpPage.xaml.cs">
+      <DependentUpon>HelpPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ServiceModels\AuthenticationRequest.cs" />
+    <Compile Include="Services\ServiceModels\AuthenticationResponse.cs" />
+    <Compile Include="Models\MessageWrapper.cs" />
+    <Compile Include="Models\ServiceErrorMessage.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Utilities\EmailBuilder.cs" />
+    <Compile Include="Models\Sms.cs" />
+    <Compile Include="Interfaces\ISmsService.cs" />
+    <Compile Include="Utilities\Enumerations\RateOptionsSubmissionResult.cs" />
+    <Compile Include="Services\ServiceModels\HttpResponse.cs" />
+    <Compile Include="Extensions\IntExtensions.cs" />
+    <Compile Include="Utilities\Enumerations\CreditAppSubmissionResult.cs" />
+    <Compile Include="CustomRenderers\NoHelperEntry.cs" />
+    <Compile Include="Interfaces\ILocale.cs" />
+    <Compile Include="Interfaces\ITextToSpeech.cs" />
+    <Compile Include="ViewModels\LandingViewModel.cs" />
+    <Compile Include="Pages\Sites\SitesPage.xaml.cs">
+      <DependentUpon>SitesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Sites\SitesViewModel.cs" />
+    <Compile Include="Pages\Menu\RootPage.cs" />
+    <Compile Include="Pages\Menu\MenuPage.cs" />
+    <Compile Include="Pages\AboutUsPage.xaml.cs">
+      <DependentUpon>AboutUsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\AboutUsViewModel.cs" />
+    <Compile Include="Pages\Sites\SitePage.xaml.cs">
+      <DependentUpon>SitePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Sites\SiteViewModel.cs" />
+    <Compile Include="ViewModels\Activities\ActivitiesViewModel.cs" />
+    <Compile Include="Pages\Activities\ActivitiesPage.xaml.cs">
+      <DependentUpon>ActivitiesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Activities\ObservationPage.xaml.cs">
+      <DependentUpon>ObservationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Activities\ObservationViewModel.cs" />
+    <Compile Include="Pages\Activities\ChartPage.xaml.cs">
+      <DependentUpon>ChartPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Activities\ChartViewModel.cs" />
+    <Compile Include="Xuni.License.cs" />
+    <Compile Include="Pages\Activities\ActivityDetailPage.xaml.cs">
+      <DependentUpon>ActivityDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Activities\ActivityViewModel.cs" />
+    <Compile Include="CustomRenderers\CustomPicker.cs" />
+    <Compile Include="Cells\ChangeCell.cs" />
+    <Compile Include="Utilities\Enumerations\IndicatorTypeEnumeration.cs" />
+    <Compile Include="ViewModels\Activities\ObsViewModel.cs" />
+    <Compile Include="CustomRenderers\FontAwesomeIcon.cs" />
+    <Compile Include="Custom\Grouping.cs" />
+    <Compile Include="Pages\Activities\Modals\ChangePage.xaml.cs">
+      <DependentUpon>ChangePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Activities\ChangeViewModel.cs" />
+    <Compile Include="Pages\Activities\Modals\CommentPage.xaml.cs">
+      <DependentUpon>CommentPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Activities\CommentViewModel.cs" />
+    <Compile Include="CustomRenderers\CustomEntry.cs" />
+    <Compile Include="Repositories\IObservationRepository.cs" />
+    <Compile Include="Repositories\Impl\ObservationRepository.cs" />
+    <Compile Include="Models\ActivityModel.cs" />
+    <Compile Include="Models\IndicatorAgePeriod.cs" />
+    <Compile Include="Models\ObservationAttachment.cs" />
+    <Compile Include="Models\ObservationChange.cs" />
+    <Compile Include="Models\ObservationComment.cs" />
+    <Compile Include="Models\Indicator.cs" />
+    <Compile Include="Models\Observation.cs" />
+    <Compile Include="Models\ObservationEntry.cs" />
+    <Compile Include="Models\Period.cs" />
+    <Compile Include="Models\Site.cs" />
+    <Compile Include="Services\ObservationService.cs" />
+    <Compile Include="Services\ServiceModels\GetAllDataResponse.cs" />
+    <Compile Include="Interfaces\IObservationService.cs" />
+    <Compile Include="Services\ServiceModels\GetAllDataRequest.cs" />
+    <Compile Include="Models\IndicatorVM.cs" />
+    <Compile Include="Models\SiteIndicator.cs" />
+    <Compile Include="Models\ObservationEntryVM.cs" />
+    <Compile Include="Repositories\ISiteRepository.cs" />
+    <Compile Include="Repositories\Impl\SiteRespository.cs" />
+    <Compile Include="Repositories\IActivityRepository.cs" />
+    <Compile Include="Repositories\Impl\ActivityRepository.cs" />
+    <Compile Include="Repositories\IIndicatorRepository.cs" />
+    <Compile Include="Repositories\Impl\IndicatorRepository.cs" />
+    <Compile Include="Repositories\ISiteIndicatorRepository.cs" />
+    <Compile Include="Repositories\Impl\SiteIndicatorRepository.cs" />
+    <Compile Include="Repositories\IObservationEntryRepository.cs" />
+    <Compile Include="Repositories\Impl\ObservationEntryRepository.cs" />
+    <Compile Include="Repositories\IObservationChangeRepository.cs" />
+    <Compile Include="Repositories\Impl\ObservationChangeRepository.cs" />
+    <Compile Include="Repositories\IObservationCommentRepository.cs" />
+    <Compile Include="Repositories\Impl\ObservationCommentRepository.cs" />
+    <Compile Include="Repositories\IObservationAttachmentRepository.cs" />
+    <Compile Include="Repositories\ObservationAttachmentRepository.cs" />
+    <Compile Include="Repositories\IIndicatorAgeRepository.cs" />
+    <Compile Include="Repositories\Impl\IndicatorAgeRepository.cs" />
+    <Compile Include="Services\ServiceModels\ObservationUpdateRequest.cs" />
+    <Compile Include="Services\ServiceModels\ObservationUpdateResponse.cs" />
+    <Compile Include="Services\ServiceModels\ObservationCommentRequest.cs" />
+    <Compile Include="Services\ServiceModels\ObservationCommentResponse.cs" />
+    <Compile Include="Services\ServiceModels\ObservationChangeRequest.cs" />
+    <Compile Include="Services\ServiceModels\ObservationChangeResponse.cs" />
+    <Compile Include="Services\ServiceModels\ObservationEntryUpdateRequest.cs" />
+    <Compile Include="Services\ServiceModels\ObservationEntryUpdateResponse.cs" />
+    <Compile Include="Services\ServiceModels\ObservationSaveResponse.cs" />
+    <Compile Include="Services\ServiceModels\ObservationAttachmentRequest.cs" />
+    <Compile Include="Services\ServiceModels\ObservationAttachmentResponse.cs" />
+    <Compile Include="Pages\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Activities\Modals\AttachmentPage.xaml.cs">
+      <DependentUpon>AttachmentPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\Activities\AttachmentViewModel.cs" />
+    <Compile Include="L10n.cs" />
+    <Compile Include="Resx\AppResources.Designer.cs">
+      <DependentUpon>AppResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="..\packages\Xamarin.Insights.1.11.2\build\portable-win+net45+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.11.2\build\portable-win+net45+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.targets')" />
+  <Import Project="..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.0.107\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
+  <Import Project="..\packages\Xamarin.Insights.1.12.3\build\portable-win+net45+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.targets" Condition="Exists('..\packages\Xamarin.Insights.1.12.3\build\portable-win+net45+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.targets')" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <ItemGroup>
+    <Reference Include="System.Net.Http">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\portable-net40+sl4+win8+wp71+wpa81\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Insights">
+      <HintPath>..\packages\Xamarin.Insights.1.12.3\lib\portable-win+net45+wp80+windows8+wpa+MonoAndroid10+MonoTouch10\Xamarin.Insights.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLiteNetExtensions">
+      <HintPath>..\packages\SQLiteNetExtensions.1.3.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\SQLiteNetExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Connectivity.Abstractions">
+      <HintPath>..\packages\Xam.Plugin.Connectivity.2.3.0\lib\portable-net45+wp80+win8+wpa81\Plugin.Connectivity.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Connectivity">
+      <HintPath>..\packages\Xam.Plugin.Connectivity.2.3.0\lib\portable-net45+wp80+win8+wpa81\Plugin.Connectivity.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.Net">
+      <HintPath>..\packages\SQLite.Net-PCL.3.1.1\lib\portable-win8+net45+wp8+wpa81+MonoAndroid1+MonoTouch1\SQLite.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media.Abstractions">
+      <HintPath>..\packages\Xam.Plugin.Media.2.6.2\lib\portable-net45+wp80+win8+wpa81\Plugin.Media.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.Media">
+      <HintPath>..\packages\Xam.Plugin.Media.2.6.2\lib\portable-net45+wp80+win8+wpa81\Plugin.Media.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\portable-net45+win8+wpa81+wp8\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Core">
+      <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Platform">
+      <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Xaml">
+      <HintPath>..\packages\Xamarin.Forms.2.3.4.247\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="Xuni.CollectionView">
+      <HintPath>..\packages\Xuni.CollectionView.2.3.20171.189\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xuni.CollectionView.dll</HintPath>
+    </Reference>
+    <Reference Include="Xuni.Forms.Core">
+      <HintPath>..\packages\Xuni.Forms.Core.2.3.20171.189\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xuni.Forms.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xuni.Forms.ChartCore">
+      <HintPath>..\packages\Xuni.Forms.ChartCore.2.3.20171.189\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xuni.Forms.ChartCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Xuni.Forms.FlexChart">
+      <HintPath>..\packages\Xuni.Forms.FlexChart.2.3.20171.189\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xuni.Forms.FlexChart.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.5.2\lib\portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Autofac.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="ResourceFile.xml" />
+    <None Include="Custom\testDelete.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Localization\" />
+    <Folder Include="Models\" />
+    <Folder Include="Views\" />
+    <Folder Include="CustomRenderers\" />
+    <Folder Include="Services\" />
+    <Folder Include="ViewModels\" />
+    <Folder Include="Pages\" />
+    <Folder Include="Interfaces\" />
+    <Folder Include="Pages\Base\" />
+    <Folder Include="ViewModels\Base\" />
+    <Folder Include="Custom\" />
+    <Folder Include="Common\" />
+    <Folder Include="Managers\" />
+    <Folder Include="Utilities\" />
+    <Folder Include="Builders\" />
+    <Folder Include="Builders\Impl\" />
+    <Folder Include="Services\ServiceModels\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Repositories\Impl\" />
+    <Folder Include="Utilities\Enumerations\" />
+    <Folder Include="Resx\" />
+    <Folder Include="Pages\Sites\" />
+    <Folder Include="ViewModels\Sites\" />
+    <Folder Include="Pages\Menu\" />
+    <Folder Include="Pages\Activities\" />
+    <Folder Include="ViewModels\Activities\" />
+    <Folder Include="Cells\" />
+    <Folder Include="Pages\Activities\Modals\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\LandingPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\HelpPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resx\AppResources.es.resx">
+      <LastGenOutput>AppResources.es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Sites\SitesPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\AboutUsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Sites\SitePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Activities\ActivitiesPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Activities\ObservationPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Activities\ChartPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Activities\ActivityDetailPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Activities\Modals\ChangePage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Activities\Modals\CommentPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\LoginPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resx\AppResources.fr.resx">
+      <LastGenOutput>AppResources.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Activities\Modals\AttachmentPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resx\AppResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WMP.Core.Data\WMP.Core.Data.csproj">
+      <Project>{135014D9-FD9A-4FB7-B01D-6DBEC4A7D889}</Project>
+      <Name>WMP.Core.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WMP.Core.Data.SQLiteNet\WMP.Core.Data.SQLiteNet.csproj">
+      <Project>{4CA6FF1B-18E7-4A6F-9C7D-0B35ABB1195F}</Project>
+      <Name>WMP.Core.Data.SQLiteNet</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedFlat" ResourceNamePolicy="MSBuild" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <Import Project="..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
+</Project>

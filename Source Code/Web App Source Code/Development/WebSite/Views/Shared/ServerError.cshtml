@@ -1,0 +1,23 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+@{
+    ViewBag.Title = "Error";
+}
+
+<h4>An error has occurred</h4>
+<hr />
+
+<p>We're sorry, but an error occurred. The details have been forwarded to the system administrator.</p>
+
+<p>
+    <a href="javascript:window.history.back();">Return to previous page</a><br />
+    <br />
+    <span class="cursor-pointer color-white" onclick="var x = $('#errorDetails'); x.removeClass('display-none'); x.addClass('display-inline-block');">Details</span>
+
+    @if (Model != null && Model.Exception != null)
+    {
+        <div class="display-none" id="errorDetails">
+            <b>@Html.Raw(Model.Exception.Message)</b><br />
+            @Html.Raw(Model.Exception.StackTrace ?? String.Empty)
+        </div>
+    }
+</p>

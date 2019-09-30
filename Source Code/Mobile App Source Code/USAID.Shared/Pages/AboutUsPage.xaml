@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:AboutUsPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.AboutUsPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP">
+	<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+		<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="15,0,15,0">
+						<StackLayout Padding="0,50,0,0">
+					<Image Source="Logo.png">
+					</Image>
+				</StackLayout>
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<StackLayout VerticalOptions="CenterAndExpand" Padding="30,0,30,0" Spacing="14">
+						<StackLayout Padding="0,0,0,50">
+								<Label Text="{Binding AboutUsDetailText}" FontSize="Medium" TextColor="Black" XAlign="Center" />
+								<Label Text="{Binding VersionLabel}" FontSize="Medium" TextColor="Black" XAlign="Center" />	
+						</StackLayout>
+					</StackLayout>
+				</StackLayout>
+			</StackLayout>
+		</AbsoluteLayout>
+	</StackLayout>
+</local:AboutUsPageBase>

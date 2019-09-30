@@ -1,0 +1,152 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using site = IID.BusinessLayer.Globalization.Site.Resource
+@using IID.BusinessLayer.Helpers
+@using IID.WebSite.Helpers;
+@using IID.WebSite.Models;
+@using IID.BusinessLayer.Identity;
+
+@model Site
+
+@{
+    ViewBag.Title = ("View Site: " + Model.SiteName);
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml", ProjectBreadcrumbs.ForSite(Model.SiteId.Value))
+}
+
+@Scripts.Render("~/Scripts/site.js")
+
+<section class="max-width-max">
+    <div class="header">
+        <div class="float-left title">
+            @common.Site
+        </div>
+        <div class="float-right button">
+            @if ((Identity.CurrentUser.IsInRole(Role.ActivityLeader))
+               || (Identity.CurrentUser.IsInRole(Role.CountryDirector))
+               || (Identity.CurrentUser.IsInRole(Role.SystemAdministrator)))
+            {
+                <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.SiteId.Value })">
+                    @common.Edit
+                    <img src="~/Images/icons/16/pencil_edit.png" />
+                </a>
+            }           
+            <button type="button"
+                    onclick="modifySiteFavorite(@Model.SiteId, this, $('img', this)[0]);"
+                    title="@(Model.IsFavorite ? common.RemoveFavorite : common.AddFavorite)"
+                    value="@Model.IsFavorite.ToString().ToLower()">
+                @common.Favorite
+                <img src="~/Images/icons/16/star_@(Model.IsFavorite ? "color" : "gray").png" />
+            </button>
+        </div>
+        <div class="clear-floats"></div>
+    </div>
+    <div class="content">
+        <table class="form-table width-100p">
+            <colgroup>
+                <col style="width: 40%;" />
+                <col style="width:  5%;" />
+                <col style="width: 55%;" />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.SiteName)</td>
+                                    <td>@Html.DisplayFor(m => m.SiteName)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.CountryName)</td>
+                                    <td>@Html.DisplayFor(m => m.CountryName)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.SiteTypeValue)</td>
+                                    <td>@Html.DisplayFor(m => m.SiteTypeValue)</td>
+                                </tr>
+                                <tr>
+                                    <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType1)</label></td>
+                                    <td>@Html.DisplayFor(m => m.AdministrativeDivisionName1)</td>
+                                </tr>
+                                @if (Model.AdministrativeDivisionId2.HasValue)
+                                {
+                                    <tr>
+                                        <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType2)</label></td>
+                                        <td>@Html.DisplayFor(m => m.AdministrativeDivisionName2)</td>
+                                    </tr>
+                                }
+                                @if (Model.AdministrativeDivisionId3.HasValue)
+                                {
+                                    <tr>
+                                        <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType3)</label></td>
+                                        <td>@Html.DisplayFor(m => m.AdministrativeDivisionName3)</td>
+                                    </tr>
+                                }
+                                @if (Model.AdministrativeDivisionId4.HasValue)
+                                {
+                                    <tr>
+                                        <td><label>@Html.DisplayFor(m => m.AdministrativeDivisionType4)</label></td>
+                                        <td>@Html.DisplayFor(m => m.AdministrativeDivisionName4)</td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Active)</td>
+                                    <td>@Html.DisplayFor(m => m.Active)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td></td>
+                    <td>
+                        <table class="width-100p">
+                            <colgroup>
+                                <col />
+                                <col style="width: 100%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.FundingTypeValue)</td>
+                                    <td>@Html.DisplayFor(m => m.FundingTypeValue)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Partner)</td>
+                                    <td>@Html.DisplayFor(m => m.Partner)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Longitude)</td>
+                                    <td>@Html.DisplayFor(m => m.Longitude)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.Latitude)</td>
+                                    <td>@Html.DisplayFor(m => m.Latitude)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.QIIndexScoreValue)</td>
+                                    <td>@Html.DisplayFor(m => m.QIIndexScoreValue)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.PopulationDensityValue)</td>
+                                    <td>@Html.DisplayFor(m => m.PopulationDensityValue)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Html.LabelForForm(m => m.OtherKeyInformation)</td>
+                                    <td>@Html.DisplayFor(m => m.OtherKeyInformation)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@Html.Partial("~/Views/Activity/List.cshtml", Model.Activities)
+
+@Html.Partial("~/Views/Note/Index.cshtml", new ListNotesViewModel(Model.SiteId, null, Model.Notes))

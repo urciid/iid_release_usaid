@@ -1,0 +1,337 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using error = IID.BusinessLayer.Globalization.Error.Resource
+@using indicator = IID.BusinessLayer.Globalization.Indicator.Resource
+@using IID.BusinessLayer.Identity;
+@using IID.WebSite.Models
+
+@model Indicator
+@{
+    ViewBag.Title = ("Edit Indicator: " + Model.Name);
+}
+
+@section contentHeader{
+    @Html.Partial("~/Views/Shared/ProjectBreadcrumbs.cshtml", ProjectBreadcrumbs.ForIndicator(Model.IndicatorId.Value))
+}
+
+<script type="text/javascript">
+    $(document).ready(function () { setAreYouSure('@error.UnsavedChanges'); });
+</script>
+
+@Scripts.Render("~/Scripts/indicator.js")
+
+<script type="text/javascript">
+    var frmIndicator, radDisAggAgeYes, lstAgeRanges, btnAgeRangeMoveUp,
+        btnAgeRangeMoveDown, btnAgeRangeRemove, btnAgeRangeAdd, txtAgeRangeAdd;
+
+    var hasObservations = @Model.HasObservations.ToString().ToLower();
+
+    $(document).ready(function () {
+        // Pre-load DOM elements.
+        frmIndicator = document.getElementById('frmIndicator');
+        radDisAggAgeYes = document.getElementById('disAggAgeYes');
+        lstAgeRanges = document.getElementById('lstAgeRanges');
+        btnAgeRangeMoveUp = document.getElementById('btnAgeRangeMoveUp');
+        btnAgeRangeMoveDown = document.getElementById('btnAgeRangeMoveDown');
+        btnAgeRangeRemove = document.getElementById('btnAgeRangeRemove');
+        btnAgeRangeAdd = document.getElementById('btnAgeRangeAdd');
+        txtAgeRangeAdd = document.getElementById('txtAgeRangeAdd');
+        hdnAgeRanges = document.getElementById('hdnAgeRanges');
+
+        // Show/hide content based on indicator type.
+        indicatorTypeChanged('@Model.TypeValue');
+
+        // Enable/disable age range controls.
+        enableDisableAgeRangeControls();
+    });
+</script>
+
+@using (Html.BeginForm("Edit", "Indicator", FormMethod.Post, new { id = "frmIndicator", onsubmit = "submitIndicatorForm()" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.IndicatorId)
+    <section class="max-width-max">
+        <div class="header">
+            <div class="float-left title">
+                @common.Indicator
+            </div>
+            <div class="float-right button">
+                <a class="btn btn-primary" href="@Url.Action("View", new { id = Model.IndicatorId.Value })">
+                    @common.Cancel
+                    <img src="~/Images/icons/16/close_delete.png" />
+                </a>
+                <button type="submit">
+                    @common.Save
+                    <img src="~/Images/icons/16/save_diskette_floppy_disk.png" />
+                </button>
+            </div>
+            <div class="clear-floats"></div>
+        </div>
+        <div class="content">
+            <table class="form-table width-100p">
+                <colgroup>
+                    <col style="width: 40%;" />
+                    <col style="width:  5%;" />
+                    <col style="width: 55%;" />
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td>
+                            <table class="width-100p">
+                                <colgroup>
+                                    <col />
+                                    <col style="width: 95%;" />
+                                    <col />
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.AimId)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.AimId,
+                                                new SelectList(Model.ActivityAims, "Item1", "Item2"),
+                                                new { @class = "width-100p" })
+                                        </td>
+                                        <td>@Html.ValidationMessageFor(m => m.AimId, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Name)</td>
+                                        <td>@Html.TextAreaFor(m => m.Name, new { @class = "width-100p", rows = 2 })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.Name, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.TypeFieldId)</td>
+                                        <td>
+                                            @Html.DropDownListFor(m => m.TypeFieldId, Model.IndicatorTypes,
+                                                new { @class = "width-100", onchange = "indicatorTypeChanged(this.options[this.selectedIndex].text);" })
+                                        </td>
+                                        <td>@Html.ValidationMessageFor(m => m.TypeFieldId, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.GroupFieldId)</td>
+                                        <td>@Html.DropDownListFor(m => m.GroupFieldId, Model.IndicatorGroups, new { @class = "width-100" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.GroupFieldId, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Definition)</td>
+                                        <td>@Html.TextAreaFor(m => m.Definition, new { @class = "width-100p", rows = 3 })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.NumeratorSource)</td>
+                                        <td>@Html.EditorFor(m => m.NumeratorSource, new { htmlAttributes = new { @class = "width-100p" } })</td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="tbdyNumeratorDenominator">
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            @Html.Label(indicator.Numerator, new { @class = "text-align-left" })
+                                            <hr style="margin: 0 2px 0 0;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.NumeratorName)</td>
+                                        <td>@Html.TextAreaFor(m => m.NumeratorName, new { @class = "width-100p", rows = 2 })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.NumeratorName, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.NumeratorDefinition)</td>
+                                        <td>@Html.TextAreaFor(m => m.NumeratorDefinition, new { @class = "width-100p", rows = 3 })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.NumeratorSource)</td>
+                                        <td>@Html.EditorFor(m => m.NumeratorSource, new { htmlAttributes = new { @class = "width-100p" } })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            @Html.Label(indicator.Denominator, new { @class = "text-align-left" })
+                                            <hr style="margin: 0 2px 0 0;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.DenominatorName)</td>
+                                        <td>@Html.TextAreaFor(m => m.DenominatorName, new { @class = "width-100p", rows = 2 })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.DenominatorName, "", new { @class = "error" })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.DenominatorDefinition)</td>
+                                        <td>@Html.TextAreaFor(m => m.DenominatorDefinition, new { @class = "width-100p", rows = 3 })</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.DenominatorSource)</td>
+                                        <td>@Html.EditorFor(m => m.DenominatorSource, new { htmlAttributes = new { @class = "width-100p" } })</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td></td>
+                        <td>
+                            <table>
+                                <colgroup>
+                                    <col />
+                                    <col style="width: 200px;" />
+                                    <col />
+                                </colgroup>
+                                <tbody id="tbdyCollection">
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.DataCollectionFrequencyFieldId)</td>
+                                        <td>@Html.DropDownListFor(m => m.DataCollectionFrequencyFieldId, Model.DataCollectionFrequencies, new { @class = "width-200" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.DataCollectionFrequencyFieldId, "", new { @class = "error" })</td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="tbdySampling">
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.SamplingFieldId)</td>
+                                        <td>@Html.DropDownListFor(m => m.SamplingFieldId, Model.Samplings, new { @class = "width-200" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.SamplingFieldId, "", new { @class = "error" })</td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="tbdyChangeVariable">
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.ChangeVariable)</td>
+                                        <td>@Html.EditorFor(m => m.ChangeVariable, new { @class = "width-200" })</td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="tbdyDisaggregation">
+                                    <tr>
+                                        <td colspan="2">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.DisaggregateBySex)</td>
+                                        <td>
+                                            @Html.RadioButtonFor(m => m.DisaggregateBySex, true, new { id = "disAggSexYes" })
+                                            @Html.Label("disAggSexYes", common.Yes, new { @class = "notForForm" })
+                                            &nbsp;&nbsp;
+                                            @Html.RadioButtonFor(m => m.DisaggregateBySex, false, new { id = "disAggSexNo" })
+                                            @Html.Label("disAggSexNo", common.No, new { @class = "notForForm" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.DisaggregateByAge)</td>
+                                        <td>
+                                            @Html.RadioButtonFor(m => m.DisaggregateByAge, true, new { id = "disAggAgeYes", onclick = "enableDisableAgeRangeControls();" })
+                                            @Html.Label("disAggAgeYes", common.Yes, new { @class = "notForForm" })
+                                            &nbsp;&nbsp;
+                                            @Html.RadioButtonFor(m => m.DisaggregateByAge, false, new { id = "disAggAgeNo", onclick = "enableDisableAgeRangeControls();" })
+                                            @Html.Label("disAggAgeNo", common.No, new { @class = "notForForm" })
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.AgeRanges)</td>
+                                        <td title="@(Model.HasObservations ? error.LockedBecauseObservations : "")">
+                                            <table>
+                                                <tbody>
+                                                    <tr>
+                                                        <td rowspan="3">
+                                                            @(Html.ListBox("_dont_read_", new SelectList(Model.AgeRanges.Values),
+                                                                new { @style = "width: 170px", id = "lstAgeRanges", size = 5 }))
+                                                        </td>
+                                                        <td>
+                                                            <img src="~/Images/icons/16/arrow_up.png" class="cursor-pointer" id="btnAgeRangeMoveUp"
+                                                                 onclick="moveSelectItemsUp('lstAgeRanges')" title="@common.MoveUp" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <img src="~/Images/icons/16/arrow_down.png" class="cursor-pointer" id="btnAgeRangeMoveDown"
+                                                                 onclick="moveSelectItemsDown('lstAgeRanges')" title="@common.MoveDown" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <img src="~/Images/icons/16/delete_2.png" class="cursor-pointer" id="btnAgeRangeRemove"
+                                                                 onclick="removeSelectedItems('lstAgeRanges');" title="@common.Delete" />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2"><hr class="margin-0" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <input style="width: 170px" id="txtAgeRangeAdd" type="text" />
+                                                        </td>
+                                                        <td>
+                                                            <img src="~/Images/icons/16/plus.png" class="cursor-pointer" id="btnAgeRangeAdd"
+                                                                 onclick="addAgeRangeItem();" title="@common.Add" />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="tbdyTarget">
+                                    <tr>
+                                        <td colspan="2">
+                                            &nbsp;
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.TargetPerformance)</td>
+                                        <td>
+                                            @(Html.C1().InputNumberFor(m => m.TargetPerformance)
+                                                .CssClass("width-100").Format("P0").Max(1).Min(0))
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.ThresholdGoodPerformance)</td>
+                                        <td>
+                                            @(Html.C1().InputNumberFor(m => m.ThresholdGoodPerformance)
+                                                .CssClass("width-100").Format("P0").Max(1).Min(0))
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.ThresholdPoorPerformance)</td>
+                                        <td>
+                                            @(Html.C1().InputNumberFor(m => m.ThresholdPoorPerformance)
+                                                .CssClass("width-100").Format("P0").Id("thresholdPoorPerformance").Max(1).Min(0))
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.IncreaseIsGoodText)</td>
+                                        <td>
+                                            @Html.RadioButtonFor(m => m.IncreaseIsGood, true, new { id = "increaseIsGoodYes" })
+                                            @Html.Label("increaseIsGoodYes", indicator.Increase, new { @class = "notForForm" })
+                                            &nbsp;&nbsp;
+                                            @Html.RadioButtonFor(m => m.IncreaseIsGood, false, new { id = "increaseIsGoodNo" })
+                                            @Html.Label("increaseIsGoodNo", indicator.Decrease, new { @class = "notForForm" })
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="tbdyRatio">
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.RatePerFieldId)</td>
+                                        <td>@Html.DropDownListFor(m => m.RatePerFieldId, Model.RatiosPer, new { @class = "width-100" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.RatePerFieldId, "", new { @class = "error" })</td>
+                                    </tr>
+                                </tbody>
+                                <tbody>
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.Active)</td>
+                                        <td>@Html.EditorFor(m => m.Active).Disable(!Identity.CurrentUser.IsInRole(Role.SystemAdministrator))</td>
+                                    </tr>
+                                </tbody>
+                                <tbody id="tbdyReportClass">
+                                    <tr>
+                                        <td>@Html.LabelForForm(m => m.ReportClassFieldId)</td>
+                                        <td>@Html.DropDownListFor(m => m.ReportClassFieldId, Model.ReportClasses, String.Empty, new { @class = "width-200" })</td>
+                                        <td>@Html.ValidationMessageFor(m => m.ReportClassFieldId, "", new { @class = "error" })</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+
+@Html.Partial("~/Views/IndicatorSite/List.cshtml", new ActivitySiteCollection(Model.ActivityId, Model.IndicatorId.Value))
+
+@Html.Partial("~/Views/Indicator/List.cshtml", Model)

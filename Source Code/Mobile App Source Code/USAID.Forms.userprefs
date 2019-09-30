@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{A95F22B3-AE15-41D1-B7E1-94A135FF7D53}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="USAID.Shared/Pages/Activities/ObservationPage.xaml">
+    <Files>
+      <File FileName="USAID.Shared/ViewModels/Activities/ObservationViewModel.cs" Line="313" Column="38" />
+      <File FileName="USAID.Shared/Pages/Activities/ObservationPage.xaml" Line="51" Column="80" />
+      <File FileName="USAID.Shared/Pages/Activities/ObservationPage.xaml.cs" Line="53" Column="4" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.USAID.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.17563EC6-3FF7-47AB-A0E4-42A322057C58" />
+  <MonoDevelop.Ide.ItemProperties.USAID.Droid PreferredExecutionTarget="Android.Nexus 4 (Lollipop)" />
+</Properties>

@@ -1,0 +1,64 @@
+﻿@using C1.Web.Mvc.Grid
+@using IID.BusinessLayer.Domain
+@using common = IID.BusinessLayer.Globalization.Common.Resource
+@using IID.WebSite.Models
+
+@model CountryDashboard
+
+@{
+    ViewBag.Title = "Country Dashboard";
+}
+
+<script type="text/javascript">
+    function itemFormatter(panel, r, c, cell) {
+        if (panel.cellType == wijmo.grid.CellType.Cell) {
+            var grid = panel.grid;
+            var dataItem = grid.rows[r].dataItem;
+            if (dataItem && (dataItem.email)) {
+                switch (panel.columns[c].name) {
+                    case 'Email':
+                        cell.innerHTML = (
+                            '<a href="/User/View/' + dataItem.user_id + '">' +
+                            dataItem.email + '</a>');
+                        break;
+                }
+            }
+        }
+    }
+</script>
+
+<section class="width-900">
+    <div class="header">
+        <div class="float-left title">Country Dashboard</div>
+        @*<div class="float-right button">
+                <button type="button" onclick="showAddUserDialog();">
+                    @common.Add
+                    <img src="~/Images/icons/16/plus.png" />
+                </button>
+            </div>*@
+    </div>
+    <div class="content">
+        @(Html.C1().FlexGrid<CountryDashboardDetails>()
+            .AllowSorting(true)
+            .AutoGenerateColumns(false)
+            .AutoSizeMode(AutoSizeMode.Both)
+            .Bind(Model.CountryStats)
+            .GroupBy("CountryName")
+            .Columns(c =>
+            {
+                c.Add(cb => cb.Binding("CountryName").Header("IID Table").Width("*"));
+                c.Add(cb => cb.Binding("TableName").Header("IID Table").Width("*"));
+                c.Add(cb => cb.Binding("WTDCount").Header("WTD").Width("*"));
+                c.Add(cb => cb.Binding("MTDCount").Header("MTD").Width("*"));
+                c.Add(cb => cb.Binding("YTDCount").Header("YTD").Width("*"));
+                c.Add(cb => cb.Binding("AllTimeCount").Header("All Time").Width("*"));
+            })
+            .Id("fgUserStats")
+            .HeadersVisibility(HeadersVisibility.Column)
+            .IsReadOnly(true)
+            .ItemFormatter("itemFormatter")
+            .SelectionMode(SelectionMode.None)
+
+        )
+    </div>
+</section>

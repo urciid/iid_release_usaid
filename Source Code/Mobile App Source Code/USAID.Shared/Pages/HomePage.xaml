@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:HomePageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.HomePage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP">
+
+
+	<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+		
+		<AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Image Source="starbackground.png" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Aspect="AspectFill" />
+
+			
+			<StackLayout Orientation="Vertical" VerticalOptions="Center" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0, 0, 1, 1" Padding="30,0,30,0">
+				<StackLayout Padding="0,30,0,0">
+					<Image Source="greatamericaLogo.png">
+					</Image>
+				</StackLayout>
+
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+
+				<StackLayout Orientation="Vertical" VerticalOptions="CenterAndExpand">
+					<StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+			<Button Text="{Binding DealerName}" BackgroundColor="Transparent" Clicked="EditButton_Clicked" FontSize="35" TextColor="#034468"></Button>
+						
+					</StackLayout>
+					<StackLayout HorizontalOptions="Center" Padding="0,5,0,40">
+						<BoxView HeightRequest="1" WidthRequest="200" BackgroundColor="{StaticResource GAgold}" />
+					</StackLayout>
+				</StackLayout>
+
+				
+				<StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand">
+					<Button Text="Create a Quote" Clicked="QuoteButton_Clicked" HorizontalOptions="FillAndExpand" Style="{StaticResource PrimaryButtonStyle}">
+					</Button>
+					<Button Text="Submit an App" Clicked="CreditAppButton_Clicked" HorizontalOptions="FillAndExpand" Style="{StaticResource PrimaryButtonStyle}">
+					</Button>
+					<Button Text="Need Help?" Clicked="HelpButton_Clicked" HorizontalOptions="FillAndExpand" Style="{StaticResource SecondaryButtonStyle}">
+					</Button>
+				</StackLayout>
+
+				</StackLayout>
+			</StackLayout>
+			
+		</AbsoluteLayout>
+		
+	</StackLayout>
+</local:HomePageBase>

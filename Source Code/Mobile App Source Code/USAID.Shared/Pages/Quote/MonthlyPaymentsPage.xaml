@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:MonthlyPaymentsPageBase xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="USAID.Pages.MonthlyPaymentsPage" xmlns:local="clr-namespace:USAID.Pages;assembly=WMP" Title="Payment Options">
+	<StackLayout>
+		<StackLayout Orientation="Horizontal" VerticalOptions="Start">
+			<!-- top controls -->
+		</StackLayout>
+		<StackLayout VerticalOptions="FillAndExpand">
+		    <!-- middle controls -->
+			  <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand"  HorizontalOptions="FillAndExpand" Padding="0,0,0,0" x:Name="buttonLayout">
+				<ListView 			
+		       		x:Name="lstMonthlyPayments"
+					HasUnevenRows="true"
+		       		ItemsSource="{Binding MonthlyPayments}"
+		       		RowHeight="80"
+	            	IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+                	HorizontalOptions="FillAndExpand"
+                	VerticalOptions="Start"
+					Style="{StaticResource ListViewStyle}"
+					BackgroundColor="#eef4f7"
+		       		>
+				
+				    <ListView.ItemTemplate>
+				    	<DataTemplate>
+				        	<ViewCell>
+					        	<ViewCell.View>
+									<Grid Padding="5,5,10,0" RowSpacing="2">
+									    <Grid.RowDefinitions>
+									      <RowDefinition Height="Auto" />
+									     </Grid.RowDefinitions>
+									    <Grid.ColumnDefinitions>
+									      <ColumnDefinition Width="*" />
+									      <ColumnDefinition Width="70" />
+									    </Grid.ColumnDefinitions>	
+									    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Padding="15,0,0,0">
+												<Label Text="{Binding MonthlyPaymentLine1}" Style="{StaticResource ListViewMiddleLabelStyle}" VerticalOptions="CenterAndExpand"/>
+												<Label Text="{Binding MonthlyPaymentLine2}" Style="{StaticResource ListViewMiddleLabelStyle}" VerticalOptions="CenterAndExpand"/>
+										</StackLayout>
+										<StackLayout Orientation="Horizontal" HorizontalOptions="End" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" VerticalOptions="Center">
+											<Switch x:Name="quoteSwitch" BackgroundColor="Transparent" HeightRequest="80" IsToggled="{Binding IsSelected}" />
+										</StackLayout>
+									   </Grid>
+								</ViewCell.View>
+							</ViewCell>
+						</DataTemplate>
+			    </ListView.ItemTemplate>
+			  </ListView>
+			</StackLayout>
+			<StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="30, 13 ,30,10">
+				<Button x:Name="generateQuoteBtn" Text="Generate Quote" Clicked="OnNextButtonClicked" Style="{StaticResource PrimaryButtonStyle}" HorizontalOptions="FillAndExpand">
+				</Button>
+			</StackLayout>
+		  </StackLayout>
+		  <StackLayout Orientation="Horizontal" VerticalOptions="End">
+		    <!-- bottom controls -->
+		  </StackLayout>
+		</StackLayout>
+</local:MonthlyPaymentsPageBase>

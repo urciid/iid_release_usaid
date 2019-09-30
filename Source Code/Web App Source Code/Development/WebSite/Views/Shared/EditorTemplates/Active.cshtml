@@ -1,0 +1,12 @@
+﻿@using common = IID.BusinessLayer.Globalization.Common.Resource;
+
+@model bool?
+
+@{
+    Dictionary<string, string> items = new Dictionary<string, string>();
+    items.Add(common.PendingStatus, "");
+    items.Add(common.ActiveStatus, "true");
+    items.Add(common.InactiveStatus, "false");
+}
+
+@Html.DropDownList("", new SelectList(items, "Value", "Key", Model))
